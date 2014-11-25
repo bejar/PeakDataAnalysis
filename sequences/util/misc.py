@@ -65,7 +65,7 @@ def find_time_end(seq, ini, step):
     return i
 
 
-def probability_matrix_seq(peakstr, init, end, nsym, gap, laplace=0.0):
+def probability_matrix_seq(peakseq, init, end, nsym, gap, laplace=0.0):
     """
     Computes the probability matrix of the transitions from a sequence of points
     Each element of the sequence is the class and the moment of time of the peak
@@ -74,7 +74,7 @@ def probability_matrix_seq(peakstr, init, end, nsym, gap, laplace=0.0):
 
     The Laplace correction assumes a minimum number of transitions per peak
 
-    :param peakstr:
+    :param peakseq:
     :param init:
     :param end:
     :return:
@@ -82,12 +82,12 @@ def probability_matrix_seq(peakstr, init, end, nsym, gap, laplace=0.0):
 
     pm = np.zeros((nsym, nsym)) + laplace
     for i in range(init, end-1):
-        if peakstr[i+1][1] - peakstr[i][1] < gap:
-            pm[peakstr[i][0]-1, peakstr[i+1][0]-1] += 1.0
+        if peakseq[i+1][1] - peakseq[i][1] < gap:
+            pm[peakseq[i][0]-1, peakseq[i+1][0]-1] += 1.0
     return pm/pm.sum()
 
 
-def probability_matrix_multi(peakstr, init, end, nsym, gap, laplace=0.0):
+def probability_matrix_multi(peakseq, init, end, nsym, gap, laplace=0.0):
     """
     Computes the probability matrix of the transitions from a sequence of points
     between two points of time.
@@ -99,7 +99,7 @@ def probability_matrix_multi(peakstr, init, end, nsym, gap, laplace=0.0):
 
     The Laplace correction assumes a minimum number of transitions per peak
 
-    :param peakstr:
+    :param peakseq:
     :param init:
     :param end:
     :return:
@@ -110,12 +110,12 @@ def probability_matrix_multi(peakstr, init, end, nsym, gap, laplace=0.0):
         j = i+1
         lprob = []
         sm = 0.0
-        while j < end-1 and peakstr[j][1] - peakstr[i][1] < gap:
-            sm += (gap - (peakstr[j][1] - peakstr[i][1]))
-            lprob.append((peakstr[i][0], gap - (peakstr[j][1] - peakstr[i][1])))
+        while j < end-1 and peakseq[j][1] - peakseq[i][1] < gap:
+            sm += (gap - (peakseq[j][1] - peakseq[i][1]))
+            lprob.append((peakseq[i][0], gap - (peakseq[j][1] - peakseq[i][1])))
             j += 1
         for pk, pr in lprob:
-            pm[peakstr[i][0]-1, pk -1] += (pr/sm)
+            pm[peakseq[i][0]-1, pk -1] += (pr/sm)
 
     return pm/pm.sum()
 
