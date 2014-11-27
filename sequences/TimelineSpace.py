@@ -175,7 +175,7 @@ for line,clust, ncl in aline:
     name = line + '-timelineG%d-S%d-L%d' % (round(gap*.6,0), round(step * .0006,0), round(length * .0006,0))
     print name, gap, step, length
     title = line + '-timeline G= %2.3f S=%2.1f L=%2.1f' % (gap*.0006, step * .0006, length * .0006)
-    matpeaks = scipy.io.loadmat( cpath + 'Selected/centers.' + line + '.' + clust + '.mat')
+    matpeaks = scipy.io.loadmat(cpath + 'Selected/centers.' + line + '.' + clust + '.mat')
     mattime = scipy.io.loadmat(cpath + '/WholeTime.' + line + '.mat')
 
     clpeaks = matpeaks['IDX']

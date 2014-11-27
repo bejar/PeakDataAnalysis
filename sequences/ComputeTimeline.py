@@ -216,8 +216,8 @@ def do_the_job(gap, step, length, laplace, dist, multi):
     for line, clust, ncl in aline:
 
         print line, clust
-        matpeaks = scipy.io.loadmat( cpath + '/centers.' + line + '.' + clust + '.mat')
-        mattime = scipy.io.loadmat( cpath + '/WholeTime.' + line + '.mat')
+        matpeaks = scipy.io.loadmat(cpath + '/Selected/centers.' + line + '.' + clust + '.mat')
+        mattime = scipy.io.loadmat(cpath + '/WholeTime.' + line + '.mat')
 
         clpeaks = matpeaks['IDX']
         timepeaks = mattime['temps'][0]
