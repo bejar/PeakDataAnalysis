@@ -30,12 +30,12 @@ def plotSignals(signals, n, m, vmax, vmin, name, title):
     fig.set_figwidth(30)
     fig.set_figheight(40)
     i=1
-    plt.subplots_adjust(hspace = 0.5, wspace = 0.3)
+    plt.subplots_adjust(hspace=0.5, wspace=0.3)
     for s, snm in signals:
-        if min(s)!=max(s):
-            plotSignalValues(fig,s,n,m,i, snm, vmax, vmin)
+        if min(s) != max(s):
+            plotSignalValues(fig, s, n, m, i, snm, vmax, vmin)
         else:
-            plotDummy(fig,len(s),n,m,i, snm)
+            plotDummy(fig, len(s), n, m, i, snm)
         i += 1
 
     fig.suptitle(title, fontsize=48)
