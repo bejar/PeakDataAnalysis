@@ -41,7 +41,7 @@ from util.plots import plotSignals
 #         ('L7ri', 'k18.n4', 18)
 #         ]
 
-nc = 12
+nc = 16
 
 aline = [('L4cd', 'k9.n1', 9)]
 
@@ -80,7 +80,7 @@ for i in c:
 mx = np.max(centers)
 mn = np.min(centers)
 
-plotSignals(lcenters, 6, 2, mx, mn, 'cluster-L4cd', 'cluster-L4cd')
+plotSignals(lcenters, 8, 2, mx, mn, 'cluster-L4cd', 'cluster-L4cd')
 
 
 

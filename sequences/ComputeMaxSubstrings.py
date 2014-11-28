@@ -296,7 +296,7 @@ def max_peaks_edges(nexp, clpeaks, timepeaks, sup, gap=0):
         else:
             peakfreq[voc[clpeaks[i][0]]] = 1
 
-    print peakend - peakini, len(peakstr), len(peakstr)* (1.0 / (len(peakfreq)*len(peakfreq)))
+    print peakend - peakini, len(peakstr), len(peakstr) * (1.0 / (len(peakfreq) * len(peakfreq)))
 
     for l in peakfreq:
         peakfreq[l] = (peakfreq[l]* 1.0)/len(peakstr)
