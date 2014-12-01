@@ -23,7 +23,7 @@ import scipy.io
 import numpy as np
 import matplotlib.pyplot as plt
 from pylab import *
-
+from util.paths import cpath, rpath
 
 def plotSignalValues(signals, nc):
     fig = plt.figure()
@@ -41,26 +41,35 @@ def plotSignalValues(signals, nc):
     fig.set_figheight(1.5)
 
     #plt.show()
-    fig.savefig(ipath+'/'+line+'.cl'+str(nc)+'.png', orientation='landscape',format='png', pad_inches=0.1)
-
-line = 'L6ri'
-clust = '.k15.n1'
+    fig.savefig(rpath+'/icons/'+line+'.cl'+str(nc)+'.png', orientation='landscape',format='png', pad_inches=0.1)
 
 
-cpath = '/home/bejar/Dropbox/Filtro Rudomin/Estability/'
-rpath = '/home/bejar/Documentos/Investigacion/cinvestav/secuencias/'
-ipath = '/home/bejar/Documentos/Investigacion/cinvestav/secuencias/icons/'
-ocpath = '/home/bejar/Documentos/Investigacion/cinvestav/'
+aline = [('L4cd', 'k9.n5', 9),
+         ('L4ci', 'k9.n1', 9),
+        ('L5cd', 'k10.n6' , 10),
+        #('L5rd', 'k20.n1' ),
+        ('L5ci', 'k15.n1', 15),
+        ('L5ri', 'k15.n9', 15),
+        ('L6cd', 'k17.n1', 17),
+        ('L6rd', 'k13.n9', 13),
+        #('L6ci', 'k15.n1'),
+        ('L6ri', 'k18.n4', 18),
+        ('L7ri', 'k18.n4', 18)
+        ]
 
-matpeaks = scipy.io.loadmat(ocpath + '/centers.' + line + clust + '.mat')
+# line = 'L6ri'
+# clust = '.k15.n1'
+
+for line, clust, _ in aline:
+    matpeaks = scipy.io.loadmat(cpath + 'Selected/centers.' + line + '.' + clust + '.mat')
 
 
-clpeaks = matpeaks['C']
+    clpeaks = matpeaks['C']
 
-print clpeaks.shape
+    print clpeaks.shape
 
-peakLength = clpeaks.shape[1]
+    peakLength = clpeaks.shape[1]
 
-for i in range( clpeaks.shape[0]):
-    plotSignalValues(clpeaks[i], i+1)
+    for i in range( clpeaks.shape[0]):
+        plotSignalValues(clpeaks[i], i+1)
 

@@ -42,7 +42,7 @@ nfiles = [(0, 'ctrl1'), (1, 'ctrl2'), (2, 'capsa1'), (3, 'capsa2'), (4, 'capsa3'
           ]
 
 #matpeaks = scipy.io.loadmat( cpath+'/centers.L6ri.k15.n3.mat')
-mattime = scipy.io.loadmat( cpath+'/WholeTime.L6ri.mat')
+mattime = scipy.io.loadmat(cpath+'/WholeTime.L6ri.mat')
 
 #clpeaks = matpeaks['IDX']
 timepeaks = mattime['temps'][0]

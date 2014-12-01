@@ -29,16 +29,16 @@ from pylab import *
 import networkx as nx
 from operator import itemgetter, attrgetter, methodcaller
 
-def drawgraph(nodes, edges, nfile):
+def drawgraph(nodes, edges, nfile, legend):
     rfile = open(rpath + 'maxseq-' + nfile + '.dot', 'w')
 
     rfile.write('digraph G {\nsize="20,20"\nlayout="neato"\n'+
-                'imagepath="'+rpath+'"\n'+
+                'imagepath="'+ipath+'"\n'+
                 'imagescale=true'+'\n'+
                 'labeljust=r'+'\n'+
                 'labelloc=b'+'\n'+
                 'nodesep=0.4'+'\n'+
-                'fontsize="30"\nlabel="'+nfile+'"\n')
+                'fontsize="30"\nlabel="'+legend+'"\n')
 
     radius = 5.0
 
@@ -69,7 +69,7 @@ def drawgraph_with_edges(nodes, edges, nfile):
 
 #    rfile.write('digraph G {\nsize="6,6"\nlayout="neato"\nfontsize="30"\nlabel="'+nfile+'"\n')
     rfile.write('digraph G {\nsize="20,20"\nlayout="neato"\n'+
-                'imagepath="' + rpath + '"\n' +
+                'imagepath="' + ipath + '"\n' +
                 'imagescale=true' + '\n' +
                 'labeljust=r' +  '\n' +
                 'labelloc=b' + '\n' +
@@ -100,8 +100,6 @@ def drawgraph_with_edges(nodes, edges, nfile):
     rfile.write('}\n')
 
     rfile.close()
-
-
 
 
 def max_seq_long(nexp, clpeaks, timepeaks, sup, nfile, remap, gap=0):
@@ -182,8 +180,18 @@ def max_seq_long(nexp, clpeaks, timepeaks, sup, nfile, remap, gap=0):
     print '----------'
 
 
-def max_seq_exp(nexp, clpeaks, timepeaks, sup, nfile, remap, gap=0):
-
+def max_seq_exp(nexp, clpeaks, timepeaks, nfile, remap, gap=0):
+    """
+    Grafos de las secuencias
+    :param nexp:
+    :param clpeaks:
+    :param timepeaks:
+    :param sup:
+    :param nfile:
+    :param remap:
+    :param gap:
+    :return:
+    """
     # Select the index of the experiment
     peakini = 0
     i = 0
@@ -212,7 +220,9 @@ def max_seq_exp(nexp, clpeaks, timepeaks, sup, nfile, remap, gap=0):
         else:
             peakfreq[voc[clpeaks[i][0]]] = 1
 
-    print peakend - peakini, len(peakstr), len(peakstr)* (1.0 / (len(peakfreq)*len(peakfreq)))
+    #print peakend - peakini, len(peakstr), len(peakstr)*(1.0 / (len(peakfreq)*len(peakfreq)))
+    sup= int(round(len(peakstr)*(1.0 / (len(peakfreq)*len(peakfreq))))*1.2)
+    print sup
 
     for l in peakfreq:
         peakfreq[l] = (peakfreq[l]* 1.0)/len(peakstr)
@@ -263,7 +273,7 @@ def max_seq_exp(nexp, clpeaks, timepeaks, sup, nfile, remap, gap=0):
     nsig = len(peakfreq)
     if '#' in peakfreq:
         nsig -= 1
-    drawgraph(remap, lstringsg, nfile)
+    drawgraph(remap, lstringsg, nfile, nfile+' sup(%d)'%sup)
 
 
 
@@ -352,8 +362,8 @@ def generate_sequences():
     lclstfreq = sorted(lclstfreq, key=itemgetter(1), reverse=True)
     remap = [i for i, _ in lclstfreq]
 
-    for exp, sup, nfile in nfiles:
-        max_seq_exp(exp, clpeaks, timepeaks, sup, line+'-'+nfile, remap, gap=300)
+    for exp, _, nfile in nfiles:
+        max_seq_exp(exp, clpeaks, timepeaks, line+'-'+nfile, remap, gap=300)
 
 
 def generate_sequences_long():
@@ -403,24 +413,41 @@ rpath = '/home/bejar/Documentos/Investigacion/cinvestav/secuencias/'
 ipath = '/home/bejar/Documentos/Investigacion/cinvestav/secuencias/icons/'
 ocpath = '/home/bejar/Documentos/Investigacion/cinvestav/'
 
-nfiles = [(0, 1, 'ctrl1'), (1, 1, 'ctrl2'), (2, 1, 'capsa1'), (3, 1, 'capsa2'), (4, 1, 'capsa3'),
-          (5, 1, 'lido1'), (6, 1, 'lido2'), (7, 1, 'lido3'), (8, 1, 'lido4'), (9, 1, 'lido5'), (10, 1, 'lido6')
+nfiles = [(0, 15, 'ctrl1'), (1, 15, 'ctrl2'), (2, 20, 'capsa1'), (3, 20, 'capsa2'), (4, 20, 'capsa3'),
+          (5, 15, 'lido1'), (6, 15, 'lido2'), (7, 15, 'lido3'), (8, 15, 'lido4'), (9, 15, 'lido5'), (10, 15, 'lido6')
           ]
 # nfiles = [(0, 'ctrl1')
 #           ]
 
+
+aline = [('L4cd', 'k9.n5', 9),
+         ('L4ci', 'k9.n1', 9),
+        ('L5cd', 'k10.n6' , 10),
+        #('L5rd', 'k20.n1' ),
+        ('L5ci', 'k15.n1', 15),
+        ('L5ri', 'k15.n9', 15),
+        ('L6cd', 'k17.n1', 17),
+        ('L6rd', 'k13.n9', 13),
+        #('L6ci', 'k15.n1'),
+        ('L6ri', 'k18.n4', 18),
+        ('L7ri', 'k18.n4', 18)
+        ]
+
 voc = ' ABCDEFGHIJKLMNOPQRSTUVWXYZ'
-line = 'L6ri'  # 'L6rd' 'L5ci' 'L6ri'
-clust = '.k15.n1'  # '.k20.n5' '.k16.n4' '.k15.n1'
+# line = 'L6ri'  # 'L6rd' 'L5ci' 'L6ri'
+# clust = '.k15.n1'  # '.k20.n5' '.k16.n4' '.k15.n1'
 
-matpeaks = scipy.io.loadmat( cpath + '/centers.' + line + clust + '.mat')
-mattime = scipy.io.loadmat( cpath + '/WholeTime.' + line + '.mat')
+for line, clust, _ in aline:
+    print line
+    matpeaks = scipy.io.loadmat( cpath + 'Selected/centers.' + line + '.' + clust + '.mat')
+    mattime = scipy.io.loadmat( cpath + '/WholeTime.' + line + '.mat')
 
-clpeaks = matpeaks['IDX']
-timepeaks = mattime['temps'][0]
+    clpeaks = matpeaks['IDX']
+    timepeaks = mattime['temps'][0]
 
+    generate_sequences()
 
-generate_sequences_long()
+#generate_sequences_long()
 
 #generate_sequences()
 
