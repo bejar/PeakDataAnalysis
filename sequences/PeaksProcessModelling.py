@@ -26,7 +26,8 @@ from pylab import *
 from operator import itemgetter, attrgetter, methodcaller
 from pypm.footprint import Alpha
 from pypm.petri_net import PetriNet
-
+import time
+from util.XES import write_xes
 
 def generate_log(nexp, clpeaks, timepeaks, remap, gap=0):
     """
@@ -53,20 +54,19 @@ def generate_log(nexp, clpeaks, timepeaks, remap, gap=0):
     peakend = peakini + exp.shape[0]
 
     # Build the sequence string
-    peakstr = {}
+    peakstr = []
     peakset = []
 
     for i in range(peakini, peakend):
         peakset.append(voc[remap[clpeaks[i][0]-1]])
         if i < peakend-1 and gap != 0:
             if (timepeaks[nexp][i-peakini+1] - timepeaks[nexp][i-peakini]) > gap:
-                if peakset not in peakstr:
-                    peakstr.append(peakset)
-                    peakset = []
+                peakstr.append(peakset)
+                peakset = []
 
     return peakstr
 
-def generate_model_log():
+def generate_model_log(line):
     clstfreq = {}
 
     for i in range(0, timepeaks[0].shape[0]):
@@ -81,10 +81,21 @@ def generate_model_log():
 
     for exp, nfile in nfiles:
         log = generate_log(exp, clpeaks, timepeaks, remap, gap=200)
-        print log
-        # lm = Alpha(log)
-        # pn = PetriNet()
-        # pn.from_alpha(lm, dotfile="{}.dot".format(rpath+line+'-'+nfile))
+
+        nev = 0
+
+        cases = []
+        for ev in log:
+            case = {'key': 'Event %d' % nev}
+            nev += 1
+            ltrans = []
+            for e in ev:
+                trans = {'who': 'cat', 'when': time.strftime("%Y-%m-%dT%H:%M:%S%z", time.gmtime()), 'to': e}
+                ltrans.append(trans)
+            case['transitions'] = ltrans
+            cases.append(case)
+
+        write_xes('PM-'+line+'-'+nfile, rpath, cases)
 
 
 
@@ -94,21 +105,38 @@ rpath = '/home/bejar/Documentos/Investigacion/cinvestav/secuencias/'
 ipath = '/home/bejar/Documentos/Investigacion/cinvestav/secuencias/icons/'
 ocpath = '/home/bejar/Documentos/Investigacion/cinvestav/'
 
-# nfiles = [(0, 1, 'ctrl1'), (1, 1, 'ctrl2'), (2, 1, 'capsa1'), (3, 1, 'capsa2'), (4, 1, 'capsa3'),
-#           (5, 1, 'lido1'), (6, 1, 'lido2'), (7, 1, 'lido3'), (8, 1, 'lido4'), (9, 1, 'lido5'), (10, 1, 'lido6')
-#           ]
-nfiles = [(2, 'capsa1')
+nfiles = [(0, 'ctrl1'), (1, 'ctrl2'), (2, 'capsa1'), (3, 'capsa2'), (4, 'capsa3'),
+          (5, 'lido1'), (6, 'lido2'), (7, 'lido3'), (8, 'lido4'), (9, 'lido5'), (10, 'lido6')
           ]
 
 voc = ' ABCDEFGHIJKLMNOPQRSTUVWXYZ'
-line = 'L6ri'  # 'L6rd' 'L5ci' 'L6ri'
-clust = '.k15.n1'  # '.k20.n5' '.k16.n4' '.k15.n1'
 
-matpeaks = scipy.io.loadmat( cpath + '/centers.' + line + clust + '.mat')
-mattime = scipy.io.loadmat( cpath + '/WholeTime.' + line + '.mat')
+# aline = [('L4cd', 'k9.n5', 9),
+#          ('L4ci', 'k9.n1', 9),
+#         ('L5cd', 'k10.n6' , 10),
+#         #('L5rd', 'k20.n1' ),
+#         ('L5ci', 'k15.n1', 15),
+#         ('L5ri', 'k15.n9', 15),
+#         ('L6cd', 'k17.n1', 17),
+#         ('L6rd', 'k13.n9', 13),
+#         #('L6ci', 'k15.n1'),
+#         ('L6ri', 'k18.n4', 18),
+#         ('L7ri', 'k18.n4', 18)
+#         ]
+aline = [
+         ('L6ri', 'k18.n4', 18)
+        ]
 
-clpeaks = matpeaks['IDX']
-timepeaks = mattime['temps'][0]
+
+# line = 'L6ri'  # 'L6rd' 'L5ci' 'L6ri'
+# clust = '.k15.n1'  # '.k20.n5' '.k16.n4' '.k15.n1'
+
+for line, clust, _ in aline:
+    matpeaks = scipy.io.loadmat(cpath + '/Selected/centers.' + line + '.' + clust + '.mat')
+    mattime = scipy.io.loadmat(cpath + '/WholeTime.' + line + '.mat')
+
+    clpeaks = matpeaks['IDX']
+    timepeaks = mattime['temps'][0]
 
 
-generate_model_log()
+    generate_model_log(line)
