@@ -83,15 +83,17 @@ def generate_model_log(line):
         log = generate_log(exp, clpeaks, timepeaks, remap, gap=200)
 
         nev = 0
-
+        cons = 0
+        sec = 1412114700
         cases = []
         for ev in log:
             case = {'key': 'Event %d' % nev}
             nev += 1
             ltrans = []
             for e in ev:
-                trans = {'who': 'cat', 'when': time.strftime("%Y-%m-%dT%H:%M:%S%z", time.gmtime()), 'to': e}
+                trans = {'who': 'cat', 'when': time.strftime("%Y-%m-%dT%H:%M:%S%z", time.gmtime(sec+(cons*60))), 'to': e}
                 ltrans.append(trans)
+                cons +=1
             case['transitions'] = ltrans
             cases.append(case)
 
