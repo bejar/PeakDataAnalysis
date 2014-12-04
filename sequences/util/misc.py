@@ -20,7 +20,7 @@ misc
 __author__ = 'bejar'
 
 import numpy as np
-
+from operator import itemgetter
 
 def peaks_sequence(clpeaks, timepeaks, nexp, peakini, peakend, gap):
     """
@@ -130,3 +130,25 @@ def normalize_matrix(matrix):
     for i in range(matrix.shape[0]):
         matrix[i] /= matrix[i].sum()
     return matrix
+
+def compute_frequency_remap(timepeaks, clpeaks):
+    """
+    Computes the remapping of the indices of the peaks according to their frequency on the
+    first experiment
+
+    :param timepeaks:
+    :param clpeaks:
+    :return:
+    """
+    clstfreq = {}
+    for i in range(0, timepeaks[0].shape[0]):
+        if clpeaks[i][0] in clstfreq:
+            clstfreq[clpeaks[i][0]] += 1
+        else:
+            clstfreq[clpeaks[i][0]] = 1
+
+    lclstfreq = [(k, clstfreq[k]) for k in clstfreq]
+    lclstfreq = sorted(lclstfreq, key=itemgetter(1), reverse=True)
+    remap = [i for i, _ in lclstfreq]
+    return remap
+

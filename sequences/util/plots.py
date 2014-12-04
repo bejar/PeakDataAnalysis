@@ -107,3 +107,19 @@ def plotMatrixDummy(fig,num,n,m,p,name):
     t = arange(0.0, num, 1)
     sp1.plot(t,t)
 #    plt.show()
+
+
+def plotMatrix(matrix,name, title, ticks, lticks):
+    matplotlib.rcParams.update({'font.size': 26})
+    fig = plt.figure()
+    fig.set_figwidth(50)
+    fig.set_figheight(60)
+    sp1=fig.add_subplot(1,1,1)
+    plt.title(title, fontsize=48)
+    img = sp1.imshow(matrix,  cmap=plt.cm.seismic, interpolation='none')
+    plt.xticks(ticks, lticks, fontsize=28)
+    plt.yticks(ticks, lticks, fontsize=28)
+    plt.subplots_adjust(bottom=0.15)
+    fig.colorbar(img, orientation='horizontal')
+    fig.savefig(rpath+'/corr-'+name+'.pdf', orientation='landscape', format='pdf')
+    plt.close()

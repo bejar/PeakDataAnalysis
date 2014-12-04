@@ -28,6 +28,7 @@ import matplotlib.pyplot as plt
 from pylab import *
 import networkx as nx
 from operator import itemgetter, attrgetter, methodcaller
+from util.misc import compute_frequency_remap
 
 def drawgraph(nodes, edges, nfile, legend):
     rfile = open(rpath + 'maxseq-' + nfile + '.dot', 'w')
@@ -350,52 +351,23 @@ def max_peaks_edges(nexp, clpeaks, timepeaks, sup, gap=0):
 
 
 def generate_sequences():
-    clstfreq = {}
-
-    for i in range(0, timepeaks[0].shape[0]):
-        if clpeaks[i][0] in clstfreq:
-            clstfreq[clpeaks[i][0]] += 1
-        else:
-            clstfreq[clpeaks[i][0]] = 1
-
-    lclstfreq = [(k, clstfreq[k]) for k in clstfreq]
-    lclstfreq = sorted(lclstfreq, key=itemgetter(1), reverse=True)
-    remap = [i for i, _ in lclstfreq]
+    remap = compute_frequency_remap(timepeaks, clpeaks)
 
     for exp, _, nfile in nfiles:
         max_seq_exp(exp, clpeaks, timepeaks, line+'-'+nfile, remap, gap=300)
 
 
 def generate_sequences_long():
-    clstfreq = {}
 
-    for i in range(0, timepeaks[0].shape[0]):
-        if clpeaks[i][0] in clstfreq:
-            clstfreq[clpeaks[i][0]] += 1
-        else:
-            clstfreq[clpeaks[i][0]] = 1
-
-    lclstfreq = [(k, clstfreq[k]) for k in clstfreq]
-    lclstfreq = sorted(lclstfreq, key=itemgetter(1), reverse=True)
-    remap = [i for i, _ in lclstfreq]
+    remap = compute_frequency_remap(timepeaks, clpeaks)
 
     for exp, sup, nfile in nfiles:
         max_seq_long(exp, clpeaks, timepeaks, sup, line+'-'+nfile, remap, gap=300)
 
 
 def generate_diff_sequences():
-    clstfreq = {}
 
-    for i in range(0, timepeaks[0].shape[0]):
-        if clpeaks[i][0] in clstfreq:
-            clstfreq[clpeaks[i][0]] += 1
-        else:
-            clstfreq[clpeaks[i][0]] = 1
-
-    lclstfreq = [(k, clstfreq[k]) for k in clstfreq]
-    lclstfreq = sorted(lclstfreq, key=itemgetter(1), reverse=True)
-    remap = [i for i, _ in lclstfreq]
-
+    remap = compute_frequency_remap(timepeaks, clpeaks)
 
     ledges1 = max_peaks_edges(1, clpeaks, timepeaks, 20, gap=300)
     ledges2 = max_peaks_edges(2, clpeaks, timepeaks, 25, gap=300)
@@ -439,8 +411,8 @@ voc = ' ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 
 for line, clust, _ in aline:
     print line
-    matpeaks = scipy.io.loadmat( cpath + 'Selected/centers.' + line + '.' + clust + '.mat')
-    mattime = scipy.io.loadmat( cpath + '/WholeTime.' + line + '.mat')
+    matpeaks = scipy.io.loadmat(cpath + 'Selected/centers.' + line + '.' + clust + '.mat')
+    mattime = scipy.io.loadmat(cpath + '/WholeTime.' + line + '.mat')
 
     clpeaks = matpeaks['IDX']
     timepeaks = mattime['temps'][0]

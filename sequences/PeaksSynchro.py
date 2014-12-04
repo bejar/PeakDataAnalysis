@@ -25,8 +25,8 @@ from util.paths import cpath, rpath
 from operator import itemgetter, attrgetter, methodcaller
 import pylab as P
 from pylab import *
-from util.plots import plotMatrices
-from util.misc import normalize_matrix
+from util.plots import plotMatrices, plotMatrix
+from util.misc import normalize_matrix, compute_frequency_remap
 
 def gen_data_matrix(lines):
     """
@@ -49,7 +49,7 @@ def gen_data_matrix(lines):
 
 def compute_sequences(clpeaks, timepeaks, lines, nexp, remap):
     """
-    Computes the synchronization of the peaks of several lines for an experiment
+    Computes the seguqnce of peaks of different lines
 
     :param lines:
     :param exps:
@@ -77,6 +77,12 @@ def compute_sequences(clpeaks, timepeaks, lines, nexp, remap):
 
 
 def compute_synchs(seq, window=15):
+    """
+    Computes the synchronizations of the peaks of several lines
+    :param seq:
+    :param window:
+    :return:
+    """
     def minind():
         """
         computes the index of the sequence with the lower value
@@ -119,7 +125,8 @@ def compute_synchs(seq, window=15):
 
 def generate_synchs(lines, exps, window=15):
     """
-    Generates a list of synchonized peaks
+    Returne a diccionary for all the experiments of synchonized peaks and
+    another diccionary for all experiments of the counts of the peaks
 
     :param lines:
     :param exps:
@@ -130,61 +137,47 @@ def generate_synchs(lines, exps, window=15):
     clpeaks = {}
     timepeaks = {}
     remap = {}
+
+    ## Computes the peaks remapping for all the lines
     for line, clust, _ in aline:
         matpeaks = scipy.io.loadmat(cpath + '/Selected/centers.' + line + '.' + clust + '.mat')
         mattime = scipy.io.loadmat(cpath + '/WholeTime.' + line + '.mat')
 
         clpeaks[line] = matpeaks['IDX']
         timepeaks[line] = mattime['temps'][0]
-        remap[line] = compute_remap(clpeaks[line], timepeaks[line])
-    lsynch = []
+        remap[line] = compute_frequency_remap(timepeaks[line], clpeaks[line])
+
+    ## Synchronizations for the different experiments
+    dsynch = {}
+    peakcounts = {}
+
     for nexp, exp in exps:
         sequ = compute_sequences(clpeaks, timepeaks, lines, nexp, remap)
+        expcounts = {}
+        for i in range(len(sequ)):
+            expcounts[aline[i][0]] = len(sequ[i])
+        peakcounts[exp] = expcounts
         syn = compute_synchs(sequ, window=window)
-        lsynch.append([exp, syn])
+        dsynch[exp] = syn
 
-    return lsynch
+    return dsynch, peakcounts
 
 
-def length_synch_frequency_histograms(lsynch):
+def length_synch_frequency_histograms(dsynchs):
     """
     Histograms of the frequencies of the lengths of the synchronizations
     :param lsynch:
     :return:
     """
-    for line, peaks in lsynch:
+    for _, line in nfiles:
         print line
         x = []
-        for pk in peaks:
+        for pk in dsynchs[line]:
             x.append(len(pk))
 
         P.figure()
         n, bins, patches = P.hist(x, max(x)-1, normed=1, histtype='bar', fill=True)
         P.show()
-
-
-def compute_remap(clpeaks, timepeaks):
-    """
-     Computes the remaps of the peaks indices using the frequency of the peaks
-     of the first experiment
-
-    :param clpeaks:
-    :param timepeaks:
-    :return:
-    """
-    clstfreq = {}
-
-    for i in range(0, timepeaks[0].shape[0]):
-        if clpeaks[i][0] in clstfreq:
-            clstfreq[clpeaks[i][0]] += 1
-        else:
-            clstfreq[clpeaks[i][0]] = 1
-
-    lclstfreq = [(k, clstfreq[k]) for k in clstfreq]
-    lclstfreq = sorted(lclstfreq, key=itemgetter(1), reverse=True)
-    remap = [i for i, _ in lclstfreq]
-
-    return remap
 
 
 def gen_peaks_contingency(peakdata):
@@ -193,23 +186,23 @@ def gen_peaks_contingency(peakdata):
 
     :return:
     """
-    for nx in range(len(nfiles)):
-        print nfiles[nx][1]
+    for _, nx in nfiles:
+        print nx
         pk = peakdata[nx]
 
         dmatrix = gen_data_matrix(aline)
 
-        for p in pk[1]:
-            #print p
+        for p in pk:
+            print p
             for ei in p:
                 for ej in p:
                     if ei[0] != ej[0]:
-                        #print ei[0], ej[0], ei[1][0], ej[1][0]
+                        print ei[0], ej[0], ei[1][0], ej[1][0]
                         m = dmatrix[ei[0]][ej[0]]
                         m[ei[1][0]][ej[1][0]] += 1
-                        m = dmatrix[ej[0]][ei[0]]
-                        m[ej[1][0]][ei[1][0]] += 1
-
+                        # m = dmatrix[ej[0]][ei[0]]
+                        # m[ej[1][0]][ei[1][0]] += 1
+                        #
 
         for ln in range(len(aline)):
             mt = dmatrix[ln]
@@ -218,7 +211,55 @@ def gen_peaks_contingency(peakdata):
                 if i != ln:
                     lplot.append((normalize_matrix(mt[i]), aline[i][0]))
 
-            plotMatrices(lplot, 4, 2, 'msynch-'+nfiles[nx][1]+'-'+aline[ln][0], aline[ln][0])
+            plotMatrices(lplot, 4, 2, 'msynch-'+nx+'-'+aline[ln][0], aline[ln][0])
+
+
+def lines_coincidence_matrix(peakdata):
+    """
+    Computes a contingency matrix of how many times two lines have been synchronized
+
+    :param peakdata:
+    :return:
+    """
+    coinc = np.zeros((len(aline), len(aline)))
+
+    for syn in peakdata:
+        for i in syn:
+            for j in syn:
+                if i[0] != j[0]:
+                    coinc[i[0], j[0]] += 1
+
+    return coinc
+
+
+def correlation_exp(peakdata, expcounts, window):
+    """
+    Computes the mutual information of the lines
+    :param peakdata:
+    :param expcounts:
+    :return:
+    """
+    for _, exp in nfiles:
+        print exp
+        cmatrix = lines_coincidence_matrix(peakdata[exp])
+        corrmatrix = np.zeros((len(aline), len(aline)))
+        for i in range(len(aline)):
+            indi = aline[i][0]
+            for j in range(len(aline)):
+                indj = aline[j][0]
+                if i != j:
+                    cab = cmatrix[i, j]
+                    ca = expcounts[exp][indi]
+                    cb = expcounts[exp][indj]
+                    tot = (ca + cb - cab) * 1.0
+                    corrmatrix[i,j] = cab/tot
+                    #print 'E:', exp, 'L:', indi, indj, 'C:', int(cab), ca, cb, 'Psync:', (cab/tot) #*np.log2(cab/(ca*cb))
+        corrmatrix[0,0] = 1.0
+        plotMatrix(corrmatrix, exp + '-W' + str(int(window*0.6))+'ms', exp + '-W'+ str(int(window*0.6))+'ms', [x for x in range(len(aline))], [x for x, _, _ in aline])
+        #print '----'
+
+
+
 
 
 
@@ -226,7 +267,7 @@ nfiles = [(0, 'ctrl1'), (1, 'ctrl2'), (2, 'capsa1'), (3, 'capsa2'), (4, 'capsa3'
          (5, 'lido1'), (6, 'lido2'), (7, 'lido3'), (8, 'lido4'), (9, 'lido5'), (10, 'lido6')
          ]
 
-# nfiles = [ (8, 'lido4'), (9, 'lido5')]
+#nfiles = [(0, 'ctrl1')]
 
 voc = ' ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 
@@ -256,16 +297,25 @@ aline = [('L4cd', 'k9.n5', 9),
         ('L7ri', 'k18.n4', 18)
         ]
 
-peakdata = generate_synchs(aline, nfiles, window=15)
+window = 24 / 0.6
+print 'W=', int(round(window))
+peakdata, expcounts = generate_synchs(aline, nfiles, window=int(round(window)))
 
+correlation_exp(peakdata, expcounts, int(round(window)))
+
+# print expcounts
+#
+# for p in peakdata:
+#     print p
 # print len(peakdata)
 #
 # for l in peakdata:
 #     print l[0], len(l[1])
-#     print l[1]
+#     for p in l[1]:
+#         print p
 
 ### Histograms of the frequency of the lengths
-length_synch_frequency_histograms(peakdata)
+#length_synch_frequency_histograms(peakdata)
 
 ### Contingency PDFs
 #gen_peaks_contingency(peakdata)
