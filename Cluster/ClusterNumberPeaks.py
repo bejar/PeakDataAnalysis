@@ -88,7 +88,6 @@ for line, _, _ in aline:
                 score['DB'] = minscore
                 print '.',
             #print nc, scatter_matrices_scores(data, cluster.labels_, ['ZCF', 'CH'])
-        print
         for sc in score:
             if minc[sc] > score[sc]:
                 minc[sc] = score[sc]
