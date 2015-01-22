@@ -19,15 +19,14 @@ ComputeTimeline
 
 __author__ = 'bejar'
 
-
 import scipy.io
-import numpy as np
-import matplotlib.pyplot as plt
 from pylab import *
+
 from util.distances import sKLD, square_frobenius, renyihalf
 from util.misc import  peaks_sequence, find_time_end, probability_matrix_seq, probability_matrix_multi
 from util.plots import plotSignals
-from util.paths import cpath, rpath
+from config.paths import datapath
+
 
 # def timeline(clpeaks, timepeaks, nfiles, line, gap, step):
 #     for exp, nfile in nfiles:
@@ -216,9 +215,8 @@ def do_the_job(gap, step, length, laplace, dist, multi):
     for line, clust, ncl in aline:
 
         print line, clust
-        matpeaks = scipy.io.loadmat(cpath + '/Selected/centers.' + line + '.' + clust + '.mat')
-        mattime = scipy.io.loadmat(cpath + '/WholeTime.' + line + '.mat')
-
+        matpeaks = scipy.io.loadmat(datapath + '/Selected/centers.' + line + '.' + clust + '.mat')
+        mattime = scipy.io.loadmat(datapath + '/WholeTime.' + line + '.mat')
         clpeaks = matpeaks['IDX']
         timepeaks = mattime['temps'][0]
         timeline_overlapped(clpeaks, timepeaks, nfiles, line, ncl, gap=gap, step=step, length=length, laplace=laplace, dist=dist, multi=multi)

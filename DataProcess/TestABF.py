@@ -20,11 +20,11 @@ TestABF
 __author__ = 'bejar'
 
 from neo.io import AxonIO
-from util.paths import dpath
+
+from config.paths import datapath2
 
 
-
-data = AxonIO(dpath+'e130716f00-cntrl1.abf')
+data = AxonIO(datapath2+'e130716f00-cntrl1.abf')
 
 bl = data.read_block(lazy=False, cascade=True)
 

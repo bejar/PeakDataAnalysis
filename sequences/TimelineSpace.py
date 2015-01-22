@@ -22,12 +22,12 @@ __author__ = 'bejar'
 import scipy.io
 import numpy as np
 import matplotlib.pyplot as plt
-from sklearn.manifold import MDS, TSNE, SpectralEmbedding
-import pylab as pl
-from mpl_toolkits.mplot3d import Axes3D
+from sklearn.manifold import MDS
+
 from util.distances import sKLD, square_frobenius, renyihalf
-from util.misc import peaks_sequence, find_time_end, probability_matrix_seq, probability_matrix_multi
-from util.paths import cpath, rpath
+from util.misc import peaks_sequence, find_time_end, probability_matrix_multi
+from config.paths import datapath
+
 
 def compute_timeline_pmatrices(nexp, clpeaks, ncl, timepeaks, gap=0, step=100, length=1000, laplace=0.0, dist='Frobenius'):
     """
@@ -175,8 +175,8 @@ for line,clust, ncl in aline:
     name = line + '-timelineG%d-S%d-L%d' % (round(gap*.6,0), round(step * .0006,0), round(length * .0006,0))
     print name, gap, step, length
     title = line + '-timeline G= %2.3f S=%2.1f L=%2.1f' % (gap*.0006, step * .0006, length * .0006)
-    matpeaks = scipy.io.loadmat(cpath + 'Selected/centers.' + line + '.' + clust + '.mat')
-    mattime = scipy.io.loadmat(cpath + '/WholeTime.' + line + '.mat')
+    matpeaks = scipy.io.loadmat(datapath + 'Selected/centers.' + line + '.' + clust + '.mat')
+    mattime = scipy.io.loadmat(datapath + '/WholeTime.' + line + '.mat')
 
     clpeaks = matpeaks['IDX']
     timepeaks = mattime['temps'][0]

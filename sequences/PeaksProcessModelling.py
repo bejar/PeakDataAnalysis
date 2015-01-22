@@ -19,15 +19,14 @@ PeaksProcessModelling
 
 __author__ = 'bejar'
 
-import operator
-import scipy.io
-import numpy as np
-from pylab import *
-from operator import itemgetter, attrgetter, methodcaller
-from pypm.footprint import Alpha
-from pypm.petri_net import PetriNet
+from operator import itemgetter
 import time
+
+import scipy.io
+
 from util.XES import write_xes
+from config.paths import datapath, seqpath
+
 
 def generate_log(nexp, clpeaks, timepeaks, remap, gap=0):
     """
@@ -97,15 +96,15 @@ def generate_model_log(line):
             case['transitions'] = ltrans
             cases.append(case)
 
-        write_xes('PM-'+line+'-'+nfile, rpath, cases)
+        write_xes('PM-'+line+'-'+nfile, seqpath, cases)
 
 
 
 
-cpath = '/home/bejar/Dropbox/Filtro Rudomin/Estability/'
-rpath = '/home/bejar/Documentos/Investigacion/cinvestav/secuencias/'
-ipath = '/home/bejar/Documentos/Investigacion/cinvestav/secuencias/icons/'
-ocpath = '/home/bejar/Documentos/Investigacion/cinvestav/'
+# cpath = '/home/bejar/Dropbox/Filtro Rudomin/Estability/'
+# rpath = '/home/bejar/Documentos/Investigacion/cinvestav/secuencias/'
+# ipath = '/home/bejar/Documentos/Investigacion/cinvestav/secuencias/icons/'
+# ocpath = '/home/bejar/Documentos/Investigacion/cinvestav/'
 
 nfiles = [(0, 'ctrl1'), (1, 'ctrl2'), (2, 'capsa1'), (3, 'capsa2'), (4, 'capsa3'),
           (5, 'lido1'), (6, 'lido2'), (7, 'lido3'), (8, 'lido4'), (9, 'lido5'), (10, 'lido6')
@@ -134,8 +133,8 @@ aline = [
 # clust = '.k15.n1'  # '.k20.n5' '.k16.n4' '.k15.n1'
 
 for line, clust, _ in aline:
-    matpeaks = scipy.io.loadmat(cpath + '/Selected/centers.' + line + '.' + clust + '.mat')
-    mattime = scipy.io.loadmat(cpath + '/WholeTime.' + line + '.mat')
+    matpeaks = scipy.io.loadmat(datapath + '/Selected/centers.' + line + '.' + clust + '.mat')
+    mattime = scipy.io.loadmat(datapath + '/WholeTime.' + line + '.mat')
 
     clpeaks = matpeaks['IDX']
     timepeaks = mattime['temps'][0]

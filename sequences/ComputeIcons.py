@@ -20,10 +20,10 @@ ComputeIcons
 __author__ = 'bejar'
 
 import scipy.io
-import numpy as np
-import matplotlib.pyplot as plt
 from pylab import *
-from util.paths import cpath, rpath
+
+from config.paths import datapath, seqpath
+
 
 def plotSignalValues(signals, nc):
     fig = plt.figure()
@@ -41,7 +41,7 @@ def plotSignalValues(signals, nc):
     fig.set_figheight(1.5)
 
     #plt.show()
-    fig.savefig(rpath+'/icons/'+line+'.cl'+str(nc)+'.png', orientation='landscape',format='png', pad_inches=0.1)
+    fig.savefig(seqpath+'/icons/'+line+'.cl'+str(nc)+'.png', orientation='landscape',format='png', pad_inches=0.1)
 
 
 aline = [('L4cd', 'k9.n5', 9),
@@ -61,7 +61,7 @@ aline = [('L4cd', 'k9.n5', 9),
 # clust = '.k15.n1'
 
 for line, clust, _ in aline:
-    matpeaks = scipy.io.loadmat(cpath + 'Selected/centers.' + line + '.' + clust + '.mat')
+    matpeaks = scipy.io.loadmat(datapath + 'Selected/centers.' + line + '.' + clust + '.mat')
 
 
     clpeaks = matpeaks['C']

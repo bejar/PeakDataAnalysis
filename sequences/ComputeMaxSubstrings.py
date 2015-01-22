@@ -19,22 +19,21 @@ ComputeSubsequences
 
 __author__ = 'bejar'
 
+import operator
+
+import scipy.io
+from pylab import *
 
 from rstr_max import *
-import operator
-import scipy.io
-import numpy as np
-import matplotlib.pyplot as plt
-from pylab import *
-import networkx as nx
-from operator import itemgetter, attrgetter, methodcaller
 from util.misc import compute_frequency_remap
 
+from config.paths import datapath, seqpath
+
 def drawgraph(nodes, edges, nfile, legend):
-    rfile = open(rpath + 'maxseq-' + nfile + '.dot', 'w')
+    rfile = open(seqpath + 'maxseq-' + nfile + '.dot', 'w')
 
     rfile.write('digraph G {\nsize="20,20"\nlayout="neato"\n'+
-                'imagepath="'+ipath+'"\n'+
+                'imagepath="'+seqpath+'/icons/'+'"\n'+
                 'imagescale=true'+'\n'+
                 'labeljust=r'+'\n'+
                 'labelloc=b'+'\n'+
@@ -66,11 +65,11 @@ def drawgraph(nodes, edges, nfile, legend):
 
 
 def drawgraph_with_edges(nodes, edges, nfile):
-    rfile = open(rpath + 'maxseq-' + nfile + '.dot', 'w')
+    rfile = open(seqpath + 'maxseq-' + nfile + '.dot', 'w')
 
 #    rfile.write('digraph G {\nsize="6,6"\nlayout="neato"\nfontsize="30"\nlabel="'+nfile+'"\n')
     rfile.write('digraph G {\nsize="20,20"\nlayout="neato"\n'+
-                'imagepath="' + ipath + '"\n' +
+                'imagepath="' + seqpath + '/icons/' + '"\n' +
                 'imagescale=true' + '\n' +
                 'labeljust=r' +  '\n' +
                 'labelloc=b' + '\n' +
@@ -156,7 +155,7 @@ def max_seq_long(nexp, clpeaks, timepeaks, sup, nfile, remap, gap=0):
 
     lstrings = sorted(lstrings, key=operator.itemgetter(0), reverse=True)
     lstringsg = []
-    rfile = open(rpath + 'maxseqlong-' + nfile + '.txt', 'w')
+    rfile = open(seqpath + 'maxseqlong-' + nfile + '.txt', 'w')
     cntlong = np.zeros(10)
     for seq, s in lstrings:
         wstr = ''
@@ -250,7 +249,7 @@ def max_seq_exp(nexp, clpeaks, timepeaks, nfile, remap, gap=0):
 
     lstrings = sorted(lstrings, key=operator.itemgetter(0), reverse=True)
     lstringsg = []
-    rfile = open(rpath + 'maxseq-' + nfile + '.txt', 'w')
+    rfile = open(seqpath + 'maxseq-' + nfile + '.txt', 'w')
     for seq, s in lstrings:
         wstr = ''
         prob = 1.0
@@ -380,10 +379,10 @@ def generate_diff_sequences():
 
 #remap = [1,2,15,4,3,13,12,11,14,5,10,8,6,7,9]
 
-cpath = '/home/bejar/Dropbox/Filtro Rudomin/Estability/'
-rpath = '/home/bejar/Documentos/Investigacion/cinvestav/secuencias/'
-ipath = '/home/bejar/Documentos/Investigacion/cinvestav/secuencias/icons/'
-ocpath = '/home/bejar/Documentos/Investigacion/cinvestav/'
+# cpath = '/home/bejar/Dropbox/Filtro Rudomin/Estability/'
+# rpath = '/home/bejar/Documentos/Investigacion/cinvestav/secuencias/'
+# ipath = '/home/bejar/Documentos/Investigacion/cinvestav/secuencias/icons/'
+# ocpath = '/home/bejar/Documentos/Investigacion/cinvestav/'
 
 nfiles = [(0, 15, 'ctrl1'), (1, 15, 'ctrl2'), (2, 20, 'capsa1'), (3, 20, 'capsa2'), (4, 20, 'capsa3'),
           (5, 15, 'lido1'), (6, 15, 'lido2'), (7, 15, 'lido3'), (8, 15, 'lido4'), (9, 15, 'lido5'), (10, 15, 'lido6')
@@ -411,8 +410,8 @@ voc = ' ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 
 for line, clust, _ in aline:
     print line
-    matpeaks = scipy.io.loadmat(cpath + 'Selected/centers.' + line + '.' + clust + '.mat')
-    mattime = scipy.io.loadmat(cpath + '/WholeTime.' + line + '.mat')
+    matpeaks = scipy.io.loadmat(datapath + 'Selected/centers.' + line + '.' + clust + '.mat')
+    mattime = scipy.io.loadmat(datapath + '/WholeTime.' + line + '.mat')
 
     clpeaks = matpeaks['IDX']
     timepeaks = mattime['temps'][0]

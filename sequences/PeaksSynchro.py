@@ -20,14 +20,14 @@ PeaksSynchro
 __author__ = 'bejar'
 
 import scipy.io
-import numpy as np
-from util.paths import cpath, rpath
-from operator import itemgetter, attrgetter, methodcaller
 import pylab as P
 from pylab import *
+from pyx import *
+
+from config.paths import datapath, seqpath
 from util.plots import plotMatrices, plotMatrix
 from util.misc import normalize_matrix, compute_frequency_remap
-from pyx import *
+
 
 def mintime(ltimes):
     mt = np.inf
@@ -106,7 +106,7 @@ def draw_synchs(peakdata, exps, window):
 
         d = document.document(lpages)
 
-        d.writePDFfile(rpath+"/peaksynchs-%s-W%d" % (exp, window))
+        d.writePDFfile(seqpath+"/peaksynchs-%s-W%d" % (exp, window))
 
 def gen_data_matrix(lines):
     """
@@ -222,8 +222,8 @@ def generate_synchs(lines, exps, window=15):
 
     ## Computes the peaks remapping for all the lines
     for line, clust, _ in aline:
-        matpeaks = scipy.io.loadmat(cpath + '/Selected/centers.' + line + '.' + clust + '.mat')
-        mattime = scipy.io.loadmat(cpath + '/WholeTime.' + line + '.mat')
+        matpeaks = scipy.io.loadmat(datapath + '/Selected/centers.' + line + '.' + clust + '.mat')
+        mattime = scipy.io.loadmat(datapath + '/WholeTime.' + line + '.mat')
 
         clpeaks[line] = matpeaks['IDX']
         timepeaks[line] = mattime['temps'][0]
@@ -260,7 +260,7 @@ def length_synch_frequency_histograms(dsynchs, window):
         P.figure()
         n, bins, patches = P.hist(x, max(x)-1, normed=1, histtype='bar', fill=True)
         P.title('%s-W%d'%(line, window), fontsize=48)
-        P.savefig(rpath+'/histo-'+line+'-W'+str(window)+'.pdf', orientation='landscape', format='pdf')
+        P.savefig(seqpath+'/histo-'+line+'-W'+str(window)+'.pdf', orientation='landscape', format='pdf')
 
 
 

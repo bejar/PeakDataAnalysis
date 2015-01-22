@@ -19,11 +19,12 @@ MusicFiles
 
 __author__ = 'bejar'
 
+from operator import itemgetter
+
 import scipy.io
 import numpy as np
-from util.paths import cpath, rpath
-from operator import itemgetter, attrgetter, methodcaller
 
+from config.paths import datapath, seqpath
 
 
 def cluster_times(nexp, clpeaks, timepeaks, nfile, remap):
@@ -100,13 +101,13 @@ aline = [('L4cd', 'k9.n5', 9),
 
 
 for line,clust,_ in aline:
-    matpeaks = scipy.io.loadmat( cpath + '/Selected/centers.' + line + '.' + clust + '.mat')
-    mattime = scipy.io.loadmat( cpath + '/WholeTime.' + line + '.mat')
+    matpeaks = scipy.io.loadmat( datapath + '/Selected/centers.' + line + '.' + clust + '.mat')
+    mattime = scipy.io.loadmat( datapath + '/WholeTime.' + line + '.mat')
 
     clpeaks = matpeaks['IDX']
     timepeaks = mattime['temps'][0]
     peakdata = generate_sequences()
 
-    scipy.io.savemat(rpath+'peaks-'+line,peakdata)
+    scipy.io.savemat(seqpath+'peaks-'+line, peakdata)
     print '--------------------'
 
