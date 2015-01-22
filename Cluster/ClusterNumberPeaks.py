@@ -19,13 +19,29 @@ ClusterNumberPeaks
 
 __author__ = 'bejar'
 
-from kemlglearn.metrics import scatter_matrices_scores
+from kemlglearn.metrics import scatter_matrices_scores, DaviesBouldin
 import scipy.io
 import numpy as np
 from config.paths import clusterpath, datapath
 from sklearn.cluster import MiniBatchKMeans, KMeans, AffinityPropagation, DBSCAN, SpectralClustering
 from collections import Counter
 from util.plots import plotSignals
+
+def normalize(data):
+    """
+    Normalizes all peaks to N(0,1)
+
+    :param data:
+    :return:
+    """
+    ndata = np.zeros(data.shape)
+
+    for i in range(data.shape[0]):
+        mean = np.mean(data[i])
+        std = np.std(data[i])
+        ndata[i] += (data[i]-mean)/std
+
+    return ndata
 
 
 aline = [
@@ -41,6 +57,7 @@ aline = [
         ('L6ri', 'k18.n4', 18),
         ('L7ri', 'k18.n4', 18)
         ]
+alg = 'kmeans'
 
 for line, _, _ in aline:
     print 'LINE=', line
@@ -48,21 +65,78 @@ for line, _, _ in aline:
     matpeaks = scipy.io.loadmat(datapath + '/WHOLE/trazos.' + line + '.mat')
 #    print matpeaks['Trazos'].shape
     data = matpeaks['Trazos']
+    #data = normalize(data)
 
-    minc = np.inf
-    chosen = -1
-    for nc in range(2, 20):
-        #cluster = KMeans(n_clusters=nc, n_jobs=-1)
-        cluster = SpectralClustering(n_clusters=nc, assign_labels='discretize',
-                                     affinity='nearest_neighbors', n_neighbors=30)
+    # minc = {'ZCF': np.inf, 'DB': np.inf}
+    # chosen = {'ZCF': -1, 'DB': -1}
+    minc = {'DB': np.inf}
+    chosen = {'DB': -1}
+    for nc in range(4, 21):
+        score = {'DB':  np.inf}
+        for rep in range(5):
+            if alg == 'kmeans':
+                cluster = KMeans(n_clusters=nc, n_jobs=-1)
+            elif cluster == 'spectral':
+                cluster = SpectralClustering(n_clusters=nc, assign_labels='discretize',
+                                             affinity='nearest_neighbors', n_neighbors=30)
 
 
-        cluster.fit(data)
-        score = scatter_matrices_scores(data, cluster.labels_, ['ZCF', 'CH'])
-        print score
-        #print nc, scatter_matrices_scores(data, cluster.labels_, ['ZCF', 'CH'])
-        if minc > score['ZCF']:
-            minc = score['ZCF']
-            chosen = nc
+            cluster.fit(data)
+            #score = scatter_matrices_scores(data, cluster.labels_, ['ZCF'])
+            minscore = DaviesBouldin(data, cluster.labels_)
+            if score['DB'] > minscore:
+                score['DB'] = minscore
+                print '.',
+            #print nc, scatter_matrices_scores(data, cluster.labels_, ['ZCF', 'CH'])
+        print
+        for sc in score:
+            if minc[sc] > score[sc]:
+                minc[sc] = score[sc]
+                chosen[sc] = nc
+        print nc, score
 
     print chosen
+    nc = chosen['DB']
+
+    spectral = KMeans(n_clusters=nc, n_jobs=-1)
+    spectral.fit(data)
+    lab = spectral.labels_
+    centers = np.zeros((nc, data.shape[1]))
+
+    for i in range(data.shape[0]):
+        centers[lab[i]] += data[i]
+    print len(lab)
+    l = [lab[i] for i in range(len(lab))]
+    c = Counter(l)
+    print c
+
+    lcenters = []
+    numex = np.zeros(nc)
+    for i in c:
+        centers[i] /= c[i]
+        print i, c[i]
+        numex[i] = c[i]
+        lcenters.append((centers[i], 'center %d' % i))
+
+    mx = 0.26  # np.max(centers)
+    mn = -0.06  # np.min(centers)
+
+    plotSignals(lcenters, nc, 1, mx, mn, 'cluster-'+alg+'-%s-NC%d' % (line, nc), 'cluster-'+alg+'-%sNC%d' % (line, nc), clusterpath)
+
+
+    if alg == 'spectral':
+        params = {'clalg': 'spectral',
+                           'nc': nc,
+                           'labels': 'discretize',
+                           'affinity': 'nearest_neighbors',
+                           'n_neigbors': 30
+                           }
+    elif alg == 'kmeans':
+        params = {'clalg': 'kmeans', 'nc': nc}
+    peakdata = {'labels': lab,
+                'centers': centers,
+                'numex': numex,
+                'params': params
+                }
+
+    scipy.io.savemat(clusterpath + 'cluster-'+alg+'-peaks-' + line + '-nc' + str(nc) + '.mat', peakdata)
