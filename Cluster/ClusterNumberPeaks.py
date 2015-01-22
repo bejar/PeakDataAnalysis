@@ -52,7 +52,11 @@ for line, _, _ in aline:
     minc = np.inf
     chosen = -1
     for nc in range(2, 20):
-        cluster = KMeans(n_clusters=nc, n_jobs=-1)
+        #cluster = KMeans(n_clusters=nc, n_jobs=-1)
+        cluster = SpectralClustering(n_clusters=nc, assign_labels='discretize',
+                                     affinity='nearest_neighbors', n_neighbors=30)
+
+
         cluster.fit(data)
         score = scatter_matrices_scores(data, cluster.labels_, ['ZCF', 'CH'])
         print score
