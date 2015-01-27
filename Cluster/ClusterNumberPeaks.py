@@ -65,14 +65,14 @@ for line, _, _ in aline:
     matpeaks = scipy.io.loadmat(datapath + '/WHOLE/trazos.' + line + '.mat')
 #    print matpeaks['Trazos'].shape
     data = matpeaks['Trazos']
-    #data = normalize(data)
+    data = normalize(data)
 
     # minc = {'ZCF': np.inf, 'DB': np.inf}
     # chosen = {'ZCF': -1, 'DB': -1}
-    minc = {'DB': np.inf}
+    minc = {'DB': np.inf, 'ZCF': np.inf, 'CH': np.inf}
     chosen = {'DB': -1}
-    for nc in range(4, 21):
-        score = {'DB':  np.inf}
+    for nc in range(2, 16):
+        score = {'DB':  np.inf, 'ZCF': 0, 'CH': 0}
         for rep in range(5):
             if alg == 'kmeans':
                 cluster = KMeans(n_clusters=nc, n_jobs=-1)
@@ -86,8 +86,10 @@ for line, _, _ in aline:
             minscore = DaviesBouldin(data, cluster.labels_)
             if score['DB'] > minscore:
                 score['DB'] = minscore
+                # oscores = scatter_matrices_scores(data, cluster.labels_, ['ZCF', 'CH'])
+                # for sc in oscores:
+                #     score[sc] = oscores[sc]
                 print '.',
-            #print nc, scatter_matrices_scores(data, cluster.labels_, ['ZCF', 'CH'])
         for sc in score:
             if minc[sc] > score[sc]:
                 minc[sc] = score[sc]
@@ -97,9 +99,9 @@ for line, _, _ in aline:
     print chosen
     nc = chosen['DB']
 
-    spectral = KMeans(n_clusters=nc, n_jobs=-1)
-    spectral.fit(data)
-    lab = spectral.labels_
+    km = KMeans(n_clusters=nc, n_jobs=-1)
+    km.fit(data)
+    lab = km.labels_
     centers = np.zeros((nc, data.shape[1]))
 
     for i in range(data.shape[0]):
@@ -109,6 +111,7 @@ for line, _, _ in aline:
     c = Counter(l)
     print c
 
+    # Save the results
     lcenters = []
     numex = np.zeros(nc)
     for i in c:
@@ -117,25 +120,31 @@ for line, _, _ in aline:
         numex[i] = c[i]
         lcenters.append((centers[i], 'center %d' % i))
 
-    mx = 0.26  # np.max(centers)
-    mn = -0.06  # np.min(centers)
+    cstd = np.zeros((nc, data.shape[1]))
+    for i in c:
+        center_mask = lab == i
+        cstd[i] = np.std(data[center_mask], axis=0)
 
-    plotSignals(lcenters, nc, 1, mx, mn, 'cluster-'+alg+'-%s-NC%d' % (line, nc), 'cluster-'+alg+'-%sNC%d' % (line, nc), clusterpath)
 
+    mx = np.max(centers) # 0.26
+    mn = np.min(centers) #-0.06
 
-    if alg == 'spectral':
-        params = {'clalg': 'spectral',
-                           'nc': nc,
-                           'labels': 'discretize',
-                           'affinity': 'nearest_neighbors',
-                           'n_neigbors': 30
-                           }
-    elif alg == 'kmeans':
-        params = {'clalg': 'kmeans', 'nc': nc}
-    peakdata = {'labels': lab,
-                'centers': centers,
-                'numex': numex,
-                'params': params
-                }
+    plotSignals(lcenters, 8, 2, mx, mn, 'cluster-'+alg+'-N-%s-NC%d' % (line, nc), 'cluster-'+alg+'-%sNC%d' % (line, nc), clusterpath, cstd=cstd)
 
-    scipy.io.savemat(clusterpath + 'cluster-'+alg+'-peaks-' + line + '-nc' + str(nc) + '.mat', peakdata)
+    #
+    # if alg == 'spectral':
+    #     params = {'clalg': 'spectral',
+    #                        'nc': nc,
+    #                        'labels': 'discretize',
+    #                        'affinity': 'nearest_neighbors',
+    #                        'n_neigbors': 30
+    #                        }
+    # elif alg == 'kmeans':
+    #     params = {'clalg': 'kmeans', 'nc': nc}
+    # peakdata = {'labels': lab,
+    #             'centers': centers,
+    #             'numex': numex,
+    #             'params': params
+    #             }
+    #
+    # scipy.io.savemat(clusterpath + 'cluster-'+alg+'-peaks-N' + line + '-nc' + str(nc) + '.mat', peakdata)

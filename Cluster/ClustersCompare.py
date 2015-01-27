@@ -71,21 +71,21 @@ alg2 = 'kmeans'
 #
 #     #print indexes
 
-for line, _, _ in aline:
-    print 'LINE=', line
-
-    matclust1 = scipy.io.loadmat(clusterpath + 'cluster-'+alg1+'-peaks-' + line + '-nc' + str(nc) + '.mat')
-    matclust2 = scipy.io.loadmat(clusterpath + 'cluster-'+alg2+'-peaks-' + line + '-nc' + str(nc) + '.mat')
-
-    labels1 = matclust1['labels'][0]
-    # print labels1.shape
-    labels2 = matclust2['labels'][0]
-    # print labels2.shape
-
-
-    print 'NMI= ', normalized_mutual_info_score(labels1, labels2)
-    print 'ARAND= ', adjusted_rand_score(labels1, labels2)
-    print 'AMI= ', adjusted_mutual_info_score(labels1, labels2)
+# for line, _, _ in aline:
+#     print 'LINE=', line
+#
+#     matclust1 = scipy.io.loadmat(clusterpath + 'cluster-'+alg1+'-peaks-' + line + '-nc' + str(nc) + '.mat')
+#     matclust2 = scipy.io.loadmat(clusterpath + 'cluster-'+alg2+'-peaks-' + line + '-nc' + str(nc) + '.mat')
+#
+#     labels1 = matclust1['labels'][0]
+#     # print labels1.shape
+#     labels2 = matclust2['labels'][0]
+#     # print labels2.shape
+#
+#
+#     print 'NMI= ', normalized_mutual_info_score(labels1, labels2)
+#     print 'ARAND= ', adjusted_rand_score(labels1, labels2)
+#     print 'AMI= ', adjusted_mutual_info_score(labels1, labels2)
 
 # lcenters = []
 # for line, _, _ in aline:
