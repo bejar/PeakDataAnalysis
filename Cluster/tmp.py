@@ -73,25 +73,28 @@ for line, nc1, p1 in aline:
     data = normalize(data)
     print data.shape
 
-    matclust = scipy.io.loadmat(clusterpath + 'cluster-'+alg+'-peaks-' + norm + line + '-nc' + str(nc1) + '.mat')
+    matclust = scipy.io.loadmat(clusterpath + 'cluster-'+alg+'-peaks-' + norm + line + '-nc' + str(nc1) + '.mat', squeeze_me=True)
     centers = matclust['centers']
     print centers.shape
-    lab = matclust['labels'][0]
+    lab = matclust['labels']
+    print matclust['params']
+    print matclust['params']['nc']
     print lab
-    nc = centers.shape[0]
-    cstd = np.zeros((nc, data.shape[1]))
-    print nc
-
-    for i in range(nc):
-        center_mask = lab == i
-        cstd[i] = np.std(data[center_mask], axis=0)
-    lcenters = []
-    for i in range(nc):
-        lcenters.append((centers[i], 'center %d' % i))
-
-
-    mx = np.max(centers) # 0.26
-    mn = np.min(centers) #-0.06
-
-    plotSignals(lcenters, 8, 2, mx, mn, 'cluster-'+alg+'-N-%s-NC%d' % (line, nc), 'cluster-'+alg+'-%sNC%d' % (line, nc), clusterpath, cstd=cstd)
+    # print lab
+    # nc = centers.shape[0]
+    # cstd = np.zeros((nc, data.shape[1]))
+    # print nc
+    #
+    # for i in range(nc):
+    #     center_mask = lab == i
+    #     cstd[i] = np.std(data[center_mask], axis=0)
+    # lcenters = []
+    # for i in range(nc):
+    #     lcenters.append((centers[i], 'center %d' % i))
+    #
+    #
+    # mx = np.max(centers) # 0.26
+    # mn = np.min(centers) #-0.06
+    #
+    # plotSignals(lcenters, 8, 2, mx, mn, 'cluster-'+alg+'-N-%s-NC%d' % (line, nc), 'cluster-'+alg+'-%sNC%d' % (line, nc), clusterpath, cstd=cstd)
 

@@ -28,6 +28,23 @@ from collections import Counter
 from util.plots import plotSignals
 
 
+def normalize(data):
+    """
+    Normalizes all peaks to N(0,1)
+
+    :param data:
+    :return:
+    """
+    ndata = np.zeros(data.shape)
+
+    for i in range(data.shape[0]):
+        mean = np.mean(data[i])
+        std = np.std(data[i])
+        ndata[i] += (data[i]-mean)/std
+
+    return ndata
+
+
 aline = [
  #   ('L4cd', 'k9.n5', 9),
  #        ('L4ci', 'k9.n1', 9),
@@ -53,7 +70,7 @@ for line, _, _ in aline:
     matpeaks = scipy.io.loadmat(datapath + '/WHOLE/trazos.' + line + '.mat')
     print matpeaks['Trazos'].shape
     data = matpeaks['Trazos']
-
+    normalize(data)
 
     if alg == 'spectral':
         spectral = SpectralClustering(n_clusters=nc, assign_labels='discretize',
