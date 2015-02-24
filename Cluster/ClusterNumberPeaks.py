@@ -19,7 +19,7 @@ ClusterNumberPeaks
 
 __author__ = 'bejar'
 
-from kemlglearn.metrics import scatter_matrices_scores, DaviesBouldin
+from kemlglearn.metrics import scatter_matrices_scores, davies_bouldin_score
 import scipy.io
 import numpy as np
 from config.paths import clusterpath, datapath
@@ -83,7 +83,7 @@ for line, _, _ in aline:
 
             cluster.fit(data)
             #score = scatter_matrices_scores(data, cluster.labels_, ['ZCF'])
-            minscore = DaviesBouldin(data, cluster.labels_)
+            minscore = davies_bouldin_score(data, cluster.labels_)
             if score['DB'] > minscore:
                 score['DB'] = minscore
                 # oscores = scatter_matrices_scores(data, cluster.labels_, ['ZCF', 'CH'])
