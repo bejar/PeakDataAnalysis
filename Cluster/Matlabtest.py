@@ -20,16 +20,27 @@ MAtlabtest
 __author__ = 'bejar'
 
 
-from pymatbridge import Matlab
+# from pymatbridge import Matlab
+#
+# mlab = Matlab(executable='/home/bejar/bin/MATLAB/R2012b/bin/matlab')
+#
+# mlab.start()
+#
+# results = mlab.run_code('a=[1 2 3];')
+#
+# print results
+#
+# print mlab.get_variable('a')
+#
+# mlab.stop()
+import scipy.io
 
-mlab = Matlab(executable='/home/bejar/bin/MATLAB/R2012b/bin/matlab')
+data = {'aaa': range(10)}
 
-mlab.start()
+scipy.io.savemat('/home/bejar/zz.mat', data, do_compression=True)
 
-results = mlab.run_code('a=[1 2 3];')
+data = {'bbb': [1, 2, 3]}
 
-print results
+scipy.io.savemat('/home/bejar/zz.mat', data, do_compression=True)
 
-print mlab.get_variable('a')
-
-mlab.stop()
+print scipy.io.whosmat('/home/bejar/zz.mat')
