@@ -163,14 +163,14 @@ aline = [
         ]
 
 
-dfuns ={'Renyi': renyihalf, 'Frobenius': square_frobenius, 'KL': sKLD}
+dfuns = {'Renyi': renyihalf, 'Frobenius': square_frobenius, 'KL': sKLD}
 
 gap = int(300.0 /.6) #ms
 step = int(6.0 / 0.0006) #s
 length = int(120.0 / 0.0006) #s
 dist = 'Frobenius'
 
-for line,clust, ncl in aline:
+for line, clust, ncl in aline:
 
     name = line + '-timelineG%d-S%d-L%d' % (round(gap*.6,0), round(step * .0006,0), round(length * .0006,0))
     print name, gap, step, length

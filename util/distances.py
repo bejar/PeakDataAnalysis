@@ -36,6 +36,7 @@ def sKLD(m1, m2):
     dkl21 = lm2 * lquot21
     return dkl12.sum() + dkl21.sum()
 
+
 def renyihalf(m1, m2):
     """
     Renyi divergence for parameter 1/2

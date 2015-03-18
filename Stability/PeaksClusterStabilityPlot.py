@@ -23,7 +23,7 @@ import matplotlib.pyplot as plt
 from pylab import *
 
 path = '/home/bejar/Documentos/Investigacion/cinvestav/Cluster/'
-name = 'trazos-20120426-wholeEspaciado'
+name = 'trazos-20120516-wholeEspaciado'
 file = open(path+name+'.txt','r')
 
 all=file.readlines()

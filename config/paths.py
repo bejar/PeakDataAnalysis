@@ -23,3 +23,5 @@ datapath = '/home/bejar/Dropbox/Filtro Rudomin/Estability/'
 seqpath = '/home/bejar/Documentos/Investigacion/cinvestav/secuencias/'
 clusterpath = '/home/bejar/Documentos/Investigacion/cinvestav/clustering/'
 datapath2 = '/home/bejar/Data/Cinvestav/'
+
+datapathnew ='/home/bejar/Dropbox/Isaac/'
