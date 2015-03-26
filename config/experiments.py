@@ -1,10 +1,10 @@
 """
-.. module:: MAtlabtest
+.. module:: experiments
 
-MAtlabtest
+experiments
 *************
 
-:Description: MAtlabtest
+:Description: experiments
 
     
 
@@ -13,15 +13,14 @@ MAtlabtest
 
 :Version: 
 
-:Created on: 26/01/2015 9:55 
+:Created on: 23/03/2015 11:44 
 
 """
 
 __author__ = 'bejar'
 
-
-from pymatbridge import Matlab
-
+from util.Experiment import Experiment
+from config.paths import cinvesdata
 
 datafiles = [(['e130716f00-cntrl1', 'e130716f02-cntrl2', 'e130716f03-cntrl3'], 12,
               ['L4ci', 'L4cd', 'L5ri', 'L5rd', 'L5ci', 'L5cd', 'L6ri', 'L6rd', 'L6ci', 'L6cd', 'L7ri', 'L7rd'],
@@ -29,24 +28,18 @@ datafiles = [(['e130716f00-cntrl1', 'e130716f02-cntrl2', 'e130716f03-cntrl3'], 1
              (['e130827f23-cntrl1', 'e130827f26-cntrl2', 'e130827f37-cntrl3'], 11,
               ['L4ci', 'L4cd', 'L5ri', 'L5rd', 'L5ci', 'L5cd', 'L6ri', 'L6rd', 'L6ci', 'L6cd', 'L7ri'],
               10256.4),
-             (['e130903f20-cntrl1', 'e130903f22-cntrl2', 'e130903f25-cntrl3'], 11,
+             (['e130903f20-cntrl1', 'e130903f22-cntrl2', 'e130903f25-cntrl3'], 11, 10256.4),
               ['L4ri', 'L4cd', 'L4ci', 'L5rd', 'L5ri', 'L5cd', 'L5ci', 'L6rd', 'L6ri', 'L6cd', 'L6ci'],
-              10256.4),
-             (['e141113f09-cntrl1', 'e141113f11-cntrl2', 'e141113f13-cntrl3'], 12,
+             (['e141113f09-cntrl1', 'e141113f11-cntrl2', 'e141113f13-cntrl3'], 12, 10204.1),
               ['L4ci', 'L4cd', 'L5ri', 'L5rd', 'L5ci', 'L5cd', 'L6ri', 'L6rd', 'L6ci', 'L6cd', 'L7ri', 'L7rd'],
-             10204.1),
-             (['e141029f35-cntrl1', 'e141029f37-cntrl2', 'e141029f39-cntrl3'], 12,
+             (['e141029f35-cntrl1', 'e141029f37-cntrl2', 'e141029f39-cntrl3'], 12, 10204.1),
               ['L4ci', 'L4cd', 'L5ri', 'L5rd', 'L5ci', 'L5cd', 'L6ri', 'L6rd', 'L6ci', 'L6cd', 'L7ri', 'L7rd'],
-              10204.1),
-             (['e141016f07-cntrl1', 'e141016f09-cntrl2', 'e141016f11-cntrl3'], 12,
+             (['e141016f07-cntrl1', 'e141016f09-cntrl2', 'e141016f11-cntrl3'], 12, 10204.1),
               ['L4ci', 'L4cd', 'L5ri', 'L5rd', 'L5ci', 'L5cd', 'L6ri', 'L6rd', 'L6ci', 'L6cd', 'L7ri', 'L7rd'],
-              10204.1),
-             (['e140911f20-cntrl1', 'e140911f33-cntrl2', 'e140911f36-cntrl3'], 12,
+             (['e140911f20-cntrl1', 'e140911f33-cntrl2', 'e140911f36-cntrl3'], 12, 10416.7),
               ['L4ci', 'L4cd', 'L5ri', 'L5rd', 'L5ci', 'L5cd', 'L6ri', 'L6rd', 'L6ci', 'L6cd', 'L7ri', 'L7rd'],
-              10416.7),
-             (['e140311f09-cntrl1', 'e140311f13-cntrl2', 'e140311f23-cntrl3'], 12,
+             (['e140311f09-cntrl1', 'e140311f13-cntrl2', 'e140311f23-cntrl3'], 12, 10204.1),
               ['L4ci', 'L4cd', 'L5ri', 'L5rd', 'L5ci', 'L5cd', 'L6ri', 'L6rd', 'L6ci', 'L6cd', 'L7ri', 'L7rd'],
-              10204.1),
              (['e140225f31-cntrl1', 'e140225f34-cntrl2', 'e140225f39-cntrl3', 'e140225f47-cntrl4', 'e140225f50-cntrl5',
                'e140225f59-cntrl6'], 12,
               ['L4ci', 'L4cd', 'L5ri', 'L5rd', 'L5ci', 'L5cd', 'L6ri', 'L6rd', 'L6ci', 'L6cd', 'L7ri', 'L7rd'],
@@ -56,27 +49,10 @@ datafiles = [(['e130716f00-cntrl1', 'e130716f02-cntrl2', 'e130716f03-cntrl3'], 1
               10416.7),
              ]
 
-
-mlab = Matlab(executable='/home/bejar/bin/MATLAB/R2014b/bin/matlab')
-
-mlab.start()
-a = mlab.run_code('cd(\'/home/bejar/PycharmProjects/PeakDataAnalysis/Matlab/\')')
-print a
-
-for files, nsig, singals, sampling in datafiles:
-    for file in files:
-        nfile = '/home/bejar/Data/Cinvestav/' + file + '.mat'
-        nfiler = '/home/bejar/Data/Cinvestav/' + file + '-peaks.mat'
-        print 'Processing ', file
-        print 'IN= ', nfile
-        print 'OUT= ', nfiler
-        a = mlab.run_code('cdp_identification(\'' + nfile + '\', \'' + nfiler + '\', 100e-3,' + str(sampling) + ')')
-        print '************************************************'
-
-mlab.stop()
-
-
-# print results
-# print mlab.get_variable('a')
-
-#res = mlab.run_func('jk.m', {'arg1': 3, 'arg2': 5})
+experiments = \
+    {
+    'e130716f00':
+        Experiment(cinvesdata, 'e130716f00', 10204.1,
+                   ['e130716f00-cntrl1', 'e130716f02-cntrl2', 'e130716f03-cntrl3'],
+                   ['L4ci', 'L4cd', 'L5ri', 'L5rd', 'L5ci', 'L5cd', 'L6ri', 'L6rd', 'L6ci', 'L6cd', 'L7ri', 'L7rd'])
+}

@@ -83,6 +83,48 @@ def plotSignals(signals, n, m, vmax, vmin, name, title, path, cstd=None):
     plt.close()
 #    plt.show()
 
+def show_signal(signal):
+    """
+    Plots a signal
+    :param signal:
+    :return:
+    """
+    matplotlib.rcParams.update({'font.size': 26})
+    fig = plt.figure()
+    fig.set_figwidth(30)
+    fig.set_figheight(40)
+    minaxis = min(signal)
+    maxaxis = max(signal)
+    num = len(signal)
+    sp1 = fig.add_subplot(111)
+    sp1.axis([0, num, minaxis, maxaxis])
+    t = arange(0.0, num, 1)
+    sp1.plot(t, signal)
+
+    plt.show()
+
+def show_two_signals(signal1, signal2):
+    """
+    Shows two signals in the same picture
+    :param signal1:
+    :param signal2:
+    :return:
+    """
+    fig = plt.figure()
+    fig.set_figwidth(30)
+    fig.set_figheight(40)
+    minaxis = min(signal1)
+    maxaxis = max(signal1)
+    num = len(signal1)
+    sp1 = fig.add_subplot(111)
+    sp1.axis([0, num, minaxis, maxaxis])
+    t = arange(0.0, num, 1)
+    sp1.plot(t, signal1)
+    sp1.plot(t, signal2)
+    plt.show()
+
+
+
 
 # Plot a set of signals
 def plotSignalValues(fig, signal1, n, m, p, name, vmax, vmin, cstd=None):

@@ -22,6 +22,7 @@ __author__ = 'bejar'
 datapath = '/home/bejar/Dropbox/Filtro Rudomin/Estability/'
 seqpath = '/home/bejar/Documentos/Investigacion/cinvestav/secuencias/'
 clusterpath = '/home/bejar/Documentos/Investigacion/cinvestav/clustering/'
-datapath2 = '/home/bejar/Data/Cinvestav/'
+cinvesdata = '/home/bejar/Data/Cinvestav/'
+resultpath = '/home/bejar/Data/Cinvestav/Results/'
 
 datapathnew ='/home/bejar/Dropbox/Isaac/'

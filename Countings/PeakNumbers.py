@@ -31,7 +31,7 @@ def compute_counts(window, timeline):
         bins += 1
     res = np.zeros(bins)
     for i in range(bins):
-        res[i] = len(timeline[np.logical_and(((window * i) < timeline),(timeline < ((window * i) + window)))])
+        res[i] = len(timeline[np.logical_and(((window * i) < timeline), (timeline < ((window * i) + window)))])
     if timeline[-1] % window != 0:
         prop = (timeline[-1] % window)/window
         res[-1] = int(res[-1]/prop)
@@ -66,10 +66,10 @@ def plot_histo(accum, title, ylim):
     fig.savefig(seqpath+'/count-' + title + '.pdf', orientation='landscape', format='pdf')
 
 
-lines = [#'L4cd',
+lines = ['L4cd',
          'L4ci',
          'L5cd',
-         #'L5rd',
+         'L5rd',
          'L5ci', 'L5ri', 'L6cd', 'L6rd', 'L6ci',
          'L6ri',  'L7ri']
 
@@ -115,7 +115,7 @@ for e in exp:
         maxlineacum = max(maxlineacum, np.amax(dictsum[e][line]))
     maxallacum = max(np.amax(accum[e]), maxallacum)
 
-plot_histo(accum, 'all-I-pp'+str(window/1000)+'s', ((maxallacum //1000) + 1)*1000)
+# plot_histo(accum, 'all-I-pp'+str(window/1000)+'s', ((maxallacum //1000) + 1)*1000)
 for l in lines:
     accumline = {}
     for e in exp:
