@@ -31,13 +31,19 @@ from numpy.fft import rfft, irfft
 from scipy.signal import resample, decimate
 import h5py
 
-expname = 'e130716f00'
+def printing(name, object):
+    if type(object) == h5py._hl.dataset.Dataset and 'Time' in name:
+        print name, object.shape
+
+expname = 'e130827'#'e130716'#'e130903'#
 
 datainfo = experiments[expname]
 
 f = h5py.File(datainfo.dpath + datainfo.name + '.hdf5', 'r')
 
-for s in datainfo.sensors:
-    d = f[datainfo.datafiles[0] + '/' + s + '/' + 'Peaks']
-    print d.shape
-    show_signal(d[0, :])
+# for s in datainfo.sensors:
+#     d = f[datainfo.datafiles[0] + '/' + s + '/' + 'Peaks']
+#     print d.shape
+#     show_signal(d[0, :])
+
+f.visititems(printing)
