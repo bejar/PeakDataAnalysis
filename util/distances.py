@@ -21,6 +21,7 @@ __author__ = 'bejar'
 
 import numpy as np
 
+
 def sKLD(m1, m2):
     """
     Simetrized Kullback-Leibler divergence between two probability matrices
@@ -30,8 +31,8 @@ def sKLD(m1, m2):
     """
     lm1 = np.log(m1)
     lm2 = np.log(m2)
-    lquot12 = np.log(m1/m2)
-    lquot21 = np.log(m2/m1)
+    lquot12 = np.log(m1 / m2)
+    lquot21 = np.log(m2 / m1)
     dkl12 = lm1 * lquot12
     dkl21 = lm2 * lquot21
     return dkl12.sum() + dkl21.sum()
@@ -45,7 +46,7 @@ def renyihalf(m1, m2):
     :return:
     """
 
-    pm = m1*m2
+    pm = m1 * m2
     spm = np.sqrt(pm)
 
     return -2 * np.log(spm.sum())

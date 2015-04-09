@@ -19,47 +19,45 @@ ClusterHungarian
 
 __author__ = 'bejar'
 
-
 import scipy.io
 import numpy as np
-from config.paths import datapath, clusterpath
-from sklearn.cluster import MiniBatchKMeans, KMeans, AffinityPropagation, DBSCAN, SpectralClustering
-from collections import Counter
-from util.plots import plotSignals, plotHungarianSignals
 from munkres import Munkres
-from sklearn.metrics.pairwise import euclidean_distances,rbf_kernel
-from sklearn.metrics import adjusted_mutual_info_score, adjusted_rand_score, normalized_mutual_info_score
+from sklearn.metrics.pairwise import euclidean_distances
+
+from config.paths import clusterpath
+from util.plots import plotHungarianSignals
+
 
 aline = [
-        ('L4cd', 11, 0),
-        ('L4ci', 11, 1),
-        ('L5cd', 10, 2),
-        ('L5rd', 9, 3),
-        ('L5ci', 13, 4),
-        ('L5ri', 11, 5),
-        ('L6cd', 13, 6),
-        ('L6rd', 11, 7),
-        ('L6ci', 13, 8),
-        ('L6ri', 12, 9),
-        ('L7ri', 14, 10)
-        ]
+    ('L4cd', 11, 0),
+    ('L4ci', 11, 1),
+    ('L5cd', 10, 2),
+    ('L5rd', 9, 3),
+    ('L5ci', 13, 4),
+    ('L5ri', 11, 5),
+    ('L6cd', 13, 6),
+    ('L6rd', 11, 7),
+    ('L6ci', 13, 8),
+    ('L6ri', 12, 9),
+    ('L7ri', 14, 10)
+]
 
 alg = 'kmeans'
 
 norm = 'N'
 
-
 for line1, nc1, p1 in aline:
     print 'LINE=', line1, '***************************************'
-    matclust1 = scipy.io.loadmat(clusterpath + 'cluster-'+alg+'-peaks-' + norm + line1 + '-nc' + str(nc1) + '.mat')
+    matclust1 = scipy.io.loadmat(clusterpath + 'cluster-' + alg + '-peaks-' + norm + line1 + '-nc' + str(nc1) + '.mat')
     centers1 = matclust1['centers']
     print centers1.shape
     inv = None
     for line2, nc2, p2 in aline:
-        if p1 < p2 :
+        if p1 < p2:
             print 'LINE=', line2
 
-            matclust2 = scipy.io.loadmat(clusterpath + 'cluster-'+alg+'-peaks-' + norm + line2 + '-nc' + str(nc2) + '.mat')
+            matclust2 = scipy.io.loadmat(
+                clusterpath + 'cluster-' + alg + '-peaks-' + norm + line2 + '-nc' + str(nc2) + '.mat')
 
             centers2 = matclust2['centers']
             print centers2.shape

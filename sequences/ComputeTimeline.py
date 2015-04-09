@@ -23,13 +23,14 @@ import scipy.io
 from pylab import *
 
 from util.distances import sKLD, square_frobenius, renyihalf
-from util.misc import  peaks_sequence, find_time_end, probability_matrix_seq, probability_matrix_multi
+from util.misc import peaks_sequence, find_time_end, probability_matrix_seq, probability_matrix_multi
 from util.plots import plotSignals
 from config.paths import datapath
 
 
+
 # def timeline(clpeaks, timepeaks, nfiles, line, gap, step):
-#     for exp, nfile in nfiles:
+# for exp, nfile in nfiles:
 #         compute_timeline(exp, clpeaks, timepeaks, line+'-'+nfile, gap=gap, step=step)
 #
 #
@@ -129,17 +130,21 @@ from config.paths import datapath
 #
 
 
-def timeline_overlapped(clpeaks, timepeaks, nfiles, line, ncl, gap=300, step=50*300, length=300*300, laplace=0.0, dist='Frobenius', multi=True):
+def timeline_overlapped(clpeaks, timepeaks, nfiles, line, ncl, gap=300, step=50 * 300, length=300 * 300, laplace=0.0,
+                        dist='Frobenius', multi=True):
     ldiffs = []
     for exp, nfile in nfiles:
         ldiffs.append((compute_timeline_overlapped(exp,
-                       clpeaks, ncl, timepeaks, gap=gap, step=step,
-                       length=length, laplace=laplace, dist=dist, multi=multi), nfile+'-'+dist))
-    vmax = [max(x) for x,_ in ldiffs]
-    vmin = [min(x) for x,_ in ldiffs]
+                                                   clpeaks, ncl, timepeaks, gap=gap, step=step,
+                                                   length=length, laplace=laplace, dist=dist, multi=multi),
+                       nfile + '-' + dist))
+    vmax = [max(x) for x, _ in ldiffs]
+    vmin = [min(x) for x, _ in ldiffs]
 
-    name = line + '-timelineG%d-S%d-L%d-Lap%2.2f-%s' % (round(gap*.6,0), round(step * .0006,0), round(length * .0006,0),laplace,dist)
-    title = line + '-timeline G= %2.3f S=%2.1f L=%2.1f Lap=%2.2f D=%s' % (gap*.0006, step * .0006, length * .0006, laplace, dist)
+    name = line + '-timelineG%d-S%d-L%d-Lap%2.2f-%s' % (
+    round(gap * .6, 0), round(step * .0006, 0), round(length * .0006, 0), laplace, dist)
+    title = line + '-timeline G= %2.3f S=%2.1f L=%2.1f Lap=%2.2f D=%s' % (
+    gap * .0006, step * .0006, length * .0006, laplace, dist)
 
     if multi:
         name += '-Multi'
@@ -155,7 +160,8 @@ def timeline_overlapped(clpeaks, timepeaks, nfiles, line, ncl, gap=300, step=50*
     plotSignals(ldiffs, 6, 2, max(vmax), min(vmin), name, title)
 
 
-def compute_timeline_overlapped(nexp, clpeaks, ncl, timepeaks, gap=0, step=100, length=1000, laplace=0.0, dist='Frobenius', multi=True):
+def compute_timeline_overlapped(nexp, clpeaks, ncl, timepeaks, gap=0, step=100, length=1000, laplace=0.0,
+                                dist='Frobenius', multi=True):
     """
     Computes the time line of the probability matrix of transitions
 
@@ -195,9 +201,8 @@ def compute_timeline_overlapped(nexp, clpeaks, ncl, timepeaks, gap=0, step=100, 
     current = find_time_end(peakseq, current, step)
     last = find_time_end(peakseq, current, length)
 
-
     ldist = []
-    while last < len(peakseq)-1:
+    while last < len(peakseq) - 1:
         if multi:
             pmnext = probability_matrix_multi(peakseq, current, last, nsym, gap=gap, laplace=laplace)
         else:
@@ -211,15 +216,16 @@ def compute_timeline_overlapped(nexp, clpeaks, ncl, timepeaks, gap=0, step=100, 
 
     return ldist
 
+
 def do_the_job(gap, step, length, laplace, dist, multi):
     for line, clust, ncl in aline:
-
         print line, clust
         matpeaks = scipy.io.loadmat(datapath + '/Selected/centers.' + line + '.' + clust + '.mat')
         mattime = scipy.io.loadmat(datapath + '/WholeTime.' + line + '.mat')
         clpeaks = matpeaks['IDX']
         timepeaks = mattime['temps'][0]
-        timeline_overlapped(clpeaks, timepeaks, nfiles, line, ncl, gap=gap, step=step, length=length, laplace=laplace, dist=dist, multi=multi)
+        timeline_overlapped(clpeaks, timepeaks, nfiles, line, ncl, gap=gap, step=step, length=length, laplace=laplace,
+                            dist=dist, multi=multi)
 
 
 nfiles = [(0, 'ctrl1'), (1, 'ctrl2'), (2, 'capsa1'), (3, 'capsa2'), (4, 'capsa3'),
@@ -231,16 +237,16 @@ nfiles = [(0, 'ctrl1'), (1, 'ctrl2'), (2, 'capsa1'), (3, 'capsa2'), (4, 'capsa3'
 
 aline = [('L4cd', 'k9.n5', 9),
          ('L4ci', 'k9.n1', 9),
-        ('L5cd', 'k10.n6' , 10),
-        #('L5rd', 'k20.n1' ),
-        ('L5ci', 'k15.n1', 15),
-        ('L5ri', 'k15.n9', 15),
-        ('L6cd', 'k17.n1', 17),
-        ('L6rd', 'k13.n9', 13),
-        #('L6ci', 'k15.n1'),
-        ('L6ri', 'k18.n4', 18),
-        ('L7ri', 'k18.n4', 18)
-        ]
+         ('L5cd', 'k10.n6', 10),
+         #('L5rd', 'k20.n1' ),
+         ('L5ci', 'k15.n1', 15),
+         ('L5ri', 'k15.n9', 15),
+         ('L6cd', 'k17.n1', 17),
+         ('L6rd', 'k13.n9', 13),
+         #('L6ci', 'k15.n1'),
+         ('L6ri', 'k18.n4', 18),
+         ('L7ri', 'k18.n4', 18)
+         ]
 
 
 # aline = [('L4ci', 'k20.n1')]
@@ -250,24 +256,24 @@ aline = [('L4cd', 'k9.n5', 9),
 
 # 300 = 180ms
 
-dfuns ={'Renyi': renyihalf, 'Frobenius': square_frobenius, 'KL': sKLD}
+dfuns = {'Renyi': renyihalf, 'Frobenius': square_frobenius, 'KL': sKLD}
 
-gap = int(400.0 / 0.6) #ms
-step = int(3.0 / 0.0006) #s
-length = int(60.0 / 0.0006) #s
+gap = int(400.0 / 0.6)  #ms
+step = int(3.0 / 0.0006)  #s
+length = int(60.0 / 0.0006)  #s
 dist = 'Renyi'
 laplace = 1
 multi = True
 
 #for i in [60.0,90.0, 120.0,180.0,240.0,300.0]:
 for i in [60.0, 90.0, 120.0, 180.0, 240.0, 300.0]:
-   # print '\\begin{tabular}','{|c|',
-   # print 'c|'*len(nfiles), '}\\\\\\hline'
-   # print '%2.2fs'%i,
-   # for _, l in nfiles:
-   #     print '& ', l,
-   # print '\\\\\hline'
-    length = int(i / 0.0006) #s
+    # print '\\begin{tabular}','{|c|',
+    # print 'c|'*len(nfiles), '}\\\\\\hline'
+    # print '%2.2fs'%i,
+    # for _, l in nfiles:
+    #     print '& ', l,
+    # print '\\\\\hline'
+    length = int(i / 0.0006)  #s
     do_the_job(gap, step, length, laplace, dist, multi)
-   # print '\\end{tabular}'
-   # print
+    # print '\\end{tabular}'
+    # print

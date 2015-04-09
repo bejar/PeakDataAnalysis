@@ -57,13 +57,14 @@ def generate_log(nexp, clpeaks, timepeaks, remap, gap=0):
     peakset = []
 
     for i in range(peakini, peakend):
-        peakset.append(voc[remap[clpeaks[i][0]-1]])
-        if i < peakend-1 and gap != 0:
-            if (timepeaks[nexp][i-peakini+1] - timepeaks[nexp][i-peakini]) > gap:
+        peakset.append(voc[remap[clpeaks[i][0] - 1]])
+        if i < peakend - 1 and gap != 0:
+            if (timepeaks[nexp][i - peakini + 1] - timepeaks[nexp][i - peakini]) > gap:
                 peakstr.append(peakset)
                 peakset = []
 
     return peakstr
+
 
 def generate_model_log(line):
     clstfreq = {}
@@ -90,15 +91,14 @@ def generate_model_log(line):
             nev += 1
             ltrans = []
             for e in ev:
-                trans = {'who': 'cat', 'when': time.strftime("%Y-%m-%dT%H:%M:%S%z", time.gmtime(sec+(cons*60))), 'to': e}
+                trans = {'who': 'cat', 'when': time.strftime("%Y-%m-%dT%H:%M:%S%z", time.gmtime(sec + (cons * 60))),
+                         'to': e}
                 ltrans.append(trans)
-                cons +=1
+                cons += 1
             case['transitions'] = ltrans
             cases.append(case)
 
-        write_xes('PM-'+line+'-'+nfile, seqpath, cases)
-
-
+        write_xes('PM-' + line + '-' + nfile, seqpath, cases)
 
 
 # cpath = '/home/bejar/Dropbox/Filtro Rudomin/Estability/'
@@ -113,7 +113,7 @@ nfiles = [(0, 'ctrl1'), (1, 'ctrl2'), (2, 'capsa1'), (3, 'capsa2'), (4, 'capsa3'
 voc = ' ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 
 # aline = [('L4cd', 'k9.n5', 9),
-#          ('L4ci', 'k9.n1', 9),
+# ('L4ci', 'k9.n1', 9),
 #         ('L5cd', 'k10.n6' , 10),
 #         #('L5rd', 'k20.n1' ),
 #         ('L5ci', 'k15.n1', 15),
@@ -125,8 +125,8 @@ voc = ' ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 #         ('L7ri', 'k18.n4', 18)
 #         ]
 aline = [
-         ('L6ri', 'k18.n4', 18)
-        ]
+    ('L6ri', 'k18.n4', 18)
+]
 
 
 # line = 'L6ri'  # 'L6rd' 'L5ci' 'L6ri'
@@ -138,6 +138,5 @@ for line, clust, _ in aline:
 
     clpeaks = matpeaks['IDX']
     timepeaks = mattime['temps'][0]
-
 
     generate_model_log(line)

@@ -19,13 +19,14 @@ ClusterSaveData
 
 __author__ = 'bejar'
 
-from kemlglearn.metrics import scatter_matrices_scores, DaviesBouldin
+from collections import Counter
+
 import scipy.io
 import numpy as np
+from sklearn.cluster import KMeans
+
 from config.paths import clusterpath, datapath
-from sklearn.cluster import MiniBatchKMeans, KMeans, AffinityPropagation, DBSCAN, SpectralClustering
-from collections import Counter
-from util.plots import plotSignals
+
 
 def normalize(data):
     """
@@ -39,29 +40,28 @@ def normalize(data):
     for i in range(data.shape[0]):
         mean = np.mean(data[i])
         std = np.std(data[i])
-        ndata[i] += (data[i]-mean)/std
+        ndata[i] += (data[i] - mean) / std
 
     return ndata
 
 
 aline = [
-        ('L4cd', 11, 0),
-        ('L4ci', 11, 1),
-        ('L5cd', 10, 2),
-        ('L5rd', 9, 3),
-        ('L5ci', 13, 4),
-        ('L5ri', 11, 5),
-        ('L6cd', 13, 6),
-        ('L6rd', 11, 7),
-        ('L6ci', 13, 8),
-        ('L6ri', 12, 9),
-        ('L7ri', 14, 10)
-        ]
+    ('L4cd', 11, 0),
+    ('L4ci', 11, 1),
+    ('L5cd', 10, 2),
+    ('L5rd', 9, 3),
+    ('L5ci', 13, 4),
+    ('L5ri', 11, 5),
+    ('L6cd', 13, 6),
+    ('L6rd', 11, 7),
+    ('L6ci', 13, 8),
+    ('L6ri', 12, 9),
+    ('L7ri', 14, 10)
+]
 
 alg = 'kmeans'
 
 norm = 'N'
-
 
 for line, nc, _ in aline:
     print 'LINE=', line
@@ -81,7 +81,6 @@ for line, nc, _ in aline:
 
     for i in range(data.shape[0]):
         centers[lab[i]] += data[i]
-
 
     print len(lab)
 

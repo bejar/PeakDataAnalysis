@@ -19,11 +19,12 @@ PeakNumbers
 
 __author__ = 'bejar'
 
-
-from config.paths import datapath, datapathnew, seqpath
 import scipy.io
 import numpy as np
 import matplotlib.pyplot as plt
+
+from config.paths import datapathnew, seqpath
+
 
 def compute_counts(window, timeline):
     bins = int(timeline[-1] / window)
@@ -33,16 +34,18 @@ def compute_counts(window, timeline):
     for i in range(bins):
         res[i] = len(timeline[np.logical_and(((window * i) < timeline), (timeline < ((window * i) + window)))])
     if timeline[-1] % window != 0:
-        prop = (timeline[-1] % window)/window
-        res[-1] = int(res[-1]/prop)
+        prop = (timeline[-1] % window) / window
+        res[-1] = int(res[-1] / prop)
 
     return res
+
 
 def color(i):
     if i % 2 == 0:
         return 'g'
     else:
         return 'b'
+
 
 def plot_histo(accum, title, ylim):
     index = np.arange(nwin)
@@ -51,8 +54,8 @@ def plot_histo(accum, title, ylim):
 
     fig, ax = plt.subplots()
 
-    for i,e in enumerate(exp):
-        rects1 = plt.bar(index + (2*nwin*i* bar_width), height=accum[e], width=bar_width,
+    for i, e in enumerate(exp):
+        rects1 = plt.bar(index + (2 * nwin * i * bar_width), height=accum[e], width=bar_width,
                          alpha=opacity,
                          color=color(i))
 
@@ -63,7 +66,7 @@ def plot_histo(accum, title, ylim):
     fig.set_figheight(15)
     ax.set_ylim([0, ylim])
     plt.title(title, fontsize=48)
-    fig.savefig(seqpath+'/count-' + title + '.pdf', orientation='landscape', format='pdf')
+    fig.savefig(seqpath + '/count-' + title + '.pdf', orientation='landscape', format='pdf')
 
 
 lines = ['L4cd',
@@ -71,10 +74,10 @@ lines = ['L4cd',
          'L5cd',
          'L5rd',
          'L5ci', 'L5ri', 'L6cd', 'L6rd', 'L6ci',
-         'L6ri',  'L7ri']
+         'L6ri', 'L7ri']
 
 # lines = [#'L4cd',
-#          'L5cd',
+# 'L5cd',
 # 'L6cd', 'L6rd',
 #         ]
 
@@ -101,7 +104,7 @@ for line in lines:
     mattime = scipy.io.loadmat(datapathnew + '/Symbols/peaks-' + line + '.mat')
     for i, e in enumerate(exp):
         #print mattime['E{:02d}{:s}'.format(i, e)][:,1]
-        dictsum[e][line] = compute_counts(window*freq, mattime['E{:02d}{:s}'.format(i, e)][:, 1])
+        dictsum[e][line] = compute_counts(window * freq, mattime['E{:02d}{:s}'.format(i, e)][:, 1])
 
 nwin = len(dictsum[exp[0]][lines[0]])
 accum = {}
@@ -120,4 +123,4 @@ for l in lines:
     accumline = {}
     for e in exp:
         accumline[e] = dictsum[e][l]
-    plot_histo(accumline, l+'-pp'+str(window/1000)+'s', ((maxlineacum //100) + 1)*100)
+    plot_histo(accumline, l + '-pp' + str(window / 1000) + 's', ((maxlineacum // 100) + 1) * 100)

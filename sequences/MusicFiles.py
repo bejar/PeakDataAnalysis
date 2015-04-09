@@ -28,7 +28,6 @@ from config.paths import datapath, seqpath
 
 
 def cluster_times(nexp, clpeaks, timepeaks, nfile, remap):
-
     # Select the index of the experiment
     peakini = 0
     i = 0
@@ -45,11 +44,9 @@ def cluster_times(nexp, clpeaks, timepeaks, nfile, remap):
 
     print exp.shape, peakini, peakend
     for i in range(peakini, peakend):
-        peakstr.append([remap[clpeaks[i][0]-1],exp[i-peakini][0]])
+        peakstr.append([remap[clpeaks[i][0] - 1], exp[i - peakini][0]])
 
     return peakstr
-
-
 
 
 def generate_sequences():
@@ -67,7 +64,7 @@ def generate_sequences():
 
     data = {}
     for exp, nfile in nfiles:
-        peaklist = cluster_times(exp, clpeaks, timepeaks, line+'-'+nfile, remap)
+        peaklist = cluster_times(exp, clpeaks, timepeaks, line + '-' + nfile, remap)
         data['E{0:0>2d}{1}'.format(exp, nfile)] = np.array(peaklist)
     return data
 
@@ -83,7 +80,7 @@ voc = ' ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 
 
 # aline = [('L4cd', 'k9.n5', 9),
-#          ('L4ci', 'k9.n1', 9),
+# ('L4ci', 'k9.n1', 9),
 #         ('L5cd', 'k10.n6' , 10),
 #         #('L5rd', 'k20.n1' ),
 #         ('L5ci', 'k15.n1', 15),
@@ -96,18 +93,17 @@ voc = ' ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 #         ]
 
 aline = [('L5rd', 'k20.n1', 20),
-        ('L6ci', 'k15.n1', 15)
-        ]
+         ('L6ci', 'k15.n1', 15)
+         ]
 
-
-for line,clust,_ in aline:
-    matpeaks = scipy.io.loadmat( datapath + '/Selected/centers.' + line + '.' + clust + '.mat')
-    mattime = scipy.io.loadmat( datapath + '/WholeTime.' + line + '.mat')
+for line, clust, _ in aline:
+    matpeaks = scipy.io.loadmat(datapath + '/Selected/centers.' + line + '.' + clust + '.mat')
+    mattime = scipy.io.loadmat(datapath + '/WholeTime.' + line + '.mat')
 
     clpeaks = matpeaks['IDX']
     timepeaks = mattime['temps'][0]
     peakdata = generate_sequences()
 
-    scipy.io.savemat(seqpath+'peaks-'+line, peakdata)
+    scipy.io.savemat(seqpath + 'peaks-' + line, peakdata)
     print '--------------------'
 

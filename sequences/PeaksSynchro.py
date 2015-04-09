@@ -39,16 +39,16 @@ def mintime(ltimes):
 
 
 def syncIcon(x, y, lines, coord, lv, scale, can):
-    scale=scale*0.6
-    y=(y/2.5)+2
-    x=x+5
+    scale = scale * 0.6
+    y = (y / 2.5) + 2
+    x = x + 5
 
 
-    #lcoor=[(i,j) for i in range(n) for j in range(m)]
+    # lcoor=[(i,j) for i in range(n) for j in range(m)]
 
-    for al,v in zip(aline, lv):
+    for al, v in zip(aline, lv):
         c = coord[al[0]]
-        p=path.rect(y+(c[0]*scale), x+(c[1]*scale), scale, scale)
+        p = path.rect(y + (c[0] * scale), x + (c[1] * scale), scale, scale)
         if v:
             can.stroke(p, [deco.filled([color.gray(0.5)])])
         else:
@@ -56,7 +56,6 @@ def syncIcon(x, y, lines, coord, lv, scale, can):
 
 
 def draw_synchs(peakdata, exps, window):
-
     for _, exp in exps:
         print exp
         ncol = 0
@@ -66,7 +65,7 @@ def draw_synchs(peakdata, exps, window):
         c = canvas.canvas()
         p = path.line(1, 0, 1, 28)
         c.stroke(p)
-        c.text(1.5, 27, '%s - page: %d'% (exp, npage), [text.size(-1)])
+        c.text(1.5, 27, '%s - page: %d' % (exp, npage), [text.size(-1)])
         vprev = 0
         y = 0
         yt = 1.25
@@ -77,7 +76,7 @@ def draw_synchs(peakdata, exps, window):
 
             v = mintime(pk[i]) % 5000
             if v < vprev:
-                p=path.line(yt+2.5, 0, yt+2.5, 28)
+                p = path.line(yt + 2.5, 0, yt + 2.5, 28)
                 c.stroke(p)
                 y += 6.3
                 yt += 2.5
@@ -98,15 +97,16 @@ def draw_synchs(peakdata, exps, window):
 
             vprev = v
             d = v - 800
-            c.text(yt, (d/200.0)+5.25, '%8s' % str(int(round(pk[i][0][1][1]*0.6))), [text.size(-4)])
-            syncIcon(d/200.0, y, aline, coormap, l, 0.25, c)
+            c.text(yt, (d / 200.0) + 5.25, '%8s' % str(int(round(pk[i][0][1][1] * 0.6))), [text.size(-4)])
+            syncIcon(d / 200.0, y, aline, coormap, l, 0.25, c)
 
         # p=path.line(yt+2.5, 0, yt+2.5, 28)
         # c.stroke(p)
 
         d = document.document(lpages)
 
-        d.writePDFfile(seqpath+"/peaksynchs-%s-W%d" % (exp, window))
+        d.writePDFfile(seqpath + "/peaksynchs-%s-W%d" % (exp, window))
+
 
 def gen_data_matrix(lines):
     """
@@ -151,7 +151,7 @@ def compute_sequences(clpeaks, timepeaks, lines, nexp, remap):
         # Build the sequence of peaks
         peakstr = []
         for i in range(peakini, peakend):
-            peakstr.append([remap[line][clpeaks[line][i][0]-1]-1, exp[i-peakini][0]])
+            peakstr.append([remap[line][clpeaks[line][i][0] - 1] - 1, exp[i - peakini][0]])
         peakseq.append(peakstr)
     return peakseq
 
@@ -163,6 +163,7 @@ def compute_synchs(seq, window=15):
     :param window:
     :return:
     """
+
     def minind():
         """
         computes the index of the sequence with the lower value
@@ -176,25 +177,26 @@ def compute_synchs(seq, window=15):
         return mind
 
     # Contadores de avance
-    counts = [0]*len(seq)
+    counts = [0] * len(seq)
 
     fin = False
     lsynch = []
     while not fin:
         # Compute the peak with the lower value
         imin = minind()
-        if len(seq[imin]) > counts[imin]+1 and seq[imin][counts[imin]][1] <= (seq[imin][counts[imin]+1][1]+window):
+        if len(seq[imin]) > counts[imin] + 1 and seq[imin][counts[imin]][1] <= (
+            seq[imin][counts[imin] + 1][1] + window):
             # Look for the peaks inside the window length
             psynch = [(imin, seq[imin][counts[imin]])]
             for i in range(len(seq)):
                 if (len(seq[i]) > counts[i]) and (i != imin):
-                    if seq[i][counts[i]][1] <= (seq[imin][counts[imin]][1]+window):
+                    if seq[i][counts[i]][1] <= (seq[imin][counts[imin]][1] + window):
                         psynch.append((i, seq[i][counts[i]]))
                         counts[i] += 1
             counts[imin] += 1
             if len(psynch) > 1:
                 lsynch.append(psynch)
-                #print psynch
+                # print psynch
         else:
             counts[imin] += 1
 
@@ -258,10 +260,9 @@ def length_synch_frequency_histograms(dsynchs, window):
             x.append(len(pk))
 
         P.figure()
-        n, bins, patches = P.hist(x, max(x)-1, normed=1, histtype='bar', fill=True)
-        P.title('%s-W%d'%(line, window), fontsize=48)
-        P.savefig(seqpath+'/histo-'+line+'-W'+str(window)+'.pdf', orientation='landscape', format='pdf')
-
+        n, bins, patches = P.hist(x, max(x) - 1, normed=1, histtype='bar', fill=True)
+        P.title('%s-W%d' % (line, window), fontsize=48)
+        P.savefig(seqpath + '/histo-' + line + '-W' + str(window) + '.pdf', orientation='landscape', format='pdf')
 
 
 def gen_peaks_contingency(peakdata):
@@ -277,7 +278,7 @@ def gen_peaks_contingency(peakdata):
         dmatrix = gen_data_matrix(aline)
 
         for p in pk:
-            #print p
+            # print p
             for ei in p:
                 for ej in p:
                     if ei[0] != ej[0]:
@@ -295,7 +296,7 @@ def gen_peaks_contingency(peakdata):
                 if i != ln:
                     lplot.append((normalize_matrix(mt[i]), aline[i][0]))
 
-            plotMatrices(lplot, 4, 2, 'msynch-'+nx+'-'+aline[ln][0], aline[ln][0])
+            plotMatrices(lplot, 4, 2, 'msynch-' + nx + '-' + aline[ln][0], aline[ln][0])
 
 
 def lines_coincidence_matrix(peakdata):
@@ -324,7 +325,7 @@ def correlation_exp(peakdata, expcounts, window):
     :return:
     """
     for _, exp in nfiles:
-        #print exp
+        # print exp
         cmatrix = lines_coincidence_matrix(peakdata[exp])
         corrmatrix = np.zeros((len(aline), len(aline)))
         for i in range(len(aline)):
@@ -336,27 +337,24 @@ def correlation_exp(peakdata, expcounts, window):
                     ca = expcounts[exp][indi]
                     cb = expcounts[exp][indj]
                     tot = (ca + cb - cab) * 1.0
-                    corrmatrix[i,j] = cab/tot
+                    corrmatrix[i, j] = cab / tot
                     #print 'E:', exp, 'L:', indi, indj, 'C:', int(cab), ca, cb, 'Psync:', (cab/tot) #*np.log2(cab/(ca*cb))
-        corrmatrix[0,0] = 1.0
-        plotMatrix(corrmatrix, exp + '-W' + str(int(window*0.6))+'ms', exp + '-W'+ str(int(window*0.6))+'ms', [x for x in range(len(aline))], [x for x, _, _ in aline])
+        corrmatrix[0, 0] = 1.0
+        plotMatrix(corrmatrix, exp + '-W' + str(int(window * 0.6)) + 'ms', exp + '-W' + str(int(window * 0.6)) + 'ms',
+                   [x for x in range(len(aline))], [x for x, _, _ in aline])
         #print '----'
 
 
-
-
-
-
 nfiles = [(0, 'ctrl1'), (1, 'ctrl2'), (2, 'capsa1'), (3, 'capsa2'), (4, 'capsa3'),
-         (5, 'lido1'), (6, 'lido2'), (7, 'lido3'), (8, 'lido4'), (9, 'lido5'), (10, 'lido6')
-         ]
+          (5, 'lido1'), (6, 'lido2'), (7, 'lido3'), (8, 'lido4'), (9, 'lido5'), (10, 'lido6')
+          ]
 
 # nfiles = [(0, 'ctrl1')]
 
 voc = ' ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 
 # aline = [#('L4cd', 'k19.n1'),
-#          ('L4ci', 'k20.n1', 20),
+# ('L4ci', 'k20.n1', 20),
 #         ('L5cd', 'k10.n1', 10),
 #         #('L5rd', 'k20.n1' ),
 #         ('L5ci', 'k21.n1', 21),
@@ -369,19 +367,18 @@ voc = ' ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 #         ]
 
 aline = [
-         ('L4ci', 'k9.n1', 9),
-         ('L4cd', 'k9.n5', 9),
-        ('L5ri', 'k15.n9', 15),
-        ('L5rd', 'k20.n1', 20),  #<-
-        ('L5ci', 'k15.n1', 15),
-        ('L5cd', 'k10.n6', 10),
-        ('L6rd', 'k13.n9', 13),
-        ('L6ri', 'k18.n4', 18),
-        ('L6ci', 'k15.n1', 15), #<-
-        ('L6cd', 'k17.n1', 17),
-        ('L7ri', 'k18.n4', 18)
-        ]
-
+    ('L4ci', 'k9.n1', 9),
+    ('L4cd', 'k9.n5', 9),
+    ('L5ri', 'k15.n9', 15),
+    ('L5rd', 'k20.n1', 20),  #<-
+    ('L5ci', 'k15.n1', 15),
+    ('L5cd', 'k10.n6', 10),
+    ('L6rd', 'k13.n9', 13),
+    ('L6ri', 'k18.n4', 18),
+    ('L6ci', 'k15.n1', 15),  #<-
+    ('L6cd', 'k17.n1', 17),
+    ('L7ri', 'k18.n4', 18)
+]
 
 coormap = {'L4ci': (1, 1),
            'L4cd': (1, 2),
@@ -394,7 +391,7 @@ coormap = {'L4ci': (1, 1),
            'L6ci': (5, 1),
            'L6cd': (5, 2),
            'L7ri': (6, 1)
-}
+           }
 
 ###
 window = 42 / 0.6
@@ -418,7 +415,7 @@ peakdata, expcounts = generate_synchs(aline, nfiles, window=int(round(window)))
 #         print p
 
 ### Histograms of the frequency of the lengths
-length_synch_frequency_histograms(peakdata, window=int(round(window*0.6)))
+length_synch_frequency_histograms(peakdata, window=int(round(window * 0.6)))
 
 ### Contingency PDFs
 #gen_peaks_contingency(peakdata)

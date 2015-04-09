@@ -19,31 +19,33 @@ ResTest
 
 __author__ = 'bejar'
 
-
-from config.paths import cinvesdata
-from config.experiments import experiments
-from util.Experiment import Experiment
-from util.plots import show_signal, show_two_signals
-import scipy.io
-import numpy as np
-import matplotlib.pyplot as plt
-from numpy.fft import rfft, irfft
-from scipy.signal import resample, decimate
 import h5py
+
+from config.experiments import experiments
+
 
 def printing(name, object):
     if type(object) == h5py._hl.dataset.Dataset and 'Time' in name:
         print name, object.shape
 
-expname = 'e130827'#'e130716'#'e130903'#
 
-datainfo = experiments[expname]
+lexperiments = ['e130716', 'e130827', 'e130903', 'e141113', 'e141029', 'e141016', 'e140911', 'e140311', 'e140225',
+                'e140220']
 
-f = h5py.File(datainfo.dpath + datainfo.name + '.hdf5', 'r')
+for expname in lexperiments:
+    print '########################'
+    print 'Experiment:', expname
+    datainfo = experiments[expname]
 
-# for s in datainfo.sensors:
-#     d = f[datainfo.datafiles[0] + '/' + s + '/' + 'Peaks']
-#     print d.shape
-#     show_signal(d[0, :])
+    f = h5py.File(datainfo.dpath + datainfo.name + '.hdf5', 'r')
 
-f.visititems(printing)
+    files = datainfo.datafiles
+    for file in files:
+        print '++++++++++++++++++++++++++++'
+        print 'FILE:', file
+        for s in datainfo.sensors:
+            if s[0] == 'L':
+                d = f[file + '/' + s + '/' + 'Peaks']
+                print s, d.shape[0]
+
+                # f.visititems(printing)

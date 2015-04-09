@@ -19,12 +19,13 @@ MAtlabtest
 
 __author__ = 'bejar'
 
-
 from pymatbridge import Matlab
+
 from config.experiments import experiments, lexperiments
 
 
-#lexperiments = ['e130716', 'e130827', 'e130903', 'e141113', 'e141029', 'e141016', 'e140911', 'e140311', 'e140225', 'e140220']
+
+# lexperiments = ['e130716', 'e130827', 'e130903', 'e141113', 'e141029', 'e141016', 'e140911', 'e140311', 'e140225', 'e140220']
 lexperiments = ['e130716']
 
 mlab = Matlab(executable='/home/bejar/bin/MATLAB/R2014b/bin/matlab')
@@ -37,7 +38,7 @@ datasufix = '-RawResampled'
 
 for expname in lexperiments:
     datainfo = experiments[expname]
-    sampling = datainfo.sampling /6.0
+    sampling = datainfo.sampling / 6.0
 
     for file in datainfo.datafiles:
         nfile = '/home/bejar/Data/Cinvestav/' + file + datasufix + '.mat'

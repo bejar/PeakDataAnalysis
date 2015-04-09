@@ -25,4 +25,4 @@ clusterpath = '/home/bejar/Documentos/Investigacion/cinvestav/clustering/'
 cinvesdata = '/home/bejar/Data/Cinvestav/'
 resultpath = '/home/bejar/Data/Cinvestav/Results/'
 
-datapathnew ='/home/bejar/Dropbox/Isaac/'
+datapathnew = '/home/bejar/Dropbox/Isaac/'

@@ -19,12 +19,13 @@ ClusterPeaks
 
 __author__ = 'bejar'
 
+from collections import Counter
 
 import scipy.io
 import numpy as np
+from sklearn.cluster import KMeans, SpectralClustering
+
 from config.paths import datapath, clusterpath
-from sklearn.cluster import MiniBatchKMeans, KMeans, AffinityPropagation, DBSCAN, SpectralClustering
-from collections import Counter
 from util.plots import plotSignals
 
 
@@ -40,29 +41,29 @@ def normalize(data):
     for i in range(data.shape[0]):
         mean = np.mean(data[i])
         std = np.std(data[i])
-        ndata[i] += (data[i]-mean)/std
+        ndata[i] += (data[i] - mean) / std
 
     return ndata
 
 
 aline = [
- #   ('L4cd', 'k9.n5', 9),
- #        ('L4ci', 'k9.n1', 9),
- #        ('L5cd', 'k10.n6', 10),
-         ('L5cd', 'k20.n1', 10),
- #        ('L5ci', 'k15.n1', 15),
- #        ('L5ri', 'k15.n9', 15),
- #        ('L6cd', 'k17.n1', 17),
- #        ('L6rd', 'k13.n9', 13),
- #        ('L6ci', 'k15.n1', 10),
- #        ('L6ri', 'k18.n4', 18),
- #        ('L7ri', 'k18.n4', 18)
-        ]
+    # ('L4cd', 'k9.n5', 9),
+    #        ('L4ci', 'k9.n1', 9),
+    #        ('L5cd', 'k10.n6', 10),
+    ('L5cd', 'k20.n1', 10),
+    #        ('L5ci', 'k15.n1', 15),
+    #        ('L5ri', 'k15.n9', 15),
+    #        ('L6cd', 'k17.n1', 17),
+    #        ('L6rd', 'k13.n9', 13),
+    #        ('L6ci', 'k15.n1', 10),
+    #        ('L6ri', 'k18.n4', 18),
+    #        ('L7ri', 'k18.n4', 18)
+]
 
 nc = 4
 alg = 'spectral'
 
-#aline = [('L6cd', 'k17.n1', 17)]
+# aline = [('L6cd', 'k17.n1', 17)]
 #line = aline[0][0]
 for line, _, _ in aline:
     print 'LINE=', line
@@ -87,7 +88,6 @@ for line, _, _ in aline:
     for i in range(data.shape[0]):
         centers[lab[i]] += data[i]
 
-
     print len(lab)
 
     l = [lab[i] for i in range(len(lab))]
@@ -107,16 +107,16 @@ for line, _, _ in aline:
     mx = 0.26  # np.max(centers)
     mn = -0.06  # np.min(centers)
 
-    plotSignals(lcenters, nc, 1, mx, mn, 'cluster-'+alg+'-%s-NC%d' % (line, nc), 'cluster-'+alg+'-%sNC%d' % (line, nc), clusterpath)
-
+    plotSignals(lcenters, nc, 1, mx, mn, 'cluster-' + alg + '-%s-NC%d' % (line, nc),
+                'cluster-' + alg + '-%sNC%d' % (line, nc), clusterpath)
 
     if alg == 'spectral':
         params = {'clalg': 'spectral',
-                           'nc': nc,
-                           'labels': 'discretize',
-                           'affinity': 'nearest_neighbors',
-                           'n_neigbors': 30
-                           }
+                  'nc': nc,
+                  'labels': 'discretize',
+                  'affinity': 'nearest_neighbors',
+                  'n_neigbors': 30
+                  }
     elif alg == 'kmeans':
         params = {'clalg': 'kmeans', 'nc': nc}
     peakdata = {'labels': lab,
@@ -125,7 +125,7 @@ for line, _, _ in aline:
                 'params': params
                 }
 
-    scipy.io.savemat(clusterpath + 'cluster-'+alg+'-peaks-' + line + '-nc' + str(nc) + '.mat', peakdata)
+    scipy.io.savemat(clusterpath + 'cluster-' + alg + '-peaks-' + line + '-nc' + str(nc) + '.mat', peakdata)
 
 
 
