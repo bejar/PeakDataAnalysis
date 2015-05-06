@@ -62,6 +62,20 @@ def plotHungarianSignals(coinc, centers1, centers2, vmax, vmin, name, title, pat
 
 
 def plotSignals(signals, n, m, vmax, vmin, name, title, path, cstd=None):
+    """
+     Plots list of signals (signal,name)
+
+    :param signals:
+    :param n:
+    :param m:
+    :param vmax:
+    :param vmin:
+    :param name:
+    :param title:
+    :param path:
+    :param cstd:
+    :return:
+    """
     matplotlib.rcParams.update({'font.size': 26})
     fig = plt.figure()
     fig.set_figwidth(30)
@@ -72,6 +86,8 @@ def plotSignals(signals, n, m, vmax, vmin, name, title, path, cstd=None):
         if min(s) != max(s):
             if cstd is not None:
                 pstd = cstd[i - 1]
+            else:
+                pstd = None
             plotSignalValues(fig, s, n, m, i, snm, vmax, vmin, cstd=pstd)
         else:
             plotDummy(fig, len(s), n, m, i, snm)

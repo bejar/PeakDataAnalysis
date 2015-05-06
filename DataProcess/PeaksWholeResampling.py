@@ -6,7 +6,7 @@ PeaksWholeResampling
 
 :Description: PeaksWholeResampling
 
-    
+    Resamples the original data and saves on the HDF5 file as /RawResample
 
 :Authors: bejar
     

@@ -6,7 +6,8 @@ PeaksResampling
 
 :Description: PeaksResampling
 
-    
+
+ Resamples the peaks from the signals and saves the results in the HDF5 files as *Signal*/PeaksResample
 
 :Authors: bejar
     

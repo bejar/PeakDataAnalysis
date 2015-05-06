@@ -6,7 +6,7 @@ PeaksExtractData
 
 :Description: PeaksExtractData
 
-    
+ Saves a data collection from the HDF5 file to a matlab file
 
 :Authors: bejar
     

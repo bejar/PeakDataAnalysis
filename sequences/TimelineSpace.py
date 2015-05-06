@@ -22,7 +22,8 @@ __author__ = 'bejar'
 import scipy.io
 import numpy as np
 import matplotlib.pyplot as plt
-from sklearn.manifold import MDS
+from sklearn.manifold import MDS, TSNE, SpectralEmbedding
+from mpl_toolkits.mplot3d import Axes3D
 
 from util.distances import sKLD, square_frobenius, renyihalf
 from util.misc import peaks_sequence, find_time_end, probability_matrix_multi
@@ -123,14 +124,14 @@ def timeline_overlapped_exp(clpeaks, ncl, timepeaks, nfiles, gap=300, step=50 * 
     #print len(ldiffs[i]), len(ldiffs[j]), len(y), len(md)
     mdist = compute_trans_dist(md)
     fig = plt.figure()
-    mds = MDS(n_components=2, dissimilarity='precomputed')
+    #mds = MDS(n_components=3, dissimilarity='precomputed')
     #mds = TSNE(n_components=3, perplexity=50.0, early_exaggeration=2.0, learning_rate=50.0, n_iter=2000, metric='precomputed')
-    #mds = SpectralEmbedding(n_components=3, affinity='precomputed', n_neighbors=5)
+    mds = SpectralEmbedding(n_components=3, affinity='precomputed', n_neighbors=5)
     X_new = mds.fit_transform(mdist)
-    print 'STRESS = ', mds.stress_
-    #ax = fig.gca(projection='3d')
-    #plt.scatter(X_new[:, 1], X_new[:, 2], zs=X_new[:, 0], c=y, s=25)
-    plt.scatter(X_new[:, 0], X_new[:, 1], c=y)
+    #print 'STRESS = ', mds.stress_
+    ax = fig.gca(projection='3d')
+    plt.scatter(X_new[:, 1], X_new[:, 2], zs=X_new[:, 0], c=y, s=25)
+    #plt.scatter(X_new[:, 0], X_new[:, 1], c=y)
     plt.show()
 
 
