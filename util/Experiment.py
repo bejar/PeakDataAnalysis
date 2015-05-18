@@ -29,12 +29,14 @@ class Experiment():
     datafiles = None
     sensors = None
     dpath = None
+    clusters = None
 
-    def __init__(self, dpath, name, sampling, datafiles, sensors):
+    def __init__(self, dpath, name, sampling, datafiles, sensors, clusters):
         self.name = name
         self.sampling = sampling
         self.datafiles = datafiles
         self.sensors = sensors
         self.dpath = dpath
+        self.clusters = clusters
 
 

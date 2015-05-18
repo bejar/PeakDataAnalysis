@@ -151,10 +151,13 @@ def plotSignalValues(fig, signal1, n, m, p, name, vmax, vmin, cstd=None):
     plt.title(name)
     sp1.axis([0, num, minaxis, maxaxis])
     t = arange(0.0, num, 1)
-    plt.axhline(linewidth=4, color='r', y=np.mean(signal1))
-    pstd = np.std(signal1)
-    plt.axhline(linewidth=4, color='b', y=np.mean(signal1) + pstd)
-    plt.axhline(linewidth=4, color='b', y=np.mean(signal1) - pstd)
+    if cstd is not None:
+        plt.axhline(linewidth=4, color='r', y=np.mean(signal1))
+        pstd = np.std(signal1)
+        plt.axhline(linewidth=4, color='b', y=np.mean(signal1) + pstd)
+        plt.axhline(linewidth=4, color='b', y=np.mean(signal1) - pstd)
+    else:
+        plt.axhline(linewidth=1, color='r', y=0)
     sp1.plot(t, signal1)
     if cstd is not None:
         sp1.plot(t, signal1 + cstd)

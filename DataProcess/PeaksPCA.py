@@ -6,7 +6,8 @@ PeaksPCA
 
 :Description: PeaksPCA
 
-    Performs a PCA of the peaks and reconstructs them with only a number of them
+    Performs a PCA of the peaks and reconstructs them with only a number of them.
+    After, it removes the mean a subwidow of the initial and final values of the signal
     Eventually saves the peaks in *Signal*/PeaksPCA
 
 :Authors: bejar
@@ -30,7 +31,7 @@ from util.plots import show_signal
 # Components for reconstructing the peaks
 components = 10
 
-# Points to compute the baseline
+# Points to compute the baseline (40 initial, 40 final)
 lind = range(40)
 lind.extend(range(130, 170))
 

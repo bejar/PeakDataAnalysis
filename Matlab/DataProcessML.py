@@ -1,12 +1,12 @@
 """
-.. module:: MAtlabtest
+.. module:: DataProcessML
 
 MAtlabtest
 *************
 
-:Description: MAtlabtest
+:Description: DataProcessML
 
-    
+    Extracts the peaks of the signals using the MATLAB code
 
 :Authors: bejar
     
