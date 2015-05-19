@@ -33,7 +33,7 @@ components = 10
 
 # Points to compute the baseline (40 initial, 40 final)
 lind = range(40)
-lind.extend(range(130, 170))
+#lind.extend(range(130, 170))
 
 lexperiments = ['e130716', 'e130827', 'e130903', 'e141113', 'e141029', 'e141016', 'e140911', 'e140311', 'e140225',
                 'e140220']
@@ -49,20 +49,28 @@ for expname in lexperiments:
     for dfile in datainfo.datafiles:
         for s in datainfo.sensors:
             d = f[dfile + '/' + s + '/' + 'PeaksResample']
-            pca = PCA(n_components=d.shape[1])
-            res = pca.fit_transform(d[()])
+            data = d[()]
+            # Substract the basal
+            for row in range(data.shape[0]):
+                vals = data[row, lind]
+                basal = np.mean(vals)
+                data[row] -= basal
+
+            pca = PCA(n_components=data.shape[1])
+            res = pca.fit_transform(data)
             res[:, components:] = 0
             trans = pca.inverse_transform(res)
 
             # Substract the basal
-            for row in range(trans.shape[0]):
-                vals = trans[row, lind]
-                basal = np.mean(vals)
-                trans[row] -= basal
+            # for row in range(trans.shape[0]):
+            #     vals = trans[row, lind]
+            #     basal = np.mean(vals)
+            #     trans[row] -= basal
+
 
             # show_signal(trans[0, :])
             print dfile + '/' + s + '/' +'PeaksResamplePCA'
-            d = f.require_dataset(dfile + '/' + s + '/' +'PeaksResamplePCA', trans.shape, dtype='f',
+            d = f.require_dataset(dfile + '/' + s + '/' +'PeaksResamplePCA2', trans.shape, dtype='f',
                               data=trans, compression='gzip')
             d[()] = trans
 

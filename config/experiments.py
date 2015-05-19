@@ -69,7 +69,7 @@ experiments = \
             Experiment(cinvesdata, 'e130827', 10256.4,
                        ['e130827f23-cntrl1', 'e130827f26-cntrl2', 'e130827f37-cntrl3'],
                        ['L4ci', 'L4cd', 'L5ri', 'L5rd', 'L5ci', 'L5cd', 'L6ri', 'L6rd', 'L6ci', 'L6cd', 'L7ri']
-                       , [7, 10, 10, 11, 9, 9, 10, 10, 7, 7, 9]),
+                       , [9, 10, 11, 9, 11, 11, 11, 10, 8, 12, 8]),
         'e130903':
             Experiment(cinvesdata, 'e130903', 10256.4,
                        ['e130903f20-cntrl1', 'e130903f22-cntrl2', 'e130903f25-cntrl3'],
