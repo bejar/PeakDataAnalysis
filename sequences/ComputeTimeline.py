@@ -22,7 +22,7 @@ __author__ = 'bejar'
 import scipy.io
 from pylab import *
 
-from util.distances import sKLD, square_frobenius, renyihalf
+from util.distances import simetrized_kullback_leibler_divergence, square_frobenius_distance, renyi_half_divergence
 from util.misc import peaks_sequence, find_time_end, probability_matrix_seq, probability_matrix_multi
 from util.plots import plotSignals
 from config.paths import datapath
@@ -256,7 +256,7 @@ aline = [('L4cd', 'k9.n5', 9),
 
 # 300 = 180ms
 
-dfuns = {'Renyi': renyihalf, 'Frobenius': square_frobenius, 'KL': sKLD}
+dfuns = {'Renyi': renyi_half_divergence, 'Frobenius': square_frobenius_distance, 'KL': simetrized_kullback_leibler_divergence}
 
 gap = int(400.0 / 0.6)  #ms
 step = int(3.0 / 0.0006)  #s

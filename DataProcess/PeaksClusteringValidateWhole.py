@@ -34,10 +34,11 @@ from collections import Counter
 import logging
 
 
+lexperiments = ['e130827',  'e141016', 'e140911', 'e140225','e140220']
 
 
-expname = 'e130827' #'e140220'
-niter = 25
+expname = 'e130827'
+niter = 30
 datainfo = experiments[expname]
 
 logging.basicConfig(filename=datainfo.dpath+'/Results/' + datainfo.name + '-val-whole.txt', filemode='w',
@@ -66,7 +67,7 @@ for s in datainfo.sensors:
     best = 0
     ncbest = 0
     logging.info('S= %s' %s)
-    for nc in range(4, 15):
+    for nc in range(4, 21):
         lclasif = []
         for i in range(niter):
             k_means = KMeans(init='k-means++', n_clusters=nc, n_init=10, n_jobs=-1)

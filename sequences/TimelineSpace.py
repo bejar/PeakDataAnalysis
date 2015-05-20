@@ -25,7 +25,7 @@ import matplotlib.pyplot as plt
 from sklearn.manifold import MDS, TSNE, SpectralEmbedding
 from mpl_toolkits.mplot3d import Axes3D
 
-from util.distances import sKLD, square_frobenius, renyihalf
+from util.distances import simetrized_kullback_leibler_divergence, square_frobenius_distance, renyi_half_divergence
 from util.misc import peaks_sequence, find_time_end, probability_matrix_multi
 from config.paths import datapath
 
@@ -165,7 +165,7 @@ aline = [
     ('L6ri', 'k18.n4', 18)
 ]
 
-dfuns = {'Renyi': renyihalf, 'Frobenius': square_frobenius, 'KL': sKLD}
+dfuns = {'Renyi': renyi_half_divergence, 'Frobenius': square_frobenius_distance, 'KL': simetrized_kullback_leibler_divergence}
 
 gap = int(300.0 / .6)  #ms
 step = int(6.0 / 0.0006)  #s

@@ -39,7 +39,7 @@ lexperiments = ['e130716', 'e130827', 'e130903', 'e141113', 'e141029', 'e141016'
                 'e140220']
 
 # Good experiments
-lexperiments = ['e130827',  'e141016', 'e140911', 'e140225','e140220']
+lexperiments = ['e130827',  'e141016', 'e140911', 'e140225', 'e140220']
 
 for expname in lexperiments:
     datainfo = experiments[expname]
@@ -51,10 +51,10 @@ for expname in lexperiments:
             d = f[dfile + '/' + s + '/' + 'PeaksResample']
             data = d[()]
             # Substract the basal
-            for row in range(data.shape[0]):
-                vals = data[row, lind]
-                basal = np.mean(vals)
-                data[row] -= basal
+            # for row in range(data.shape[0]):
+            #     vals = data[row, lind]
+            #     basal = np.mean(vals)
+            #     data[row] -= basal
 
             pca = PCA(n_components=data.shape[1])
             res = pca.fit_transform(data)
@@ -62,15 +62,15 @@ for expname in lexperiments:
             trans = pca.inverse_transform(res)
 
             # Substract the basal
-            # for row in range(trans.shape[0]):
-            #     vals = trans[row, lind]
-            #     basal = np.mean(vals)
-            #     trans[row] -= basal
+            for row in range(trans.shape[0]):
+                vals = trans[row, lind]
+                basal = np.mean(vals)
+                trans[row] -= basal
 
 
             # show_signal(trans[0, :])
             print dfile + '/' + s + '/' +'PeaksResamplePCA'
-            d = f.require_dataset(dfile + '/' + s + '/' +'PeaksResamplePCA2', trans.shape, dtype='f',
+            d = f.require_dataset(dfile + '/' + s + '/' +'PeaksResamplePCA', trans.shape, dtype='f',
                               data=trans, compression='gzip')
             d[()] = trans
 
