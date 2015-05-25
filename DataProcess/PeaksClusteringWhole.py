@@ -37,7 +37,7 @@ lexperiments = ['e130716', 'e130827', 'e130903', 'e141113', 'e141029', 'e141016'
 # Good experiments
 lexperiments = ['e130827',  'e141016', 'e140911', 'e140225', 'e140220']
 
-lexperiments = ['e130827']
+lexperiments = ['e130716']
 
 colors = 'rgbymc'
 
@@ -54,7 +54,7 @@ for s, nclusters in zip(datainfo.sensors, datainfo.clusters):
         dataf = d[()]
         ldata.append(dataf)
 
-    data = ldata[0]
+    data = np.concatenate(ldata) #ldata[0]
 
     km = KMeans(n_clusters=nclusters)
     km.fit_transform(data)
@@ -64,7 +64,7 @@ for s, nclusters in zip(datainfo.sensors, datainfo.clusters):
     #print cnt
 
     lhisto = []
-    for dataf, ndata in zip(ldata,datainfo.datafiles):
+    for dataf, ndata in zip(ldata, datainfo.datafiles):
         histo = np.zeros(nclusters)
         for i in range(dataf.shape[0]):
             histo[km.predict(dataf[i])] += 1.0
@@ -84,7 +84,7 @@ for s, nclusters in zip(datainfo.sensors, datainfo.clusters):
     fig.set_figheight(40)
 
     ind = np.arange(nclusters)  # the x locations for the groups
-    width = 0.35       # the width of the bars
+    width = 0.15       # the width of the bars
     ax.set_xticks(ind+width)
     ax.set_xticklabels( ind )
     for i, h in enumerate(lhisto):
@@ -104,8 +104,8 @@ for s, nclusters in zip(datainfo.sensors, datainfo.clusters):
         part = nclusters /2
     else:
         part = (nclusters /2) + 1
-    plotSignals(lsignals,part,2,np.max(km.cluster_centers_),np.min(km.cluster_centers_), datainfo.name + '-' + s, s,
-                datainfo.dpath+'/Results/')
+    plotSignals(lsignals,part,2,np.max(km.cluster_centers_),np.min(km.cluster_centers_), datainfo.name + '-' + s,
+                datainfo.name + '-' + s, datainfo.dpath+'/Results/')
     # for cc in range(nclusters):
     #     show_signal(km.cluster_centers_[cc])
 

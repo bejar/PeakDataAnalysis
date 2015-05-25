@@ -21,6 +21,7 @@ par(3)=0.0;      % tapering window use tukey window tap=0 no window, tap=1 max t
 par(4)=0;        % max number of freqs used in FFT
 
 %Peaks definition and selection
+upthreshold = 1;        % Outliers threshold *** ADDED by Javier
 threshold=0.05;        % Peaks Max-Min in window above threshold in amplitude
 peakprecision=T/12;    % Peaks localization time resolution in points
 RCoinc=T/6;              % Peak synchronization radius
@@ -73,7 +74,7 @@ cutoff2=cutof2; if cutof2==0 cutoff2=Fs; end
 fprintf('Peaks FFT frecuency interval [%2.2f,%2.2f] Hz \n',cutof1,cutoff2);
 fprintf('Peaks tapering %1.1f and num frequency %i \n',tap,freq);
 fprintf('Peaks precision %i and time window subdivision %i \n',peakprecision,Tpk);
-fprintf('Peaks cuts factors factp=%f factpm=%f threshold=%f \n',factp,factm,threshold);
+fprintf('Peaks cuts factors factp=%f factpm=%f threshold=%f upthreshold=%f\n',factp,factm,threshold, upthreshold);
 fprintf('Peaks integral cuts factors %f %f %f %f \n',quot(1),quot(2),quot(3),quot(4));
 
 
@@ -92,10 +93,10 @@ while (tstop<Nmax)
     xs=data(tstart:tstop,j); Nl=length(xs); if (Nl<Tw) xs=[xs ; zeros(Tw-Nl,1)]; end 
     [xf, f, y, y2]=smot(t,xs',par,ismot); %signal smooth in frequency interval
     xf=xf-min(xf);
-    qpeak=max(xf)>threshold;
+    qpeak=max(xf)>threshold & max(xf)<upthreshold; % *** upthreshold ADDED by Javier
     
     
-    %Peaks second level cuts we only consider time windoss
+    %Peaks second level cuts we only consider time windows
     %with centered peaks and minimum peaks amplitude >threshold           
     [Vm Tm]=max(xf(floor(Tw/npz)+2:Tw));    %smart peaks search
         

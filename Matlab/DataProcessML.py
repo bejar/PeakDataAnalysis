@@ -34,11 +34,11 @@ mlab.start()
 a = mlab.run_code('cd(\'/home/bejar/PycharmProjects/PeakDataAnalysis/Matlab/\')')
 print a
 
-datasufix = '-RawResampled'
+datasufix = ''#'-RawResampled'
 
 for expname in lexperiments:
     datainfo = experiments[expname]
-    sampling = datainfo.sampling / 6.0
+    sampling = datainfo.sampling #/ 6.0
 
     for file in datainfo.datafiles:
         nfile = '/home/bejar/Data/Cinvestav/' + file + datasufix + '.mat'
@@ -47,6 +47,7 @@ for expname in lexperiments:
         print 'IN= ', nfile
         print 'OUT= ', nfiler
         a = mlab.run_code('cdp_identification(\'' + nfile + '\', \'' + nfiler + '\', 100e-3,' + str(sampling) + ')')
+        print a
         print '************************************************'
 
 mlab.stop()

@@ -37,7 +37,7 @@ import logging
 lexperiments = ['e130827',  'e141016', 'e140911', 'e140225','e140220']
 
 
-expname = 'e130827'
+expname = 'e140911'
 niter = 30
 datainfo = experiments[expname]
 
