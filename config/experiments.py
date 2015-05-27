@@ -78,13 +78,13 @@ experiments = \
             Experiment(cinvesdata, 'e141113', 10204.1,
                        ['e141029f35-cntrl1', 'e141029f37-cntrl2', 'e141029f39-cntrl3'],
                        ['L4ci', 'L4cd', 'L5ri', 'L5rd', 'L5ci', 'L5cd', 'L6ri', 'L6rd', 'L6ci', 'L6cd', 'L7ri',
-                        'L7rd'],[]),
+                        'L7rd'],[8,8,8,8,8,8,8,8,8,8,8,8]),
 
         'e141029':
             Experiment(cinvesdata, 'e141029', 10204.1,
                        ['e141029f35-cntrl1', 'e141029f37-cntrl2', 'e141029f39-cntrl3'],
                        ['L4ci', 'L4cd', 'L5ri', 'L5rd', 'L5ci', 'L5cd', 'L6ri', 'L6rd', 'L6ci', 'L6cd', 'L7ri',
-                        'L7rd'],[]),
+                        'L7rd'],[8,8,8,8,8,8,8,8,8,8,8,8]),
         'e141016':
             Experiment(cinvesdata, 'e141016', 10204.1,
                        ['e141016f07-cntrl1', 'e141016f09-cntrl2', 'e141016f11-cntrl3'],
@@ -99,7 +99,7 @@ experiments = \
             Experiment(cinvesdata, 'e140311', 10204.1,
                        ['e140311f09-cntrl1', 'e140311f13-cntrl2', 'e140311f23-cntrl3'],
                        ['L4ci', 'L4cd', 'L5ri', 'L5rd', 'L5ci', 'L5cd', 'L6ri', 'L6rd', 'L6ci', 'L6cd', 'L7ri',
-                        'L7rd'],[]),
+                        'L7rd'],[8,8,8,8,8,8,8,8,8,8,8,8]),
         'e140225':
             Experiment(cinvesdata, 'e140225', 10204.1,
                        ['e140225f31-cntrl1', 'e140225f34-cntrl2', 'e140225f39-cntrl3', 'e140225f47-cntrl4',

@@ -1,0 +1,14 @@
+Pasos para procesar un experimento:
+
+ConvertABF - Genera ficheros matlab a partir de los datos en ABF
+DataProcessML - Genera el fichero con los picos con el programa MATLAB de extraccion de picos
+                (necesita el tamaño de la ventana en ms y la frecuencia de muestreo Hz)
+PeaksResampling - Genera un fichero HDF5 con los datos originales y los picos (Raw/Peaks)
+                   y genera una matriz con un resampling de los picos (PeaksResample)
+PeaksPCA - Añade al fichero los picos despues de aplicarles el PCA
+PeaksClusteringValidateWhole - Estima el numero de clusters para los picos (todos los picos de todas las fases
+                                juntos)
+PeaksClusteringWhole - Genera el clustering para el primer tramo del experimento y clasifica con el el resto de
+                       fases, genera grafico de los centroides del clustering de la primera fase e histogramas de
+                       frecuencias de picos para todas
+

@@ -89,14 +89,19 @@ def resample_data(expname):
                                   compression='gzip')
             dgroup.create_dataset('Peaks', pdata[tdata != 0, :].shape, dtype='f', data=pdata[tdata != 0, :],
                                   compression='gzip')
-            dgroup.create_dataset('PeaksResample', (pdata[tdata != 0, :].shape[0], 170), dtype='f',
-                                  data=resample(pdata[tdata != 0, :], 170, axis=1), compression='gzip')
+            presamp = resample(pdata[tdata != 0, :], wsize, axis=1, window=wsize*2)
+            dgroup.create_dataset('PeaksResample', (presamp.shape[0], wselect), dtype='f',
+                                  data=presamp[:, wdisc:wsize-wdisc], compression='gzip')
 
-            f[df + '/' + s + '/PeaksResample'].attrs['Resampling'] = 170
+            f[df + '/' + s + '/PeaksResample'].attrs['Resampling'] = wselect
     f.close()
 
-# lexperiments = ['e130716', 'e130827', 'e130903', 'e141113', 'e141029', 'e141016', 'e140911', 'e140311', 'e140225', 'e140220']
-lexperiments = ['e141113', 'e141029', 'e141016', 'e140911', 'e140311', 'e140225', 'e140220']
+lexperiments = ['e130716', 'e130827', 'e130903', 'e141113', 'e141029', 'e141016', 'e140911', 'e140311', 'e140225', 'e140220']
+#lexperiments = ['e130827']  # ['e141113', 'e141029', 'e141016', 'e140911', 'e140311', 'e140225', 'e140220']
+
+wsize = 250
+wselect = 170
+wdisc = int((wsize - wselect)/2.0)
 
 for exp in lexperiments:
     resample_data(exp)

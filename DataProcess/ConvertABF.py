@@ -23,7 +23,7 @@ from neo.io import AxonIO
 import numpy as np
 import scipy.io
 
-from config.paths import datapath2
+from config.paths import cinvesdata
 
 
 datafiles = [(['e130716f00-cntrl1', 'e130716f02-cntrl2', 'e130716f03-cntrl3'], 12, 10204.1),
@@ -42,7 +42,7 @@ datafiles = [(['e130716f00-cntrl1', 'e130716f02-cntrl2', 'e130716f03-cntrl3'], 1
 for dataf, nsig, _ in datafiles:
     for files in dataf:
         print 'Reading: ', files, '...'
-        data = AxonIO(datapath2 + files + '.abf')
+        data = AxonIO(cinvesdata + files + '.abf')
 
         bl = data.read_block(lazy=False, cascade=True)
 
@@ -61,5 +61,5 @@ for dataf, nsig, _ in datafiles:
 
         peakdata = {'data': matrix}
         print 'Saving: ', files, '...'
-        scipy.io.savemat(datapath2 + files + '.mat', peakdata, do_compression=True)
+        scipy.io.savemat(cinvesdata + files + '.mat', peakdata, do_compression=True)
 
