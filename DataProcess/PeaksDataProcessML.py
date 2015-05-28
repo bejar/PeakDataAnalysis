@@ -36,6 +36,8 @@ print a
 
 datasufix = ''#'-RawResampled'
 
+wtime = '120e-3' # Window length in miliseconds
+
 for expname in lexperiments:
     datainfo = experiments[expname]
     sampling = datainfo.sampling #/ 6.0
@@ -46,7 +48,7 @@ for expname in lexperiments:
         print 'Processing ', file
         print 'IN= ', nfile
         print 'OUT= ', nfiler
-        a = mlab.run_code('cdp_identification(\'' + nfile + '\', \'' + nfiler + '\', 120e-3,' + str(sampling) + ')')
+        a = mlab.run_code('cdp_identification(\'' + nfile + '\', \'' + nfiler + '\', '+ wtime +',' + str(sampling) + ')')
         print a
         print '************************************************'
 

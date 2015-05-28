@@ -28,21 +28,17 @@ import numpy as np
 from config.experiments import experiments
 from util.plots import show_signal
 
-# Components for reconstructing the peaks
-components = 10
 
-# Points to compute the baseline (40 initial, 40 final)
-lind = range(40)
-#lind.extend(range(130, 170))
+def compute_pca_basal_transformation(expname, components=10, baseline=40):
+    """
+    Transforms the data reconstructing the peaks using some components of the PCA
+    and uses the mean of the baseline points to move the peak
 
-lexperiments = ['e130716', 'e130827', 'e130903', 'e141113', 'e141029', 'e141016', 'e140911', 'e140311', 'e140225',
-                'e140220']
-
-# Good experiments
-lexperiments = ['e130827',  'e141016', 'e140911', 'e140225', 'e140220']
-
-#lexperiments = ['e130827']
-for expname in lexperiments:
+    :param components: Components selected from the PCA
+    :param baseline: Points to use to move the peak
+    :return:
+    """
+    lind = range(40)
     datainfo = experiments[expname]
 
     f = h5py.File(datainfo.dpath + datainfo.name + '.hdf5', 'r+')
@@ -75,3 +71,15 @@ for expname in lexperiments:
                               data=trans, compression='gzip')
             d[()] = trans
 
+
+# ---------------------------------------------------------------------------------------------------------------
+
+lexperiments = ['e130716', 'e130827', 'e130903', 'e141113', 'e141029', 'e141016', 'e140911', 'e140311', 'e140225',
+                'e140220']
+
+# Good experiments
+lexperiments = ['e130827',  'e141016', 'e140911', 'e140225', 'e140220']
+
+#lexperiments = ['e130827']
+for expname in lexperiments:
+    compute_pca_basal_transformation(expname)
