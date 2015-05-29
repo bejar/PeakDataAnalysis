@@ -34,13 +34,10 @@ from sklearn.metrics import mean_squared_error
 import util.TotalVariation as tv
 
 lexperiments = ['e130827',  'e141016', 'e140911', 'e140225', 'e140220']
-
+lexperiments = ['e130716']
 expname = lexperiments[0]
 
 datainfo = experiments[expname]
-wsize = 250
-wselect = 170
-wdisc = int((wsize - wselect)/2.0)
 
 f = h5py.File(datainfo.dpath + datainfo.name + '.hdf5', 'r+')
 
@@ -48,31 +45,17 @@ for s, nclusters in zip(datainfo.sensors, datainfo.clusters):
     print s
     ldatap = []
     ldatappca = []
-    ldatares = []
     for dfiles in datainfo.datafiles:
         d = f[dfiles + '/' + s + '/' + 'Peaks']
         dataf = d[()]
         ldatap.append(dataf)
-        d = f[dfiles + '/' + s + '/' + 'PeaksResamplePCA']
+        d = f[dfiles + '/' + s + '/' + 'PeaksTVD']
         dataf = d[()]
         ldatappca.append(dataf)
-        d = f[dfiles + '/' + s + '/' + 'PeaksResample']
-        dataf = d[()]
-        ldatares.append(dataf)
 
     data = ldatap[0] #np.concatenate(ldata)
-    datares = ldatares[0] #np.concatenate(ldata)
     datapca = ldatappca[0] #np.concatenate(ldata)
 
     for i in range(data.shape[0]):
-
-        x = data[i].reshape((data[i].shape[0]),1)
-        lmax = tv.tvdiplmax(x)
-        lratio = np.array([2e-2])
-        y, E, status, l_max = tv.tvdip(x, lmax*lratio, False, 1e-5)
-        show_two_signals(data[i], y)
-        presamp = resample(y, wsize, window=wsize*2)
-
-        show_two_signals(datares[i], presamp[wdisc:wsize-wdisc])
-        show_two_signals(datares[i], datapca[i])
+        show_two_signals(data[i], datapca[i])
 

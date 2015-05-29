@@ -28,8 +28,7 @@ import numpy as np
 from config.experiments import experiments
 from util.plots import show_signal
 
-
-def compute_pca_basal_transformation(expname, components=10, baseline=40):
+def compute_pca_basal_transformation(expname, components=10, baseline=40, TVD=False):
     """
     Transforms the data reconstructing the peaks using some components of the PCA
     and uses the mean of the baseline points to move the peak
@@ -38,14 +37,20 @@ def compute_pca_basal_transformation(expname, components=10, baseline=40):
     :param baseline: Points to use to move the peak
     :return:
     """
-    lind = range(40)
+
+    if TVD:
+        alt = ''
+    else:
+        alt = 'TVD'
+
+    lind = range(baseline)
     datainfo = experiments[expname]
 
     f = h5py.File(datainfo.dpath + datainfo.name + '.hdf5', 'r+')
 
     for dfile in datainfo.datafiles:
         for s in datainfo.sensors:
-            d = f[dfile + '/' + s + '/' + 'PeaksResample']
+            d = f[dfile + '/' + s + '/' + 'PeaksResample' + alt]
             data = d[()]
             # Substract the basal
             # for row in range(data.shape[0]):
@@ -66,8 +71,8 @@ def compute_pca_basal_transformation(expname, components=10, baseline=40):
 
 
             # show_signal(trans[0, :])
-            print dfile + '/' + s + '/' +'PeaksResamplePCA'
-            d = f.require_dataset(dfile + '/' + s + '/' +'PeaksResamplePCA', trans.shape, dtype='f',
+            print dfile + '/' + s + '/' +'PeaksResamplePCA'+alt
+            d = f.require_dataset(dfile + '/' + s + '/' +'PeaksResamplePCA'+alt, trans.shape, dtype='f',
                               data=trans, compression='gzip')
             d[()] = trans
 
