@@ -53,7 +53,7 @@ def total_variation_denoising(expname, lratio=np.array([2e-2])):
             for i in range(data.shape[0]):
                 x = data[i].reshape((data[i].shape[0]), 1)
                 lmax = tv.tvdiplmax(x)
-                y, _, _, _ = tv.tvdip(x, lmax*lratio, False, 1e-5)
+                y, _, _, _ = tv.tvdip(x, lmax*lratio, False, 1e-3)
                 datares[i] = y[:, 0]
 
             d = f.require_dataset(dfile + '/' + s + '/' + 'PeaksTVD', datares.shape, dtype='f',

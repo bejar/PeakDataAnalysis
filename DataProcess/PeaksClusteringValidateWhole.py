@@ -39,7 +39,7 @@ itime = int(time.time())
 lexperiments = ['e130827',  'e141016', 'e140911', 'e140225','e140220']
 
 
-expname = 'e141016'
+expname = 'e130827'
 niter = 30
 datainfo = experiments[expname]
 fname = datainfo.dpath+'/Results/' + datainfo.name + '-val-whole-%d.txt'%itime
