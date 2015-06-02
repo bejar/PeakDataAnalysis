@@ -137,8 +137,8 @@ def show_two_signals(signal1, signal2):
     sp1 = fig.add_subplot(111)
     sp1.axis([0, num, minaxis, maxaxis])
     t = arange(0.0, num, 1)
-    sp1.plot(t, signal1)
-    sp1.plot(t, signal2)
+    sp1.plot(t, signal1, 'r')
+    sp1.plot(t, signal2, 'b')
     plt.show()
 
 

@@ -26,7 +26,7 @@ from config.experiments import experiments, lexperiments
 
 
 # lexperiments = ['e130716', 'e130827', 'e130903', 'e141113', 'e141029', 'e141016', 'e140911', 'e140311', 'e140225', 'e140220']
-lexperiments = ['e130827']
+lexperiments = ['e140225', 'e140220', 'e141016', 'e140911']
 
 mlab = Matlab(executable='/home/bejar/bin/MATLAB/R2014b/bin/matlab')
 
@@ -48,7 +48,7 @@ for expname in lexperiments:
         print 'Processing ', file
         print 'IN= ', nfile
         print 'OUT= ', nfiler
-        a = mlab.run_code('cdp_identification(\'' + nfile + '\', \'' + nfiler + '\', '+ wtime +',' + str(sampling) + ')')
+        a = mlab.run_code('cdp_identification(\'' + nfile + '\', \'' + nfiler + '\', '+ wtime + ',' + str(sampling) + ')')
         print a
         print '************************************************'
 

@@ -73,7 +73,7 @@ def resample_data(expname, wtsel, resampfac, TVD=False):
             d = f.require_dataset(dfile + '/' + s + '/' +'PeaksResample' + alt, (presamp.shape[0], wtlen_new), dtype='f',
                                   data=presamp[:, wtdisc:wtlen-wtdisc], compression='gzip')
             d[()] = presamp[:, wtdisc:wtlen-wtdisc]
-            f[dfile + '/' + s + '/PeaksResample' + alt].attrs['Resampling'] = wtsel
+            f[dfile + '/' + s + '/PeaksResample' + alt].attrs['ReSampFactor'] = resampfac
 
     f.close()
 

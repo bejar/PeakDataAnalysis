@@ -64,7 +64,7 @@ def save_data(expname):
 lexperiments = ['e130716', 'e130827', 'e130903', 'e141113', 'e141029', 'e141016', 'e140911', 'e140311', 'e140225', 'e140220']
 #lexperiments = ['e130827']  # ['e141113', 'e141029', 'e141016', 'e140911', 'e140311', 'e140225', 'e140220']
 
-lexperiments = ['e130716']
+lexperiments = ['e140225', 'e140220', 'e141016', 'e140911']
 
 for exp in lexperiments:
     save_data(exp)

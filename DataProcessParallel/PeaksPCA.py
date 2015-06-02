@@ -48,6 +48,9 @@ def do_the_job(dfile, sensor, components, lind, alt):
 
     pca = PCA(n_components=data.shape[1])
     res = pca.fit_transform(data)
+
+    print 'VEX=', np.sum(pca.explained_variance_ratio_[0:components])
+
     res[:, components:] = 0
     trans = pca.inverse_transform(res)
 
@@ -68,9 +71,10 @@ if __name__ == '__main__':
     # Good experiments
     lexperiments = ['e130827',  'e141016', 'e140911', 'e140225', 'e140220']
 
-    lexperiments = ['e130716']
+    #lexperiments = ['e140225', 'e140220', 'e141016', 'e140911']
 
-    TVD = False
+
+    TVD = True
     baseline = 40
     components = 10
     for expname in lexperiments:
@@ -92,7 +96,8 @@ if __name__ == '__main__':
             f = h5py.File(datainfo.dpath + datainfo.name + '.hdf5', 'r+')
             for trans, sensor in zip(res, datainfo.sensors):
                 print dfile + '/' + sensor + '/' + 'PeaksResamplePCA' + alt
-                d = f.require_dataset(dfile + '/' + sensor + '/' + 'PeaksResamplePCA' + alt, trans.shape, dtype='f', data=trans, compression='gzip')
+                d = f.require_dataset(dfile + '/' + sensor + '/' + 'PeaksResamplePCA' + alt, trans.shape, dtype='f',
+                                      data=trans, compression='gzip')
                 d[()] = trans
 
             f.close()

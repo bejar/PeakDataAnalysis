@@ -32,16 +32,18 @@ from config.experiments import experiments
 from util.plots import show_signal, plotSignals
 from collections import Counter
 import logging
+import time
 
+itime = int(time.time())
 
 lexperiments = ['e130827',  'e141016', 'e140911', 'e140225','e140220']
 
 
-expname = 'e140911'
+expname = 'e141016'
 niter = 30
 datainfo = experiments[expname]
-
-logging.basicConfig(filename=datainfo.dpath+'/Results/' + datainfo.name + '-val-whole.txt', filemode='w',
+fname = datainfo.dpath+'/Results/' + datainfo.name + '-val-whole-%d.txt'%itime
+logging.basicConfig(filename=fname, filemode='w',
                     level=logging.INFO, format='%(message)s', datefmt='%m/%d/%Y %I:%M:%S')
 
 console = logging.StreamHandler()
@@ -73,7 +75,7 @@ for s in datainfo.sensors:
             k_means = KMeans(init='k-means++', n_clusters=nc, n_init=10, n_jobs=-1)
             k_means.fit(data)
             lclasif.append(k_means.labels_.copy())
-            print '.',
+            #print '.',
         vnmi = []
         for i in range(niter):
             for j in range(i+1, niter):

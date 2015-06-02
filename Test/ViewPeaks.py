@@ -34,7 +34,7 @@ from sklearn.metrics import mean_squared_error
 import util.TotalVariation as tv
 
 lexperiments = ['e130827',  'e141016', 'e140911', 'e140225', 'e140220']
-lexperiments = ['e130716']
+lexperiments = ['e130827']
 expname = lexperiments[0]
 
 datainfo = experiments[expname]
@@ -46,10 +46,10 @@ for s, nclusters in zip(datainfo.sensors, datainfo.clusters):
     ldatap = []
     ldatappca = []
     for dfiles in datainfo.datafiles:
-        d = f[dfiles + '/' + s + '/' + 'Peaks']
+        d = f[dfiles + '/' + s + '/' + 'PeaksResample']
         dataf = d[()]
         ldatap.append(dataf)
-        d = f[dfiles + '/' + s + '/' + 'PeaksTVD']
+        d = f[dfiles + '/' + s + '/' + 'PeaksResampleTVD']
         dataf = d[()]
         ldatappca.append(dataf)
 
