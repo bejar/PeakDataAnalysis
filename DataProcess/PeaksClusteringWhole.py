@@ -40,18 +40,19 @@ lexperiments = ['e130827',  'e141016', 'e140911', 'e140225', 'e140220']
 lexperiments = ['e130827']
 
 colors = 'rgbymc'
+ext = '-TVD'
 
 #expname = lexperiments[3]
 for expname in lexperiments:
     datainfo = experiments[expname]
 
-    f = h5py.File(datainfo.dpath + datainfo.name + '.hdf5', 'r+')
+    f = h5py.File(datainfo.dpath + datainfo.name + ext + '.hdf5', 'r+')
 
     for s, nclusters in zip(datainfo.sensors, datainfo.clusters):
         print s
         ldata = []
         for dfiles in datainfo.datafiles:
-            d = f[dfiles + '/' + s + '/' + 'PeaksResamplePCATVD']
+            d = f[dfiles + '/' + s + '/' + 'PeaksResamplePCA']
             dataf = d[()]
             ldata.append(dataf)
 
@@ -62,7 +63,7 @@ for expname in lexperiments:
         lsignals = []
         cnt = Counter(list(km.labels_))
 
-        #print cnt
+        print data.shape
 
         lhisto = []
         for dataf, ndata in zip(ldata, datainfo.datafiles):
@@ -90,8 +91,8 @@ for expname in lexperiments:
         ax.set_xticklabels( ind )
         for i, h in enumerate(lhisto):
             rects = ax.bar(ind+(i*width), h, width, color=colors[i])
-        fig.suptitle(datainfo.name + '-' + s, fontsize=48)
-        fig.savefig(datainfo.dpath+'/Results/' + datainfo.name + '-' + s + '-histo.pdf', orientation='landscape', format='pdf')
+        fig.suptitle(datainfo.name + '-' + s + ext, fontsize=48)
+        fig.savefig(datainfo.dpath+'/Results/' + datainfo.name + '-' + s + ext + '-histo.pdf', orientation='landscape', format='pdf')
     #    plt.show()
 
 
@@ -105,8 +106,8 @@ for expname in lexperiments:
             part = nclusters /2
         else:
             part = (nclusters /2) + 1
-        plotSignals(lsignals,part,2,np.max(km.cluster_centers_),np.min(km.cluster_centers_), datainfo.name + '-' + s,
-                    datainfo.name + '-' + s, datainfo.dpath+'/Results/')
+        plotSignals(lsignals,part,2,np.max(km.cluster_centers_),np.min(km.cluster_centers_), datainfo.name + '-' + s + ext,
+                    datainfo.name + '-' + s + ext, datainfo.dpath+'/Results/')
         # for cc in range(nclusters):
         #     show_signal(km.cluster_centers_[cc])
 

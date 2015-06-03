@@ -29,7 +29,7 @@ from config.experiments import experiments
 from util.plots import show_signal
 from joblib import Parallel, delayed
 
-def do_the_job(dfile, sensor, components, lind, alt):
+def do_the_job(dfile, sensor, components, lind, alt, ext=''):
     """
     Transforms the data reconstructing the peaks using some components of the PCA
     and uses the mean of the baseline points to move the peak
@@ -41,7 +41,8 @@ def do_the_job(dfile, sensor, components, lind, alt):
     :param lind: Points to use to move the peak
     :return:
     """
-    f = h5py.File(datainfo.dpath + datainfo.name + '.hdf5', 'r')
+    print datainfo.dpath + datainfo.name + ext + '.hdf5'
+    f = h5py.File(datainfo.dpath + datainfo.name + ext + '.hdf5', 'r')
 
     d = f[dfile + '/' + sensor + '/' + 'PeaksResample' + alt]
     data = d[()]
@@ -72,11 +73,12 @@ if __name__ == '__main__':
     lexperiments = ['e130827',  'e141016', 'e140911', 'e140225', 'e140220']
 
     #lexperiments = ['e140225', 'e140220', 'e141016', 'e140911']
+    lexperiments = ['e130827']
 
-
-    TVD = True
+    TVD = False
     baseline = 40
     components = 10
+    ext = '-TVD'
     for expname in lexperiments:
         if TVD:
             alt = 'TVD'
@@ -90,10 +92,10 @@ if __name__ == '__main__':
         for dfile in datainfo.datafiles:
             print dfile
             # Paralelize PCA computation
-            res = Parallel(n_jobs=-1)(delayed(do_the_job)(dfile, s, components, lind, alt) for s in datainfo.sensors)
+            res = Parallel(n_jobs=-1)(delayed(do_the_job)(dfile, s, components, lind, alt, ext) for s in datainfo.sensors)
             print 'Parallelism ended'
             # Save all the data
-            f = h5py.File(datainfo.dpath + datainfo.name + '.hdf5', 'r+')
+            f = h5py.File(datainfo.dpath + datainfo.name + ext + '.hdf5', 'r+')
             for trans, sensor in zip(res, datainfo.sensors):
                 print dfile + '/' + sensor + '/' + 'PeaksResamplePCA' + alt
                 d = f.require_dataset(dfile + '/' + sensor + '/' + 'PeaksResamplePCA' + alt, trans.shape, dtype='f',

@@ -39,28 +39,15 @@ expname = lexperiments[0]
 
 datainfo = experiments[expname]
 
-f = h5py.File(datainfo.dpath + datainfo.name + '-TVD.hdf5', 'r+')
+f = h5py.File(datainfo.dpath + datainfo.name + '-TVD.hdf5', 'r')
 
 for s, nclusters in zip(datainfo.sensors, datainfo.clusters):
-    print s
-    ldatap = []
-    ldatappca = []
-    ldataraw = []
+
     for dfiles in datainfo.datafiles:
-        d = f[dfiles + '/' + s + '/' + 'Peaks']
-        dataf = d[()]
-        ldataraw.append(dataf)
-        d = f[dfiles + '/' + s + '/' + 'PeaksResample']
-        dataf = d[()]
-        ldatap.append(dataf)
         d = f[dfiles + '/' + s + '/' + 'PeaksResamplePCA']
         dataf = d[()]
-        ldatappca.append(dataf)
 
-    data = ldatap[0] #np.concatenate(ldata)
-    datapca = ldatappca[0] #np.concatenate(ldata)
-    dataraw= ldataraw[0] #np.concatenate(ldata)
+        print dataf.shape
+        for i in range(dataf.shape[0]):
+            show_signal(dataf[i])
 
-    for i in range(data.shape[0]):
-        show_two_signals( datapca[i], data[i])
-        show_signal(dataraw[i])

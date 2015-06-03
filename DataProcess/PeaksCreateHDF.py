@@ -28,15 +28,15 @@ from config.experiments import experiments, lexperiments
 from util.plots import show_two_signals
 
 
-def save_data(expname):
+def save_data(expname, ext=""):
 
     datainfo = experiments[expname]
-    print datainfo.dpath + datainfo.name + '.hdf5'
+    print datainfo.dpath + datainfo.name + ext + '.hdf5'
 
-    f = h5py.File(datainfo.dpath + datainfo.name + '.hdf5', 'w')
+    f = h5py.File(datainfo.dpath + datainfo.name + ext + '.hdf5', 'w')
 
     for dfiles in datainfo.datafiles:
-        mattime = scipy.io.loadmat(datainfo.dpath + dfiles + '-peaks.mat')
+        mattime = scipy.io.loadmat(datainfo.dpath + dfiles + ext + '-peaks.mat')
 
         times = mattime['ipeakM']
         peaks = mattime['PeakM']
@@ -64,7 +64,8 @@ def save_data(expname):
 lexperiments = ['e130716', 'e130827', 'e130903', 'e141113', 'e141029', 'e141016', 'e140911', 'e140311', 'e140225', 'e140220']
 #lexperiments = ['e130827']  # ['e141113', 'e141029', 'e141016', 'e140911', 'e140311', 'e140225', 'e140220']
 
-lexperiments = ['e140225', 'e140220', 'e141016', 'e140911']
+#lexperiments = ['e130827', 'e140225', 'e140220', 'e141016', 'e140911']
+lexperiments = ['e130827']
 
 for exp in lexperiments:
-    save_data(exp)
+    save_data(exp, ext='-TVD')

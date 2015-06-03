@@ -25,7 +25,6 @@ import scipy.io
 
 from config.paths import cinvesdata
 
-
 datafiles = [(['e130716f00-cntrl1', 'e130716f02-cntrl2', 'e130716f03-cntrl3'], 12, 10204.1),
              (['e130827f23-cntrl1', 'e130827f26-cntrl2', 'e130827f37-cntrl3'], 11, 10256.4),
              (['e130903f20-cntrl1', 'e130903f22-cntrl2', 'e130903f25-cntrl3'], 11, 10256.4),
@@ -39,6 +38,14 @@ datafiles = [(['e130716f00-cntrl1', 'e130716f02-cntrl2', 'e130716f03-cntrl3'], 1
              (['e140220f8-ctrl1', 'e140220f10-ctrl2', 'e140220f12-ctrl3'], 12, 10416.7),
              ]
 
+datafiles = [(['15514005', '15514006', '15514007',
+               '15514008', '15514009', '15514010', '15514011', '15514012', '15514013', '15514014', '15514015', '15514016',
+               '15514017', '15514018', '15514019', '15514020', '15514021', '15514022', '15514023', '15514024', '15514025', '15514026', '15514027'],
+              12, 10000.0)]
+
+datafiles = [(['15514027'],
+              12, 10000.0)]
+
 for dataf, nsig, _ in datafiles:
     for files in dataf:
         print 'Reading: ', files, '...'
@@ -48,6 +55,7 @@ for dataf, nsig, _ in datafiles:
 
         dim = bl.segments[0].analogsignals[0].shape[0]
 
+        print dim
         matrix = np.zeros((dim, nsig))
         # for sig in bl.segments[0].analogsignals:
         # i += 1
@@ -56,6 +64,8 @@ for dataf, nsig, _ in datafiles:
 
 
         for i in range(dim):
+            if i % 100000 == 0:
+                print i
             for j in range(nsig):
                 matrix[i][j] = bl.segments[0].analogsignals[j][i].magnitude
 

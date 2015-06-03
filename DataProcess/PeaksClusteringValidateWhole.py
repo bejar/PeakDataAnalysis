@@ -40,9 +40,11 @@ lexperiments = ['e130827',  'e141016', 'e140911', 'e140225','e140220']
 
 
 expname = 'e130827'
+ext = '-TVD'
+
 niter = 30
 datainfo = experiments[expname]
-fname = datainfo.dpath+'/Results/' + datainfo.name + '-val-whole-%d.txt'%itime
+fname = datainfo.dpath+'/Results/' + datainfo.name + ext + '-val-whole-%d.txt'%itime
 logging.basicConfig(filename=fname, filemode='w',
                     level=logging.INFO, format='%(message)s', datefmt='%m/%d/%Y %I:%M:%S')
 
@@ -55,7 +57,8 @@ console.setFormatter(formatter)
 # add the handler to the root logger
 logging.getLogger('').addHandler(console)
 
-f = h5py.File(datainfo.dpath + datainfo.name + '.hdf5', 'r+')
+
+f = h5py.File(datainfo.dpath + datainfo.name + ext + '.hdf5', 'r+')
 
 logging.info('****************************')
 for s in datainfo.sensors:

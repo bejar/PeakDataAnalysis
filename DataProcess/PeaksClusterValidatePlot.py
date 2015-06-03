@@ -64,7 +64,7 @@ def plot_cluster_validation(exp):
 # --------------------------------------
 lexperiments = ['e130716', 'e130827', 'e130903', 'e141113', 'e141029', 'e141016', 'e140911', 'e140311', 'e140225', 'e140220']
 #lexperiments = ['e130827']  # ['e141113', 'e141029', 'e141016', 'e140911', 'e140311', 'e140225', 'e140220']
-lexperiments = ['e141016', 'e140911', 'e140220']
+lexperiments = ['e141016', 'e140911', 'e140220', 'e130827', 'e140225']
 
 for exp in lexperiments:
     plot_cluster_validation(exp)

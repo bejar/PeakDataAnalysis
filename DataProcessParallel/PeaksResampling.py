@@ -30,7 +30,7 @@ from util.plots import show_two_signals
 from joblib import Parallel, delayed
 
 
-def do_the_job(dfile, sensor, wtsel, resampfac, alt):
+def do_the_job(dfile, sensor, wtsel, resampfac, alt, ext=""):
     """
     Applies a resampling of the data using Raw peaks or TVD peaks
     The time window selected has to be larger than the length of the raw peaks
@@ -42,8 +42,8 @@ def do_the_job(dfile, sensor, wtsel, resampfac, alt):
     :return:
     """
 
-
-    f = h5py.File(datainfo.dpath + datainfo.name + '.hdf5', 'r')
+    print datainfo.dpath + datainfo.name + ext + '.hdf5'
+    f = h5py.File(datainfo.dpath + datainfo.name + ext + '.hdf5', 'r')
 
     # Sampling of the dataset in Hz / resampling factor
     resampling = f[dfile + '/Raw'].attrs['Sampling'] / resampfac
@@ -69,8 +69,10 @@ if __name__ == '__main__':
     lexperiments = ['e130716', 'e130827', 'e130903', 'e141113', 'e141029', 'e141016', 'e140911', 'e140311', 'e140225', 'e140220']
     #lexperiments = ['e130827']  # ['e141113', 'e141029', 'e141016', 'e140911', 'e140311', 'e140225', 'e140220']
     lexperiments = [ 'e130827', 'e140225', 'e140220', 'e141016', 'e140911']
+    lexperiments = [ 'e130827']
 
-    TVD = True
+    ext = '-TVD'
+    TVD = False
     if TVD:
         alt = 'TVD'
     else:
@@ -86,10 +88,10 @@ if __name__ == '__main__':
         for dfile in datainfo.datafiles:
             print dfile
             # Paralelize PCA computation
-            res = Parallel(n_jobs=-1)(delayed(do_the_job)(dfile, s, wtsel, resampfactor, alt) for s in datainfo.sensors)
+            res = Parallel(n_jobs=-1)(delayed(do_the_job)(dfile, s, wtsel, resampfactor, alt, ext) for s in datainfo.sensors)
             print 'Parallelism ended'
 
-            f = h5py.File(datainfo.dpath + datainfo.name + '.hdf5', 'r+')
+            f = h5py.File(datainfo.dpath + datainfo.name + ext + '.hdf5', 'r+')
             for presamp, sensor in zip(res, datainfo.sensors):
                 print dfile + '/' + sensor + '/' + 'PeaksResample' + alt
                 d = f.require_dataset(dfile + '/' + sensor + '/' + 'PeaksResample' + alt, presamp.shape, dtype='f',
