@@ -41,7 +41,7 @@ def do_the_job(dfile, sensor, components, lind, alt, ext=''):
     :param lind: Points to use to move the peak
     :return:
     """
-    print datainfo.dpath + datainfo.name + ext + '.hdf5'
+    print datainfo.dpath + datainfo.name + ext + '.hdf5', sensor
     f = h5py.File(datainfo.dpath + datainfo.name + ext + '.hdf5', 'r')
 
     d = f[dfile + '/' + sensor + '/' + 'PeaksResample' + alt]
@@ -73,12 +73,12 @@ if __name__ == '__main__':
     lexperiments = ['e130827',  'e141016', 'e140911', 'e140225', 'e140220']
 
     #lexperiments = ['e140225', 'e140220', 'e141016', 'e140911']
-    lexperiments = ['e130827']
+    lexperiments = ['e140515b']
 
     TVD = False
     baseline = 40
     components = 10
-    ext = '-TVD'
+    ext = ''
     for expname in lexperiments:
         if TVD:
             alt = 'TVD'

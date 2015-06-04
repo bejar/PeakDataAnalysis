@@ -42,7 +42,7 @@ def do_the_job(dfile, sensor, wtsel, resampfac, alt, ext=""):
     :return:
     """
 
-    print datainfo.dpath + datainfo.name + ext + '.hdf5'
+    print datainfo.dpath + datainfo.name + ext + '.hdf5', sensor
     f = h5py.File(datainfo.dpath + datainfo.name + ext + '.hdf5', 'r')
 
     # Sampling of the dataset in Hz / resampling factor
@@ -69,9 +69,9 @@ if __name__ == '__main__':
     lexperiments = ['e130716', 'e130827', 'e130903', 'e141113', 'e141029', 'e141016', 'e140911', 'e140311', 'e140225', 'e140220']
     #lexperiments = ['e130827']  # ['e141113', 'e141029', 'e141016', 'e140911', 'e140311', 'e140225', 'e140220']
     lexperiments = [ 'e130827', 'e140225', 'e140220', 'e141016', 'e140911']
-    lexperiments = [ 'e130827']
+    lexperiments = [ 'e140515b']
 
-    ext = '-TVD'
+    ext = ''
     TVD = False
     if TVD:
         alt = 'TVD'

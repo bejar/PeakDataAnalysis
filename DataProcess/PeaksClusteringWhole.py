@@ -37,10 +37,10 @@ lexperiments = ['e130716', 'e130827', 'e130903', 'e141113', 'e141029', 'e141016'
 # Good experiments
 lexperiments = ['e130827',  'e141016', 'e140911', 'e140225', 'e140220']
 
-lexperiments = ['e130827']
+lexperiments = ['e140515b']
 
-colors = 'rgbymc'
-ext = '-TVD'
+colors = 'rgbymbcyrgbmcb'
+ext = ''
 
 #expname = lexperiments[3]
 for expname in lexperiments:
@@ -86,7 +86,7 @@ for expname in lexperiments:
         fig.set_figheight(40)
 
         ind = np.arange(nclusters)  # the x locations for the groups
-        width = 0.15       # the width of the bars
+        width = 0.20       # the width of the bars
         ax.set_xticks(ind+width)
         ax.set_xticklabels( ind )
         for i, h in enumerate(lhisto):

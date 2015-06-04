@@ -54,32 +54,32 @@ f = h5py.File(datainfo.dpath + datainfo.name + '.hdf5', 'r+')
 
 logging.info('****************************')
 for s in datainfo.sensors:
-    for dfiles in datainfo.datafiles:
-        logging.info('*****%s ******', dfiles)
-        d = f[dfiles + '/' + s + '/' + 'PeaksResamplePCA']
-        data = d[()]
-        best = 0
-        ncbest = 0
-        logging.info('S= %s' %s)
-        for nc in range(4, 15):
-            lclasif = []
-            for i in range(niter):
-                k_means = KMeans(init='k-means++', n_clusters=nc, n_init=10, n_jobs=-1)
-                k_means.fit(data)
-                lclasif.append(k_means.labels_.copy())
-                print '.',
-            vnmi = []
-            for i in range(niter):
-                for j in range(i+1, niter):
-                    nmi=metrics.adjusted_mutual_info_score(lclasif[i], lclasif[j])
-                    vnmi.append(nmi)
-            mn = mean(vnmi)
-            if best < mn:
-                best = mn
-                ncbest = nc
-            #print nc, mn
-            logging.info('%d  %f' % (nc, mn))
+    dfiles = datainfo.datafiles[0]
+    logging.info('*****%s ******', dfiles)
+    d = f[dfiles + '/' + s + '/' + 'PeaksResamplePCA']
+    data = d[()]
+    best = 0
+    ncbest = 0
+    logging.info('S= %s' %s)
+    for nc in range(4, 15):
+        lclasif = []
+        for i in range(niter):
+            k_means = KMeans(init='k-means++', n_clusters=nc, n_init=10, n_jobs=-1)
+            k_means.fit(data)
+            lclasif.append(k_means.labels_.copy())
+            print '.',
+        vnmi = []
+        for i in range(niter):
+            for j in range(i+1, niter):
+                nmi=metrics.adjusted_mutual_info_score(lclasif[i], lclasif[j])
+                vnmi.append(nmi)
+        mn = mean(vnmi)
+        if best < mn:
+            best = mn
+            ncbest = nc
+        #print nc, mn
+        logging.info('%d  %f' % (nc, mn))
 
-        logging.info('S= %s NC= %d' % (s, ncbest))
-        logging.info('****************************')
-    logging.info('++++++++++++++++++++++++++++')
+    logging.info('S= %s NC= %d' % (s, ncbest))
+    logging.info('****************************')
+logging.info('++++++++++++++++++++++++++++')

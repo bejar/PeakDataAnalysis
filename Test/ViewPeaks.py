@@ -34,14 +34,14 @@ from sklearn.metrics import mean_squared_error
 import util.TotalVariation as tv
 
 lexperiments = ['e130827',  'e141016', 'e140911', 'e140225', 'e140220']
-lexperiments = ['e130827']
+lexperiments = ['e140515b']
 expname = lexperiments[0]
 
 datainfo = experiments[expname]
 
-f = h5py.File(datainfo.dpath + datainfo.name + '-TVD.hdf5', 'r+')
+f = h5py.File(datainfo.dpath + datainfo.name + '.hdf5', 'r')
 
-for s, nclusters in zip(datainfo.sensors, datainfo.clusters):
+for s in datainfo.sensors:
     print s
     ldatap = []
     ldatappca = []
