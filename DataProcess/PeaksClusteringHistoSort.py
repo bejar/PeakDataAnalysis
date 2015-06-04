@@ -30,6 +30,7 @@ from config.experiments import experiments
 from collections import Counter
 import matplotlib.pyplot as plt
 from sklearn.metrics import mean_squared_error
+from operator import itemgetter
 
 lexperiments = ['e130716', 'e130827', 'e130903', 'e141113', 'e141029', 'e141016', 'e140911', 'e140311', 'e140225',
                 'e140220']
@@ -63,6 +64,12 @@ for expname in lexperiments:
         lsignals = []
         cnt = Counter(list(km.labels_))
 
+        lmax = []
+        for i in range(km.n_clusters):
+            lmax.append((i,np.max(km.cluster_centers_[i])))
+        lmax = sorted(lmax, key=itemgetter(1))
+
+        print lmax
         print data.shape
 
         lhisto = []
@@ -73,12 +80,15 @@ for expname in lexperiments:
             histo /= dataf.shape[0]
             print datainfo.name, ndata
             print histo
-            lhisto.append(histo)
+            histosorted = np.zeros(nclusters)
+            for i in range(histosorted.shape[0]):
+                histosorted[i] = histo[lmax[i][0]]
+            lhisto.append(histosorted)
 
-        for h in lhisto[1:]:
-            rms = np.dot(lhisto[0] - h,  lhisto[0] - h)
-            rms /= h.shape[0]
-            print np.sqrt(rms), hellinger_distance(h, lhisto[0])
+        # for h in lhisto[1:]:
+        #     rms = np.dot(lhisto[0] - h,  lhisto[0] - h)
+        #     rms /= h.shape[0]
+        #     print np.sqrt(rms), hellinger_distance(h, lhisto[0])
 
 
         fig, ax = plt.subplots()
@@ -86,20 +96,20 @@ for expname in lexperiments:
         fig.set_figheight(40)
 
         ind = np.arange(nclusters)  # the x locations for the groups
-        width = 0.10       # the width of the bars
+        width = 0.05       # the width of the bars
         ax.set_xticks(ind+width)
         ax.set_xticklabels( ind )
         for i, h in enumerate(lhisto):
             rects = ax.bar(ind+(i*width), h, width, color=colors[i])
         fig.suptitle(datainfo.name + '-' + s + ext, fontsize=48)
-        fig.savefig(datainfo.dpath+'/Results/' + datainfo.name + '-' + s + ext + '-histo.pdf', orientation='landscape', format='pdf')
+        fig.savefig(datainfo.dpath+'/Results/' + datainfo.name + '-' + s + ext + '-histo-sort.pdf', orientation='landscape', format='pdf')
     #    plt.show()
 
 
 
         print '*******************'
         for nc in range(nclusters):
-            lsignals.append((km.cluster_centers_[nc], str(nc)+' ( '+str(cnt[nc])+' )'))
+            lsignals.append((km.cluster_centers_[lmax[nc][0]], str(nc)+' ( '+str(cnt[lmax[nc][0]])+' )'))
 
         #print s, np.max(km.cluster_centers_), np.min(km.cluster_centers_)
         if nclusters % 2 == 0:
