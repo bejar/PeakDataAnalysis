@@ -39,21 +39,7 @@ from sklearn.metrics import pairwise_distances_argmin_min
 
 
 
-def syncIcon(x, y, lines, coord, lv, scale, can):
-    scale = scale * 0.6
-    y = (y / 2.5) + 2
-    x = x + 5
 
-
-    # lcoor=[(i,j) for i in range(n) for j in range(m)]
-
-    for al, v in zip(aline, lv):
-        c = coord[al[0]]
-        p = path.rect(y + (c[0] * scale), x + (c[1] * scale), scale, scale)
-        if v:
-            can.stroke(p, [deco.filled([color.gray(0.5)])])
-        else:
-            can.stroke(p)
 
 
 
@@ -106,65 +92,9 @@ def compute_sequences(clpeaks, timepeaks, lines, nexp, remap):
 
 
 
-def generate_synchs(lines, exps, window=15):
-    """
-    Returns a diccionary for all the experiments of synchonized peaks and
-    another diccionary for all experiments of the counts of the peaks
-
-    :param lines:
-    :param exps:
-    :param window:
-    :return:
-    """
-
-    clpeaks = {}
-    timepeaks = {}
-    remap = {}
-
-    ## Computes the peaks remapping for all the lines
-    for line, clust, _ in aline:
-        matpeaks = scipy.io.loadmat(datapath + '/Selected/centers.' + line + '.' + clust + '.mat')
-        mattime = scipy.io.loadmat(datapath + '/WholeTime.' + line + '.mat')
-
-        clpeaks[line] = matpeaks['IDX']
-        timepeaks[line] = mattime['temps'][0]
-        remap[line] = compute_frequency_remap(timepeaks[line], clpeaks[line])
-
-    ## Synchronizations for the different experiments
-    dsynch = {}
-    peakcounts = {}
-
-    for nexp, exp in exps:
-        sequ = compute_sequences(clpeaks, timepeaks, lines, nexp, remap)
-        expcounts = {}
-        for i in range(len(sequ)):
-            expcounts[aline[i][0]] = len(sequ[i])
-        peakcounts[exp] = expcounts
-        syn = compute_synchs(sequ, window=window)
-        dsynch[exp] = syn
-
-    return dsynch, peakcounts
 
 
-def length_synch_frequency_histograms(nfiles, dsynchs, window):
-    """
-    Histograms of the frequencies of the lengths of the synchronizations
-    :param lsynch:
-    :return:
-    """
-    for _, line in nfiles:
-        print line
-        x = []
-        for pk in dsynchs[line]:
-            x.append(len(pk))
-
-        P.figure()
-        n, bins, patches = P.hist(x, max(x) - 1, normed=1, histtype='bar', fill=True)
-        P.title('%s-W%d' % (line, window), fontsize=48)
-        P.savefig(seqpath + '/histo-' + line + '-W' + str(window) + '.pdf', orientation='landscape', format='pdf')
-
-
-def gen_peaks_contingency(dfile, peakdata):
+def gen_peaks_contingency(dfile, peakdata, sensors):
     """
     Generates PDFs with the association frequencies of the peaks
 
@@ -174,7 +104,7 @@ def gen_peaks_contingency(dfile, peakdata):
         print nx
         pk = peakdata[nx]
 
-        dmatrix = gen_data_matrix(aline)
+        dmatrix = gen_data_matrix(sensors)
 
         for p in pk:
             # print p
@@ -188,24 +118,24 @@ def gen_peaks_contingency(dfile, peakdata):
                         # m[ej[1][0]][ei[1][0]] += 1
                         #
 
-        for ln in range(len(aline)):
+        for ln in range(len(sensors)):
             mt = dmatrix[ln]
             lplot = []
-            for i in range(len(aline)):
+            for i in range(len(sensors)):
                 if i != ln:
-                    lplot.append((normalize_matrix(mt[i]), aline[i][0]))
+                    lplot.append((normalize_matrix(mt[i]), sensors[i]))
 
-            plotMatrices(lplot, 4, 2, 'msynch-' + nx + '-' + aline[ln][0], aline[ln][0])
+            plotMatrices(lplot, 4, 2, 'msynch-' + nx + '-' + sensors[ln][0], sensors[ln])
 
 
-def lines_coincidence_matrix(peakdata):
+def lines_coincidence_matrix(peakdata, sensors):
     """
     Computes a contingency matrix of how many times two lines have been synchronized
 
     :param peakdata:
     :return:
     """
-    coinc = np.zeros((len(aline), len(aline)))
+    coinc = np.zeros((len(sensors), len(sensors)))
 
     for syn in peakdata:
         for i in syn:
@@ -216,56 +146,33 @@ def lines_coincidence_matrix(peakdata):
     return coinc
 
 
-# def correlation_exp(peakdata, expcounts, window):
-#     """
-#     Computes the mutual information of the lines
-#     :param peakdata:
-#     :param expcounts:
-#     :return:
-#     """
-#     for _, exp in nfiles:
-#         # print exp
-#         cmatrix = lines_coincidence_matrix(peakdata[exp])
-#         corrmatrix = np.zeros((len(aline), len(aline)))
-#         for i in range(len(aline)):
-#             indi = aline[i][0]
-#             for j in range(len(aline)):
-#                 indj = aline[j][0]
-#                 if i != j:
-#                     cab = cmatrix[i, j]
-#                     ca = expcounts[exp][indi]
-#                     cb = expcounts[exp][indj]
-#                     tot = (ca + cb - cab) * 1.0
-#                     corrmatrix[i, j] = cab / tot
-#                     #print 'E:', exp, 'L:', indi, indj, 'C:', int(cab), ca, cb, 'Psync:', (cab/tot) #*np.log2(cab/(ca*cb))
-#         corrmatrix[0, 0] = 1.0
-#         plotMatrix(corrmatrix, exp + '-W' + str(int(window * 0.6)) + 'ms', exp + '-W' + str(int(window * 0.6)) + 'ms',
-#                    [x for x in range(len(aline))], [x for x, _, _ in aline])
-#         #print '----'
+def correlation_exp(peakdata, exps, sensors, expcounts, window):
+    """
+    Computes the mutual information of the lines
+    :param peakdata:
+    :param expcounts:
+    :return:
+    """
+    for exp in exps:
+        # print exp
+        cmatrix = lines_coincidence_matrix(peakdata[exp])
+        corrmatrix = np.zeros((len(sensors), len(sensors)))
+        for i in range(len(sensors)):
+            for j in range(len(sensors)):
+                if i != j:
+                    cab = cmatrix[i, j]
+                    ca = expcounts[exp][i]
+                    cb = expcounts[exp][j]
+                    tot = (ca + cb - cab) * 1.0
+                    corrmatrix[i, j] = cab / tot
+        corrmatrix[0, 0] = 1.0
+        plotMatrix(corrmatrix, exp + '-W' + str(int(window * 0.1)) + 'ms', exp + '-W' + str(int(window * 0.1)) + 'ms',
+                   [x for x in range(len(sensors))], [x for x in sensors])
+        #print '----'
 
-
-# nfiles = [(0, 'ctrl1'), (1, 'ctrl2'), (2, 'capsa1'), (3, 'capsa2'), (4, 'capsa3'),
-#           (5, 'lido1'), (6, 'lido2'), (7, 'lido3'), (8, 'lido4'), (9, 'lido5'), (10, 'lido6')
-#           ]
-
-# nfiles = [(0, 'ctrl1')]
+# --------------------------------------------------------------------------------------------------------------------
 
 voc = ' ABCDEFGHIJKLMNOPQRSTUVWXYZ'
-
-aline = [
-    ('L4ci', 'k9.n1', 9),
-    ('L4cd', 'k9.n5', 9),
-    ('L5ri', 'k15.n9', 15),
-    ('L5rd', 'k20.n1', 20),  #<-
-    ('L5ci', 'k15.n1', 15),
-    ('L5cd', 'k10.n6', 10),
-    ('L6rd', 'k13.n9', 13),
-    ('L6ri', 'k18.n4', 18),
-    ('L6ci', 'k15.n1', 15),  #<-
-    ('L6cd', 'k17.n1', 17),
-    ('L7ri', 'k18.n4', 18),
-    ('L7rd', 'k18.n4', 18)
-]
 
 coormap = {'L4ci': (1, 1),
            'L4cd': (1, 2),
@@ -306,7 +213,28 @@ coormap = {'L4ci': (1, 1),
 ### Contingency PDFs
 #gen_peaks_contingency(peakdata)
 
-def draw_synchs(peakdata, exps, window):
+
+
+def length_synch_frequency_histograms( dsynchs, exps, window):
+    """
+    Histograms of the frequencies of the lengths of the synchronizations
+    :param lsynch:
+    :return:
+    """
+    for line in exps:
+        print line
+        x = []
+        for pk in dsynchs[line]:
+            x.append(len(pk))
+
+        P.figure()
+        n, bins, patches = P.hist(x, max(x) - 1, normed=1, histtype='bar', fill=True)
+        P.title('%s-W%d' % (line, window), fontsize=48)
+        P.savefig(seqpath + '/histo-' + line + '-W' + str(window) + '.pdf', orientation='landscape', format='pdf')
+
+
+
+def draw_synchs(peakdata, exps, sensors, window):
     """
     Generates a PDF of the synchronizations
 
@@ -315,13 +243,18 @@ def draw_synchs(peakdata, exps, window):
     :param window:
     :return:
     """
-    def mintime(ltimes):
-        mt = np.inf
+    def syncIcon(x, y, sensors, coord, lv, scale, can):
+        scale *= 0.6
+        y = (y / 2.5) + 2
+        x += 5
 
-        for _, t in ltimes:
-            if mt > t:
-                mt = t
-        return mt
+        for al, v in zip(sensors, lv):
+            c = coord[al]
+            p = path.rect(y + (c[0] * scale), x + (c[1] * scale), scale, scale)
+            if v:
+                can.stroke(p, [deco.filled([color.gray(0.5)])])
+            else:
+                can.stroke(p)
 
     for exp in exps:
         print exp
@@ -337,11 +270,11 @@ def draw_synchs(peakdata, exps, window):
         y = 0
         yt = 1.25
         for i in range(len(pk)):
-            l = [False] * len(aline)
+            l = [False] * len(sensors)
             for p in pk[i]:
                 l[p[0]] = True
 
-            v = np.min(pk[i]) % 5000
+            v = np.min([t for _, t in pk[i]]) % 5000
             if v < vprev:
                 p = path.line(yt + 2.5, 0, yt + 2.5, 28)
                 c.stroke(p)
@@ -365,7 +298,7 @@ def draw_synchs(peakdata, exps, window):
             vprev = v
             d = v - 800
             c.text(yt, (d / 200.0) + 5.25, '%8s' % str(int(round(pk[i][0][1] * 0.6))), [text.size(-4)])
-            syncIcon(d / 200.0, y, aline, coormap, l, 0.25, c)
+            syncIcon(d / 200.0, y, sensors, coormap, l, 0.25, c)
 
         # p=path.line(yt+2.5, 0, yt+2.5, 28)
         # c.stroke(p)
@@ -425,16 +358,14 @@ def compute_synchs(seq, window=15):
     return lsynch
 
 
-def compute_syncronizations(peaks, times):
+
+def compute_data_labels(dfile, sensor):
     """
-    Computes the synchronizations among sensors
+    Computes the labels of the data using the centroids of the cluster in the file
     :param dfile:
     :param sensor:
     :return:
     """
-
-
-def compute_data_labels(dfile, sensor):
     f = h5py.File(datainfo.dpath + datainfo.name + ext + '.hdf5', 'r')
 
     d = f[dfile + '/' + sensor + '/Clustering/' + 'Centers']
@@ -445,10 +376,10 @@ def compute_data_labels(dfile, sensor):
     return labels
 
 
-
+# --------------------------------------------------------------------------------------------------------------------
 
 if __name__ == '__main__':
-    window = 200 #42 / 0.6
+    window = 250
     print 'W=', int(round(window))
     lexperiments = ['e130716', 'e130827', 'e130903', 'e141113', 'e141029', 'e141016', 'e140911', 'e140311', 'e140225',
                     'e140220']
@@ -495,4 +426,5 @@ if __name__ == '__main__':
         #     print i, len(i)
 
         peakdata[dfile] = lsynchs
-        draw_synchs(peakdata, [dfile], window)
+        #draw_synchs(peakdata, [dfile], datainfo.sensors, window)
+        length_synch_frequency_histograms(peakdata, [dfile], window=int(round(window * 0.6)))

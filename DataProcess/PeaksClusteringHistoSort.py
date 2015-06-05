@@ -25,6 +25,7 @@ from util.distances import simetrized_kullback_leibler_divergence, square_froben
     jensen_shannon_divergence, bhattacharyya_distance, hellinger_distance
 import numpy as np
 from sklearn.cluster import KMeans
+from pylab import *
 
 from config.experiments import experiments
 from collections import Counter
@@ -40,7 +41,7 @@ lexperiments = ['e130827',  'e141016', 'e140911', 'e140225', 'e140220']
 
 lexperiments = ['e140515b']
 
-colors = 'rgbymbcyrgbmcb'
+colors = 'rrryyyyyyyyybbbbbbbbbbbbb'
 ext = ''
 
 #expname = lexperiments[3]
@@ -90,18 +91,30 @@ for expname in lexperiments:
         #     rms /= h.shape[0]
         #     print np.sqrt(rms), hellinger_distance(h, lhisto[0])
 
-
-        fig, ax = plt.subplots()
-        fig.set_figwidth(30)
+        matplotlib.rcParams.update({'font.size': 26})
+        fig = plt.figure()
+        ax = fig.add_subplot(2, 1, 1)
+        fig.set_figwidth(90)
         fig.set_figheight(40)
 
         ind = np.arange(nclusters)  # the x locations for the groups
-        width = 0.05       # the width of the bars
+        width = 1.0/(len(lhisto)+1)   # the width of the bars
         ax.set_xticks(ind+width)
-        ax.set_xticklabels( ind )
+        ax.set_xticklabels(ind)
         for i, h in enumerate(lhisto):
             rects = ax.bar(ind+(i*width), h, width, color=colors[i])
         fig.suptitle(datainfo.name + '-' + s + ext, fontsize=48)
+
+        minaxis = np.min(km.cluster_centers_)
+        maxaxis = np.max(km.cluster_centers_)
+
+        for nc in range(nclusters):
+            ax2 = fig.add_subplot(2, nclusters, nc+nclusters+1)
+            signal = km.cluster_centers_[lmax[nc][0]]
+            t = arange(0.0, len(signal), 1)
+            ax2.axis([0, len(signal), minaxis, maxaxis])
+            ax2.plot(t,signal)
+            plt.axhline(linewidth=1, color='r', y=0)
         fig.savefig(datainfo.dpath+'/Results/' + datainfo.name + '-' + s + ext + '-histo-sort.pdf', orientation='landscape', format='pdf')
     #    plt.show()
 
