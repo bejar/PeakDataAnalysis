@@ -23,7 +23,7 @@ import scipy.io
 from pylab import *
 
 from config.paths import datapath, seqpath
-
+from config.experiments import experiments
 
 def plotSignalValues(signals, nc):
     fig = plt.figure()
@@ -72,4 +72,5 @@ for line, clust, _ in aline:
 
     for i in range(clpeaks.shape[0]):
         plotSignalValues(clpeaks[i], i + 1)
+
 

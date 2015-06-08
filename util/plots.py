@@ -180,7 +180,7 @@ def plotDummy(fig, num, n, m, p, name):
 
 
 def plotMatrices(matrices, n, m, name, title, path):
-    matplotlib.rcParams.update({'font.size': 26})
+    matplotlib.rcParams.update({'font.size': 32})
     fig = plt.figure()
     fig.set_figwidth(50)
     fig.set_figheight(60)
@@ -224,15 +224,15 @@ def plotMatrixDummy(fig, num, n, m, p, name):
 
 
 def plotMatrix(matrix, name, title, ticks, lticks, path):
-    matplotlib.rcParams.update({'font.size': 26})
+    matplotlib.rcParams.update({'font.size': 40})
     fig = plt.figure()
     fig.set_figwidth(50)
-    fig.set_figheight(60)
+    fig.set_figheight(50)
     sp1 = fig.add_subplot(1, 1, 1)
     plt.title(title, fontsize=48)
     img = sp1.imshow(matrix, cmap=plt.cm.seismic, interpolation='none')
-    plt.xticks(ticks, lticks, fontsize=28)
-    plt.yticks(ticks, lticks, fontsize=28)
+    plt.xticks(ticks, lticks, fontsize=40)
+    plt.yticks(ticks, lticks, fontsize=40)
     plt.subplots_adjust(bottom=0.15)
     fig.colorbar(img, orientation='horizontal')
     fig.savefig(path + '/corr-' + name + '.pdf', orientation='landscape', format='pdf')

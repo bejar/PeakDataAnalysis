@@ -20,14 +20,17 @@ ComputeSubsequences
 __author__ = 'bejar'
 
 import operator
+import h5py
+import numpy as np
 
+from config.experiments import experiments
 import scipy.io
 from pylab import *
 
 from rstr_max import *
 from util.misc import compute_frequency_remap
 from config.paths import datapath, seqpath
-
+from sklearn.metrics import pairwise_distances_argmin_min
 
 def drawgraph(nodes, edges, nfile, legend):
     rfile = open(seqpath + 'maxseq-' + nfile + '.dot', 'w')
@@ -372,6 +375,24 @@ def generate_diff_sequences():
 
     drawgraph_with_edges(remap, ledges2, 'dif-' + line + '-' + 'ctrl2-capsa1')
 
+
+def compute_data_labels(dfilec, dfile, sensor):
+    """
+    Computes the labels of the data using the centroids of the cluster in the file
+    :param dfile:
+    :param sensor:
+    :return:
+    """
+    f = h5py.File(datainfo.dpath + datainfo.name + ext + '.hdf5', 'r')
+
+    d = f[dfilec + '/' + sensor + '/Clustering/' + 'Centers']
+    centers = d[()]
+    d = f[dfile + '/' + sensor + '/' + 'PeaksResamplePCA']
+    data = d[()]
+    labels, _ = pairwise_distances_argmin_min(data, centers)
+    return labels
+
+
 # remap = [1,2,15,4,3,13,12,11,14,5,10,8,6,7,9]
 
 # cpath = '/home/bejar/Dropbox/Filtro Rudomin/Estability/'
@@ -419,3 +440,40 @@ for line, clust, _ in aline:
 
     #generate_diff_sequences()
 
+
+# --------------------------------------------------------------------------------------------------------------------
+
+if __name__ == '__main__':
+    window = 400
+    print 'W=', int(round(window))
+    lexperiments = ['e130716', 'e130827', 'e130903', 'e141113', 'e141029', 'e141016', 'e140911', 'e140311', 'e140225',
+                    'e140220']
+
+    # Good experiments
+    lexperiments = ['e130827',  'e141016', 'e140911', 'e140225', 'e140220']
+
+    # lexperiments = ['e140225', 'e140220', 'e141016', 'e140911']
+    lexperiments = ['e140515']
+
+    TVD = False
+    ext = ''
+    peakdata = {}
+    for expname in lexperiments:
+        if TVD:
+            alt = 'TVD'
+        else:
+            alt = ''
+
+        datainfo = experiments[expname]
+        f = h5py.File(datainfo.dpath + datainfo.name + ext + '.hdf5', 'r')
+
+        # dfile = datainfo.datafiles[0]
+        for dfile in datainfo.datafiles:
+            print dfile
+
+            lsens_labels = []
+            #compute the labels of the data
+            for sensor in datainfo.sensors:
+                d = f[datainfo.datafiles[0] + '/' + sensor + '/Clustering/' + 'Centers']
+                centers = d[()]
+                pass
