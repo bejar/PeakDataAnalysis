@@ -111,6 +111,7 @@ for expname in lexperiments:
         for nc in range(nclusters):
             ax2 = fig.add_subplot(2, nclusters, nc+nclusters+1)
             signal = km.cluster_centers_[lmax[nc][0]]
+            plt.title(' ( '+str(cnt[lmax[nc][0]])+' )')
             t = arange(0.0, len(signal), 1)
             ax2.axis([0, len(signal), minaxis, maxaxis])
             ax2.plot(t,signal)

@@ -35,6 +35,7 @@ from munkres import Munkres
 from config.experiments import experiments
 from sklearn.metrics import pairwise_distances_argmin_min
 from sklearn.metrics.pairwise import euclidean_distances
+import seaborn as sns
 
 # def compute_sequences(clpeaks, timepeaks, lines, nexp, remap):
 #     """
@@ -87,7 +88,7 @@ coormap = {'L4ci': (1, 1),
 ###
 #peakdata, expcounts = generate_synchs(aline, nfiles, window=int(round(window)))
 ####
-#correlation_exp(peakdata, expcounts, int(round(window)))
+#synch_coincidence_matrix(peakdata, expcounts, int(round(window)))
 
 ###
 #draw_synchs(peakdata, nfiles, window=int(round(window*0.6)))
@@ -130,6 +131,7 @@ def gen_data_matrix(lines, clusters):
 def gen_peaks_contingency(peakdata, sensors, dfile, clusters):
     """
     Generates PDFs with the association frequencies of the peaks
+    Each sensor with the synchronizations to the other sensors desagregated by peak class
 
     :return:
     """
@@ -161,16 +163,16 @@ def gen_peaks_contingency(peakdata, sensors, dfile, clusters):
 
 
 
-def lines_coincidence_matrix(peakdata, sensors):
+def lines_coincidence_matrix(peaksynchs, sensors):
     """
     Computes a contingency matrix of how many times two lines have been synchronized
 
-    :param peakdata:
+    :param peaksynchs:
     :return:
     """
     coinc = np.zeros((len(sensors), len(sensors)))
 
-    for syn in peakdata:
+    for syn in peaksynchs:
         for i in syn:
             for j in syn:
                 if i[0] != j[0]:
@@ -179,15 +181,34 @@ def lines_coincidence_matrix(peakdata, sensors):
     return coinc
 
 
-def correlation_exp(peakdata, exp, sensors, expcounts, window):
+def coincidence_contingency(peaksynchs, dfile, sensors):
+    """
+    Computes the contingency matrix of the proportion of syncronizations for each sensor over the total
+
+    :param peaksyhchs:
+    :param sensors:
+    :return:
+    """
+
+    cmatrix = lines_coincidence_matrix(peaksynchs, sensors)
+    cmatrix /= len(peaksynchs)
+    sns.heatmap(cmatrix, annot=True, fmt="2.2f", cmap="afmhot_r", xticklabels=sensors, yticklabels=sensors, vmin=0, vmax=0.6)
+
+    plt.title(dfile, fontsize=48)
+    plt.savefig(datainfo.dpath + '/Results/' + dfile + '-psync-corr.pdf', orientation='landscape', format='pdf')
+
+    plt.close()
+
+
+def synch_coincidence_matrix(peaksynchs, exp, sensors, expcounts, window):
     """
     Computes the probability of association among the peaks from the different sensors
 
-    :param peakdata:
+    :param peaksynchs:
     :param expcounts:
     :return:
     """
-    cmatrix = lines_coincidence_matrix(peakdata, sensors)
+    cmatrix = lines_coincidence_matrix(peaksynchs, sensors)
     corrmatrix = np.zeros((len(sensors), len(sensors)))
     for i in range(len(sensors)):
         for j in range(len(sensors)):
@@ -437,6 +458,7 @@ if __name__ == '__main__':
             #print peakdata
             #gen_peaks_contingency(peakdata, datainfo.sensors, dfile, datainfo.clusters)
             #draw_synchs(peakdata, dfile, datainfo.sensors, window)
-            length_synch_frequency_histograms(peakdata, dfile, window=int(round(window)))
-            # correlation_exp(peakdata, dfile, datainfo.sensors, expcounts, window)
+            #length_synch_frequency_histograms(peakdata, dfile, window=int(round(window)))
+            #synch_coincidence_matrix(peakdata, dfile, datainfo.sensors, expcounts, window)
+            coincidence_contingency(peakdata, dfile, datainfo.sensors)
 

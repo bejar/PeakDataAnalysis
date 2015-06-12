@@ -29,14 +29,13 @@ from pylab import *
 
 from rstr_max import *
 from util.misc import compute_frequency_remap
-from config.paths import datapath, seqpath
 from sklearn.metrics import pairwise_distances_argmin_min
 
-def drawgraph(nodes, edges, nfile, legend):
-    rfile = open(seqpath + 'maxseq-' + nfile + '.dot', 'w')
+def drawgraph(nnodes, edges, nfile, sensor, dfile, legend):
+    rfile = open(datainfo.dpath + '/Results/maxseq-' + nfile + '-' + dfile + '-' + sensor + '.dot', 'w')
 
     rfile.write('digraph G {\nsize="20,20"\nlayout="neato"\n' +
-                'imagepath="' + seqpath + '/icons/' + '"\n' +
+                'imagepath="' + datainfo.dpath + '/Results/icons/' + '"\n' +
                 'imagescale=true' + '\n' +
                 'labeljust=r' + '\n' +
                 'labelloc=b' + '\n' +
@@ -45,12 +44,11 @@ def drawgraph(nodes, edges, nfile, legend):
 
     radius = 5.0
 
-    nnodes = len(nodes)
     for i in range(nnodes):
         posx = -np.cos(((np.pi * 2) / nnodes) * i + (np.pi / 2)) * radius
         posy = np.sin(((np.pi * 2) / nnodes) * i + (np.pi / 2)) * radius
-        rfile.write(str(nodes[i]) + '[label="' + str(i + 1) + '",labeljust=l, labelloc=b, fontsize="24",height="0.2"' +
-                    ', image="' + line + '.cl' + str(nodes[i]) + '.png' + '"' +
+        rfile.write(str(i) + '[label="' + str(i + 1) + '",labeljust=l, labelloc=b, fontsize="24",height="0.2"' +
+                    ', image="' + datainfo.name + sensor + '.cl' + str(i+1) + '.png' + '"' +
                     ', pos="' + str(posx) + ',' + str(posy) + '!", shape = "square"];\n')
 
     for e, nb, pe in edges:
@@ -67,12 +65,12 @@ def drawgraph(nodes, edges, nfile, legend):
     rfile.close()
 
 
-def drawgraph_with_edges(nodes, edges, nfile):
-    rfile = open(seqpath + 'maxseq-' + nfile + '.dot', 'w')
+def drawgraph_with_edges(nnodes, edges, nfile, sensor):
+    rfile = open(datainfo.dpath + 'maxseq-' + nfile + '.dot', 'w')
 
     # rfile.write('digraph G {\nsize="6,6"\nlayout="neato"\nfontsize="30"\nlabel="'+nfile+'"\n')
     rfile.write('digraph G {\nsize="20,20"\nlayout="neato"\n' +
-                'imagepath="' + seqpath + '/icons/' + '"\n' +
+                'imagepath="' + datainfo.dpath + '/icons/' + '"\n' +
                 'imagescale=true' + '\n' +
                 'labeljust=r' + '\n' +
                 'labelloc=b' + '\n' +
@@ -81,12 +79,11 @@ def drawgraph_with_edges(nodes, edges, nfile):
 
     radius = 5.0
 
-    nnodes = len(nodes)
     for i in range(nnodes):
         posx = -np.cos(((np.pi * 2) / nnodes) * i + (np.pi / 2)) * radius
         posy = np.sin(((np.pi * 2) / nnodes) * i + (np.pi / 2)) * radius
-        rfile.write(str(nodes[i]) + '[label="' + str(i + 1) + '",labeljust=l, labelloc=b, fontsize="24",height="0.7"' +
-                    ', image="' + line + '.cl' + str(nodes[i]) + '.png' + '"' +
+        rfile.write(str(i) + '[label="' + str(i + 1) + '",labeljust=l, labelloc=b, fontsize="24",height="0.7"' +
+                    ', image="' + sensor + '.cl' + str(i+1) + '.png' + '"' +
                     ', pos="' + str(posx) + ',' + str(posy) + '!", shape = "square"];\n')
 
 
@@ -105,7 +102,7 @@ def drawgraph_with_edges(nodes, edges, nfile):
     rfile.close()
 
 
-def max_seq_long(nexp, clpeaks, timepeaks, sup, nfile, remap, gap=0):
+def max_seq_long(nexp, clpeaks, timepeaks, sup, nfile, gap=0):
     """
     Secuencias con soporte mas que un limite grabadas en fichero de texto
 
@@ -157,16 +154,14 @@ def max_seq_long(nexp, clpeaks, timepeaks, sup, nfile, remap, gap=0):
 
     lstrings = sorted(lstrings, key=operator.itemgetter(0), reverse=True)
     lstringsg = []
-    rfile = open(seqpath + 'maxseqlong-' + nfile + '.txt', 'w')
+    rfile = open(datainfo.dpath + 'maxseqlong-' + nfile + '.txt', 'w')
     cntlong = np.zeros(10)
     for seq, s in lstrings:
         wstr = ''
         if not '#' in seq:
             sigsym = []
             for c in range(len(seq)):
-                # wstr += str(remap[voc.find(seq[c])-1])
                 wstr += '{0:0>2d}'.format(voc.find(seq[c]))
-                #rmp = remap[voc.find(seq[c])-1]
                 rmp = voc.find(seq[c])
                 sigsym.append(rmp)
                 if c < (len(seq) - 1):
@@ -182,9 +177,13 @@ def max_seq_long(nexp, clpeaks, timepeaks, sup, nfile, remap, gap=0):
     print '----------'
 
 
-def max_seq_exp(nexp, clpeaks, timepeaks, nfile, remap, gap=0):
+def max_seq_exp(nfile, clpeaks, timepeaks, sensor, dfile, nclust, gap=0):
     """
-    Grafos de las secuencias
+    Generates frequent subsequences and the graphs representing the two step frequent
+    subsequences
+
+    Auto tunes the minimum support
+
     :param nexp:
     :param clpeaks:
     :param timepeaks:
@@ -194,33 +193,22 @@ def max_seq_exp(nexp, clpeaks, timepeaks, nfile, remap, gap=0):
     :param gap:
     :return:
     """
-    # Select the index of the experiment
-    peakini = 0
-    i = 0
-    while i < nexp:
-        exp = timepeaks[i]
-        peakini += exp.shape[0]
-        i += 1
-
-    exp = timepeaks[nexp]
-    peakend = peakini + exp.shape[0]
-
     # Build the sequence string
     peakstr = ''
 
     peakfreq = {'#': 0}
 
-    for i in range(peakini, peakend):
-        peakstr += voc[clpeaks[i][0]]
-        if i < peakend - 1 and gap != 0:
-            if (timepeaks[nexp][i - peakini + 1] - timepeaks[nexp][i - peakini]) > gap:
+    for i in range(timepeaks.shape[0]):
+        peakstr += voc[clpeaks[i]]
+        if i < timepeaks.shape[0] - 1 and gap != 0:
+            if (timepeaks[i + 1] - timepeaks[i]) > gap:
                 peakstr += '#'
                 peakfreq['#'] += 1
 
-        if voc[clpeaks[i][0]] in peakfreq:
-            peakfreq[voc[clpeaks[i][0]]] += 1
+        if voc[clpeaks[i]] in peakfreq:
+            peakfreq[voc[clpeaks[i]]] += 1
         else:
-            peakfreq[voc[clpeaks[i][0]]] = 1
+            peakfreq[voc[clpeaks[i]]] = 1
 
     # print peakend - peakini, len(peakstr), len(peakstr)*(1.0 / (len(peakfreq)*len(peakfreq)))
     sup = int(round(len(peakstr) * (1.0 / (len(peakfreq) * len(peakfreq)))) * 1.2)
@@ -228,9 +216,6 @@ def max_seq_exp(nexp, clpeaks, timepeaks, nfile, remap, gap=0):
 
     for l in peakfreq:
         peakfreq[l] = (peakfreq[l] * 1.0) / len(peakstr)
-    #     print l, (peakfreq[l]* 1.0)/(peakend - peakini)
-    #    print clpeaks[i][0]
-
 
     # Compute the sufix array
     rstr = Rstr_max()
@@ -245,22 +230,20 @@ def max_seq_exp(nexp, clpeaks, timepeaks, nfile, remap, gap=0):
         ss = rstr.global_suffix[offset_end - l:offset_end]
         id_chaine = rstr.idxString[offset_end - 1]
         s = rstr.array_str[id_chaine]
-        #print '[%s] %d'%(ss.encode('utf-8'), nb)
         if nb > sup and len(ss.encode('utf-8')) > 1:
             lstrings.append((ss.encode('utf-8'), nb))
 
     lstrings = sorted(lstrings, key=operator.itemgetter(0), reverse=True)
     lstringsg = []
-    rfile = open(seqpath + 'maxseq-' + nfile + '.txt', 'w')
+    rfile = open(datainfo.dpath + 'Results/maxseq-' + nfile + '-' + dfile + '-' +  sensor + '.txt', 'w')
+
     for seq, s in lstrings:
         wstr = ''
         prob = 1.0
         if not '#' in seq:
             sigsym = []
             for c in range(len(seq)):
-                #wstr += str(remap[voc.find(seq[c])-1])
                 wstr += str(voc.find(seq[c]))
-                #rmp = remap[voc.find(seq[c])-1]
                 rmp = voc.find(seq[c])
                 sigsym.append(rmp)
                 prob *= peakfreq[seq[c]]
@@ -275,7 +258,8 @@ def max_seq_exp(nexp, clpeaks, timepeaks, nfile, remap, gap=0):
     nsig = len(peakfreq)
     if '#' in peakfreq:
         nsig -= 1
-    drawgraph(remap, lstringsg, nfile, nfile + ' sup(%d)' % sup)
+
+    drawgraph(nclust, lstringsg, nfile, sensor, dfile, nfile + '-' + dfile+ '-'+sensor + ' sup(%d)' % sup)
 
 
 def max_peaks_edges(nexp, clpeaks, timepeaks, sup, gap=0):
@@ -349,31 +333,36 @@ def max_peaks_edges(nexp, clpeaks, timepeaks, sup, gap=0):
     return lstringsg
 
 
-def generate_sequences():
-    remap = compute_frequency_remap(timepeaks, clpeaks)
 
-    for exp, _, nfile in nfiles:
-        max_seq_exp(exp, clpeaks, timepeaks, line + '-' + nfile, remap, gap=300)
+# ----------------------------------------
+def generate_sequences(dfile, timepeaks, clpeaks, sensor, ncl, gap):
+    """
+    Generates the frequent subsequences from the times of the peaks considering
+    gap the minimum time between consecutive peaks that indicates a pause (time in the sampling frequency)
+
+    :param dfile:
+    :param timepeaks:
+    :param clpeaks:
+    :param sensor:
+    :return:
+    """
+    max_seq_exp(datainfo.name, clpeaks, timepeaks, sensor, dfile, ncl, gap=gap)
 
 
-def generate_sequences_long():
-    remap = compute_frequency_remap(timepeaks, clpeaks)
-
-    for exp, sup, nfile in nfiles:
-        max_seq_long(exp, clpeaks, timepeaks, sup, line + '-' + nfile, remap, gap=300)
+def generate_sequences_long(dfile, timepeaks, clpeaks, sensor, thres, gap):
+    max_seq_long(exp, clpeaks, timepeaks, thres, sensor + '-' + dfile, gap=gap)
 
 
-def generate_diff_sequences():
-    remap = compute_frequency_remap(timepeaks, clpeaks)
+def generate_diff_sequences(dfile, timepeaks, clpeaks, sensor, gap):
 
-    ledges1 = max_peaks_edges(1, clpeaks, timepeaks, 20, gap=300)
-    ledges2 = max_peaks_edges(2, clpeaks, timepeaks, 25, gap=300)
+    ledges1 = max_peaks_edges(1, clpeaks, timepeaks, 20, gap=gap)
+    ledges2 = max_peaks_edges(2, clpeaks, timepeaks, 25, gap=gap)
 
     for e in ledges1:
         if e in ledges2:
             ledges2.remove(e)
 
-    drawgraph_with_edges(remap, ledges2, 'dif-' + line + '-' + 'ctrl2-capsa1')
+    drawgraph_with_edges(ledges2, 'dif-' + sensor + '-' + 'ctrl2-capsa1')
 
 
 def compute_data_labels(dfilec, dfile, sensor):
@@ -390,49 +379,23 @@ def compute_data_labels(dfilec, dfile, sensor):
     d = f[dfile + '/' + sensor + '/' + 'PeaksResamplePCA']
     data = d[()]
     labels, _ = pairwise_distances_argmin_min(data, centers)
+    f.close()
     return labels
 
 
-# remap = [1,2,15,4,3,13,12,11,14,5,10,8,6,7,9]
-
-# cpath = '/home/bejar/Dropbox/Filtro Rudomin/Estability/'
-# rpath = '/home/bejar/Documentos/Investigacion/cinvestav/secuencias/'
-# ipath = '/home/bejar/Documentos/Investigacion/cinvestav/secuencias/icons/'
-# ocpath = '/home/bejar/Documentos/Investigacion/cinvestav/'
-
-nfiles = [(0, 15, 'ctrl1'), (1, 15, 'ctrl2'), (2, 20, 'capsa1'), (3, 20, 'capsa2'), (4, 20, 'capsa3'),
-          (5, 15, 'lido1'), (6, 15, 'lido2'), (7, 15, 'lido3'), (8, 15, 'lido4'), (9, 15, 'lido5'), (10, 15, 'lido6')
-          ]
-# nfiles = [(0, 'ctrl1')
-#           ]
-
-
-aline = [('L4cd', 'k9.n5', 9),
-         ('L4ci', 'k9.n1', 9),
-         ('L5cd', 'k10.n6', 10),
-         #('L5rd', 'k20.n1' ),
-         ('L5ci', 'k15.n1', 15),
-         ('L5ri', 'k15.n9', 15),
-         ('L6cd', 'k17.n1', 17),
-         ('L6rd', 'k13.n9', 13),
-         #('L6ci', 'k15.n1'),
-         ('L6ri', 'k18.n4', 18),
-         ('L7ri', 'k18.n4', 18)
-         ]
-
-voc = ' ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+voc = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 # line = 'L6ri'  # 'L6rd' 'L5ci' 'L6ri'
 # clust = '.k15.n1'  # '.k20.n5' '.k16.n4' '.k15.n1'
 
-for line, clust, _ in aline:
-    print line
-    matpeaks = scipy.io.loadmat(datapath + 'Selected/centers.' + line + '.' + clust + '.mat')
-    mattime = scipy.io.loadmat(datapath + '/WholeTime.' + line + '.mat')
-
-    clpeaks = matpeaks['IDX']
-    timepeaks = mattime['temps'][0]
-
-    generate_sequences()
+# for line, clust, _ in aline:
+#     print line
+#     matpeaks = scipy.io.loadmat(datapath + 'Selected/centers.' + line + '.' + clust + '.mat')
+#     mattime = scipy.io.loadmat(datapath + '/WholeTime.' + line + '.mat')
+#
+#     clpeaks = matpeaks['IDX']
+#     timepeaks = mattime['temps'][0]
+#
+#     generate_sequences()
 
     #generate_sequences_long()
 
@@ -444,8 +407,6 @@ for line, clust, _ in aline:
 # --------------------------------------------------------------------------------------------------------------------
 
 if __name__ == '__main__':
-    window = 400
-    print 'W=', int(round(window))
     lexperiments = ['e130716', 'e130827', 'e130903', 'e141113', 'e141029', 'e141016', 'e140911', 'e140311', 'e140225',
                     'e140220']
 
@@ -467,13 +428,12 @@ if __name__ == '__main__':
         datainfo = experiments[expname]
         f = h5py.File(datainfo.dpath + datainfo.name + ext + '.hdf5', 'r')
 
-        # dfile = datainfo.datafiles[0]
         for dfile in datainfo.datafiles:
             print dfile
 
-            lsens_labels = []
-            #compute the labels of the data
-            for sensor in datainfo.sensors:
-                d = f[datainfo.datafiles[0] + '/' + sensor + '/Clustering/' + 'Centers']
-                centers = d[()]
-                pass
+            for ncl, sensor in zip(datainfo.clusters, datainfo.sensors):
+                clpeaks = compute_data_labels(datainfo.datafiles[0], dfile, sensor)
+                d = f[dfile + '/' + sensor + '/' + 'Time']
+                timepeaks = data = d[()]
+                generate_sequences(dfile, timepeaks, clpeaks, sensor, ncl, gap=5000)
+

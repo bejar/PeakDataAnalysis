@@ -179,7 +179,18 @@ def plotDummy(fig, num, n, m, p, name):
 #    plt.show()
 
 
-def plotMatrices(matrices, n, m, name, title, path):
+def plotMatrices(matrices, n, m, name, title, path, ticks=[], lticks=[]):
+    """
+    Plots a list of matrices
+
+    :param matrices: pairs matrix, title of the plot of the matrix
+    :param n:
+    :param m:
+    :param name:
+    :param title:
+    :param path:
+    :return:
+    """
     matplotlib.rcParams.update({'font.size': 32})
     fig = plt.figure()
     fig.set_figwidth(50)
@@ -188,7 +199,7 @@ def plotMatrices(matrices, n, m, name, title, path):
     plt.subplots_adjust(hspace=0.1, wspace=0.1)
     for s, snm in matrices:
         if s is not None:
-            plotMatrixValues(fig, s, n, m, i, snm)
+            plotMatrixValues(fig, s, n, m, i, snm, ticks=ticks, lticks=lticks)
         else:
             plotMatrixDummy(fig, len(s), n, m, i, snm)
         i += 1
@@ -202,10 +213,13 @@ def plotMatrices(matrices, n, m, name, title, path):
 
 
 # Plot a set of signals
-def plotMatrixValues(fig, matrix, n, m, p, name):
+def plotMatrixValues(fig, matrix, n, m, p, name, ticks = [], lticks = []):
     sp1 = fig.add_subplot(n, m, p)
     plt.title(name, fontsize=48)
     sp1.imshow(matrix, cmap=plt.cm.gray, interpolation='none')
+    plt.xticks(ticks, lticks, fontsize=40)
+    plt.yticks(ticks, lticks, fontsize=40)
+
 
 
 #    plt.show()

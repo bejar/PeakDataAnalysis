@@ -398,7 +398,7 @@ window = 42 / 0.6
 print 'W=', int(round(window))
 peakdata, expcounts = generate_synchs(aline, nfiles, window=int(round(window)))
 ####
-#correlation_exp(peakdata, expcounts, int(round(window)))
+#synch_coincidence_matrix(peakdata, expcounts, int(round(window)))
 
 ###
 #draw_synchs(peakdata, nfiles, window=int(round(window*0.6)))

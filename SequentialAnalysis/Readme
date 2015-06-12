@@ -6,6 +6,6 @@ PeaksSyncro :
     funcion length_synch_frequency_histograms -
                         - Genera un fichero para cada parte del experimento con las frecuencias de las longitudes de
                           las sincronizaciones
-    funcion correlation_exp -
+    funcion synch_coincidence_matrix -
                         - Genera un fichero para cada parte del experimento con la frecuencia de coincidencia en las
                         sincronizaciones entre los diferenctes sensores
