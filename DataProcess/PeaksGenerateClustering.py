@@ -51,27 +51,29 @@ for expname in lexperiments:
     for sensor, nclusters in zip(datainfo.sensors, datainfo.clusters):
         print sensor
         ldata = []
-        dfile = datainfo.datafiles[0]
-        d = f[dfile + '/' + sensor + '/' + 'PeaksResamplePCA']
-        data = d[()]
+        for dfile in datainfo.datafiles:
+        #dfile = datainfo.datafiles[0]
+            print dfile
+            d = f[dfile + '/' + sensor + '/' + 'PeaksResamplePCA']
+            data = d[()]
 
-        km = KMeans(n_clusters=nclusters)
-        km.fit_transform(data)
-        lsignals = []
-        cnt = Counter(list(km.labels_))
+            km = KMeans(n_clusters=nclusters)
+            km.fit_transform(data)
+            lsignals = []
+            cnt = Counter(list(km.labels_))
 
-        lmax = []
-        for i in range(km.n_clusters):
-            lmax.append((i,np.max(km.cluster_centers_[i])))
-        lmax = sorted(lmax, key=itemgetter(1))
+            lmax = []
+            for i in range(km.n_clusters):
+                lmax.append((i,np.max(km.cluster_centers_[i])))
+            lmax = sorted(lmax, key=itemgetter(1))
 
-        centers = np.zeros(km.cluster_centers_.shape)
-        for nc in range(nclusters):
-            centers[nc] = km.cluster_centers_[lmax[nc][0]]
+            centers = np.zeros(km.cluster_centers_.shape)
+            for nc in range(nclusters):
+                centers[nc] = km.cluster_centers_[lmax[nc][0]]
 
-        d = f.require_dataset(dfile + '/' + sensor + '/Clustering/' + 'Centers' + ext, centers.shape, dtype='f',
-                              data=centers, compression='gzip')
-        d[()] = centers
-        lmax = []
+            d = f.require_dataset(dfile + '/' + sensor + '/Clustering/' + 'Centers' + ext, centers.shape, dtype='f',
+                                  data=centers, compression='gzip')
+            d[()] = centers
+            lmax = []
 
 

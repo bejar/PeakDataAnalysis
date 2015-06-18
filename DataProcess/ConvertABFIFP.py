@@ -39,9 +39,15 @@ datafiles = [(['e130716f00-cntrl1', 'e130716f02-cntrl2', 'e130716f03-cntrl3'], 1
              ]
 
 datafiles = [(['15514005', '15514006', '15514007',
-               '15514008', '15514009', '15514010', '15514011', '15514012', '15514013', '15514014', '15514015', '15514016',
-               '15514017', '15514018', '15514019', '15514020', '15514021', '15514022', '15514023', '15514024', '15514025', '15514026', '15514027'],
-              12, 10000.0)]
+               '15514008', '15514009', '15514010', '15514011', '15514012', '15514013', '15514014', '15514015',
+               '15514016',
+               '15514017', '15514018', '15514019', '15514020', '15514021', '15514022', '15514023', '15514024',
+               '15514025', '15514026', '15514027'],
+              [10, 11], 10000.0)]
+datafiles = [(['15514015', '15514016',
+               '15514017', '15514018', '15514019', '15514020', '15514021', '15514022', '15514023', '15514024',
+               '15514025', '15514026', '15514027'],
+               [10, 11], 10000.0)]
 
 # datafiles = [(['15514027'],
 #               12, 10000.0)]
@@ -49,24 +55,24 @@ datafiles = [(['15514005', '15514006', '15514007',
 for dataf, nsig, _ in datafiles:
     for files in dataf:
         print 'Reading: ', files, '...'
-        data = AxonIO(cinvesdata + files + '.abf')
+        data = AxonIO(cinvesdata + '/Exp140515/' + files + '.abf')
 
         bl = data.read_block(lazy=False, cascade=True)
 
         dim = bl.segments[0].analogsignals[0].shape[0]
 
         print dim
-        matrix = np.zeros((nsig, dim))
+        matrix = np.zeros((len(nsig), dim ))
         # for sig in bl.segments[0].analogsignals:
         # i += 1
         #     #print sig.duration, sig.signal, len(sig.times), i
         #     print sig.name, sig.units, sig.sampling_rate, sig.dtype, sig.duration, sig.shape
-
-
+        # for i in range(dim):
+        #     if i % 100000 == 0:
+        #         print i
         for j in nsig:
-            matrix[j][:] = bl.segments[0].analogsignals[j][:].magnitude
+            matrix[j-10][:] = bl.segments[0].analogsignals[j][:].magnitude
 
         peakdata = {'data': matrix.T}
         print 'Saving: ', files, '...'
         scipy.io.savemat(cinvesdata + files + '-IFP.mat', peakdata, do_compression=True)
-

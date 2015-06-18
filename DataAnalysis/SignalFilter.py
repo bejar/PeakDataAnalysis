@@ -92,46 +92,22 @@ if __name__ == '__main__':
         f = h5py.File(datainfo.dpath + datainfo.name + ext + '.hdf5', 'r')
 
 
-        for dfile in range(0,len(datainfo.datafiles)):
+        for dfile in range(len(datainfo.datafiles)):
             d = f[datainfo.datafiles[dfile] + '/' + 'Raw']
-            print d.shape, datainfo.sampling/2
-            for s in range(len(datainfo.sensors)):
-                print dfile, datainfo.sensors[s]
+            #for s in range(len(datainfo.sensors)):
+            for s in [0]:
                 rate = datainfo.sampling
                 t = np.arange(0, 10, 1/rate)
                 freq = rate * 0.5
-                iband = 100.0
-                fband = 400.0
-                #b,a = butter(10, [iband/freq, fband/freq], btype='band')
-                #b, a = iirfilter(2, 0.5, 1, 60, analog=True, ftype='cheby1', btype='low')
-                # w, h = freqs(b, a, 1000)
-                # print h[0:10]
-                # fig = plt.figure()
-                # ax = fig.add_subplot(111)
-                # ax.semilogx(w, 20 * np.log10(abs(h)))
-                # ax.set_title('Chebyshev Type II bandpass frequency response')
-                # ax.set_xlabel('Frequency [radians / second]')
-                # ax.set_ylabel('Amplitude [dB]')
-                # ax.axis((10, 1000, -100, 10))
-                # ax.grid(which='both', axis='both')
-                # plt.show()
-
-                # # data =  d[0:60000, s].copy()
-                # # x = lfilter(b, a, data, )
-                # print x[0:100], data[0:100]
-                # plt.subplots(figsize=(20, 10))
-                # plot(range(1000), x[0:1000])
-                # plot(range(1000), data[0:1000])
-                # plt.show()
-                # print x.shape
-#                print x[0:100], d[0:100,s]
-                p = np.abs(np.fft.rfft(d[0:6000000,s]))**2
-                spec = np.linspace(0, (rate)/2, len(p))
-                #p = decimate(p,20)
-                plt.subplots(figsize=(20, 10))
-                plot(spec[0:12000], p[0:12000])
-                plt.show()
+                iband = 3.0
+                fband = 10.0
+                b,a = butter(2, [iband/freq, fband/freq], btype='band')
+                p= filtfilt(b, a, d[:, s])
+                print dfile, datainfo.sensors[s], iband, fband, np.std(p), np.std(d[:, s])
+                #plt.subplots(figsize=(20, 10))
+                #plot(range(p.shape[0]), p)
+                #plt.show()
                 # plt.title(datainfo.datafiles[dfile]+ '-' + datainfo.sensors[s], fontsize=48)
                 # plt.savefig(datainfo.dpath + '/Results/' + datainfo.datafiles[dfile] + '-' + datainfo.sensors[s]
                 #             + '-spectra.pdf', orientation='landscape', format='pdf')
-                # plt.close()
+                #plt.close()

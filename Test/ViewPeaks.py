@@ -34,7 +34,7 @@ from sklearn.metrics import mean_squared_error
 import util.TotalVariation as tv
 
 lexperiments = ['e130827',  'e141016', 'e140911', 'e140225', 'e140220']
-lexperiments = ['e140515b']
+lexperiments = ['e140515']
 expname = lexperiments[0]
 
 datainfo = experiments[expname]

@@ -58,12 +58,12 @@ if __name__ == '__main__':
             alt = ''
 
         datainfo = experiments[expname]
-        f = h5py.File(datainfo.dpath + datainfo.name + ext + '.hdf5', 'r+')
+        f = h5py.File(datainfo.dpath + datainfo.name + ext + '.hdf5', 'r')
 
         # fig = plt.figure()
         for dfile in datainfo.datafiles:
             print dfile
-            d = np.array(f[dfile + '/' + 'Raw'])
+            d = np.array(f[dfile + '/' + 'RawFilter'])
             dframe = pd.DataFrame(d, columns=datainfo.sensors)
             # corrmat = np.corrcoef(d, rowvar=0)
             fig, ax = plt.subplots(figsize=(10, 10))
@@ -71,10 +71,10 @@ if __name__ == '__main__':
             # print dframe.corr()
             # print corrmat
             sns.corrplot(dframe,  cmap="afmhot_r", sig_stars=False, cmap_range=(0, 1))
-            # sns.heatmap(dframe.corr(), annot=True, fmt="2.2f", cmap="afmhot_r")
+            #sns.heatmap(dframe.corr(), annot=True, fmt="2.2f", cmap="afmhot_r")
             #
             plt.title(dfile, fontsize=48)
-            plt.savefig(datainfo.dpath + '/Results/' + dfile + '-corr2.pdf', orientation='landscape', format='pdf')
+            plt.savefig(datainfo.dpath + '/Results/' + dfile + '-corr-new.pdf', orientation='landscape', format='pdf')
             plt.close()
             # np.savetxt(datainfo.dpath + '/Results/' + dfile + '-corr.csv', corrmat, fmt='%.8e', delimiter=',', newline='\n')
 
