@@ -57,7 +57,7 @@ for expname in lexperiments:
             d = f[dfile + '/' + sensor + '/' + 'PeaksResamplePCA']
             data = d[()]
 
-            km = KMeans(n_clusters=nclusters)
+            km = KMeans(n_clusters=nclusters, n_jobs=-1)
             km.fit_transform(data)
             lsignals = []
             cnt = Counter(list(km.labels_))

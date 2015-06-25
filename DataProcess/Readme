@@ -10,7 +10,7 @@ PeaksResampling - Añade una matriz con un resampling de los picos (PeaksResampl
 PeaksPCA - Añade al fichero los picos despues de aplicarles el PCA y mover la basal (PeaksResamplePCA)
 PeaksClusteringValidateWhole - Estima el numero de clusters para los picos (todos los picos de todas las fases
                                 juntos)
-PeaksClusteringHistoSort - Genera el clustering para el primer tramo del experimento y clasifica con el el resto de
+PeaksClusteringHistoSort - Genera el clustering para el primer tramo del experimento y clasifica con él el resto de
                        fases, genera grafico de los centroides del clustering de la primera fase e histogramas de
                        frecuencias de picos para todas los tramos del experimento ordenandolas por la altura de los picos
 
