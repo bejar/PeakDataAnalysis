@@ -6,7 +6,7 @@ PeaksClustering
 
 :Description: PeaksClustering
 
-    Generates and saves a clustering of the peaks for only the first file of the experiment
+    Generates and saves a clustering of the peaks for all the files of the experiment
 
 :Authors: bejar
     
@@ -42,7 +42,6 @@ lexperiments = ['e140515']
 
 ext = ''
 
-#expname = lexperiments[3]
 for expname in lexperiments:
     datainfo = experiments[expname]
 
@@ -52,7 +51,6 @@ for expname in lexperiments:
         print sensor
         ldata = []
         for dfile in datainfo.datafiles:
-        #dfile = datainfo.datafiles[0]
             print dfile
             d = f[dfile + '/' + sensor + '/' + 'PeaksResamplePCA']
             data = d[()]

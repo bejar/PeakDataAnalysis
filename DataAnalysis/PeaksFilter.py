@@ -47,7 +47,10 @@ def save_data(expname, ext=""):
     print datainfo.dpath + datainfo.name + ext + '.hdf5'
 
     f = h5py.File(datainfo.dpath + datainfo.name + ext + '.hdf5', 'r+')
-    b, a = butter(4, 1.0/(datainfo.sampling*0.5), btype='high')
+    b, a = butter(4, 1.0/(datainfo.sampling*0.5), btype='high') # <1Hz filter
+    iband = 1.0
+    fband = 50.0
+    b,a = butter(2, [iband/(datainfo.sampling*0.5), fband/(datainfo.sampling*0.5)], btype='band') # band filter
 
     for dfile in datainfo.datafiles:
         print dfile
@@ -55,7 +58,7 @@ def save_data(expname, ext=""):
         filter = np.zeros(raw.shape)
         for i in range(len(datainfo.sensors)):
             filter[:, i] = filtfilt(b, a, raw[:, i])
-        d = f.require_dataset(dfile + '/RawFilter', filter.shape, dtype='f', data=filter, compression='gzip')
+        d = f.require_dataset(dfile + '/RawFilterBand', filter.shape, dtype='f', data=filter, compression='gzip')
         d[()] = filter
 
     f.close()

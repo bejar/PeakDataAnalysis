@@ -6,7 +6,7 @@ PeaksClusterStabilityPlot
 
 :Description: PeaksClusterStabilityPlot
 
-    
+    Plots the curve of stability measure for different number of clusters
 
 :Authors: bejar
     
