@@ -17,7 +17,7 @@ if nargin<3 T=100e-3; end; %T=100e-3sec  Tw=168 points - Time windows
 %selection parameters change if needed
 par(1)=0.;       % cutof1 frecuency Low cutoff
 par(2)=70;       % cutof2 frecuency High cutoff
-par(3)=0.0;      % tapering window use tukey window tap=0 no window, tap=1 max tapering
+par(3)=0;      % tapering window use tukey window tap=0 no window, tap=1 max tapering
 par(4)=0;        % max number of freqs used in FFT
 
 %Peaks definition and selection
@@ -83,7 +83,7 @@ fprintf('\n ----------------  PEAKS IDENTIFICATION --------- \n');
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%Start peaks selection 
 ipeakNo=[]; ipeakM=[];ff=0;
-for j=1:Nsig  %Loop over different sensors
+for j=1:1%Nsig  %Loop over different sensors
 fprintf('Peaks identification: analyzing sensor N %i \n',j);
 
 Nwin(j)=0;
@@ -121,11 +121,13 @@ while (tstop<Nmax)
            Tqint=integIneqG(xf,quot(1),quot(2),quot(3),quot(4));           
            %Tqpeak=Tqpeak&&Tqint;
           end
-          
+
+          %fprintf('%d, %d, %f, %f, %f, %f, %f, %f \n', tstart, tstart+floor(peakprecision/4)+indp, Pv, Pkv, Dp, Dm, peakprecision/4, indp);
           %check the peak
            quality=Tcentr&&Tqpeak;
             if quality 
               k=k+1;
+              fprintf('Peak %f \n',tstart+floor(peakprecision/4)+indp);
               ipeakM(k,j)=tstart+floor(peakprecision/4)+indp;
               SNp(k,j)=sum(y2.*conj(y2))/sum(y.*conj(y));
               RMSp(k,j)=std(xs);
@@ -150,10 +152,10 @@ while (tstop<Nmax)
 end
 
 
- 
+% This eliminates all the peaks that are at a distance less than the peak precision parameter
 ipeakM1=ipeakM; clear ipeakM;
 SNp1=SNp; clear SNp; RMSp1=RMSp; clear RMSp;
-for j=1:Nsig
+for j=1:1%Nsig
     tmp=uniquetol(ipeakM1(ipeakM1(:,j)>0,j),peakprecision); Npk=length(tmp);
     ipeakM(1:Npk,j)=tmp;
     [a b c]=intersect(ipeakM(1:Npk,j),ipeakM1(ipeakM1(:,j)>0,j));
@@ -165,7 +167,7 @@ clear ipeakM1; clear SNp1; clear RMSp1;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %calibrate detected signals with peaks timing
 clear Mpset
-for j=1:Nsig  
+for j=1:1%Nsig
     thdP(j)=mean(SNp(SNp(:,j)>0,j))-nsig.*std(SNp(SNp(:,j)>0,j));
     thdR(j)=mean(RMSp(RMSp(:,j)>0,j))+ko.*std(RMSp(RMSp(:,j)>0,j));
     Mpset{j}=ipeakM(ipeakM(:,j)>0,j); Mpeak(j)=length(Mpset{j});

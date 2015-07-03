@@ -42,9 +42,9 @@ lexperiments = ['e130716', 'e130827', 'e130903', 'e141113', 'e141029', 'e141016'
 # Good experiments
 lexperiments = ['e130827',  'e141016', 'e140911', 'e140225', 'e140220']
 
-lexperiments = ['e140515']
+lexperiments = ['141016']
 
-colors = 'rrryyyyyyyyybbbbbbbbbbbbb'
+#colors = 'rrryyyyyyyyybbbbbbbbbbbbb'
 ext = ''
 
 def compute_data_labels(dfilec, dfile, sensor):
@@ -70,10 +70,10 @@ reference = 0
 
 size = [0,0,0,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,2]
 size = (np.array(size)+1) * 25
-colors = 'yyyrrrrrrrrrbbbbbbbbbbb'
+#colors = 'yyyrrrrrrrrrbbbbbbbbbbb'
 for expname in lexperiments:
     datainfo = experiments[expname]
-
+    colors = datainfo.colors
     #f = h5py.File(datainfo.dpath + datainfo.name + ext + '.hdf5', 'r+')
     for s in datainfo.sensors:
         print s
@@ -102,7 +102,7 @@ for expname in lexperiments:
 
         fig = plt.figure()
 #        ax = fig.gca(projection='3d')
-        plt.scatter(mres[:, 0], mres[:, 1], c=colors)
+        plt.scatter(mres[:, 0], mres[:, 1], c=colors, s=100)
 
         for label, x, y in zip([l[-2:] for l in datainfo.datafiles], mres[:, 0], mres[:, 1]):
             plt.annotate(label, xy=(x, y))

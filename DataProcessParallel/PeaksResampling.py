@@ -60,7 +60,12 @@ def do_the_job(dfile, sensor, wtsel, resampfac, alt, ext=""):
 
     f.close()
 
-    return presamp[:, wtdisc:wtlen-wtdisc]
+    # in case we have a odd number of points in the window
+    if wtlen_new + (2*wtdisc) != wtlen:
+        wtdisci = wtdisc + 1
+    else:
+        wtdisci = wtdisc
+    return presamp[:, wtdisci:wtlen-wtdisc]
 
 # ---------------------------------------------------------------------------------------------------------------
 if __name__ == '__main__':
@@ -68,8 +73,8 @@ if __name__ == '__main__':
 
     lexperiments = ['e130716', 'e130827', 'e130903', 'e141113', 'e141029', 'e141016', 'e140911', 'e140311', 'e140225', 'e140220']
     #lexperiments = ['e130827']  # ['e141113', 'e141029', 'e141016', 'e140911', 'e140311', 'e140225', 'e140220']
-    lexperiments = [ 'e130827', 'e140225', 'e140220', 'e141016', 'e140911']
-    lexperiments = [ 'e140515']
+    lexperiments = ['e130827', 'e140225', 'e140220', 'e141016', 'e140911']
+    lexperiments = ['141016']
 
     ext = ''
     TVD = False

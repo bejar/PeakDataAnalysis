@@ -1,10 +1,13 @@
 function [X, f, y, y2] = fifft(t,x,par)
+% Documenting functions is not optional
+%% WTF, you NEVER, NEVER use the name for variable in uppercase and lowercase
+%% WTF, you NEVER, NEVER use a vector to simulate a variable number of parameters for a
+%%      function, MATLAB is a shitty programming language, but this makes it worse
+%% You give to your variables names that mean something
 
 Lp=length(par);
 par1=par(1);
 par2=par(2);
-
-
 
 tap=0;
 if Lp>2,
@@ -18,6 +21,8 @@ if Lp>3,
 end
 
  Fs=1/(t(2)-t(1));  N=length(x); Nfft=2^nextpow2(N);
+
+ % You should NEVER do this when programming
  if par1<0 par1=0; end
  if par2==0; par2=Fs; end
 
@@ -38,6 +43,9 @@ return
 end
 
 function y2=ffft(f, y, cutoff1, cutoff2,wins)
+% WTF!, When you program, you must document your functions so
+%  people does not have to guess what your code does
+
 nf=length(f);
 ny=length(y);
 if ~(ny/2+1 == nf),

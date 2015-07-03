@@ -22,11 +22,11 @@ __author__ = 'bejar'
 from pymatbridge import Matlab
 
 from config.experiments import experiments, lexperiments
-
+import time
 
 
 # lexperiments = ['e130716', 'e130827', 'e130903', 'e141113', 'e141029', 'e141016', 'e140911', 'e140311', 'e140225', 'e140220']
-lexperiments = ['e140515']#'e130827','e140225', 'e140220', 'e141016', 'e140911']
+lexperiments = ['130827']#'e130827','e140225', 'e140220', 'e141016', 'e140911']
 
 mlab = Matlab(executable='/home/bejar/bin/MATLAB/R2014b/bin/matlab')
 
@@ -42,15 +42,17 @@ for expname in lexperiments:
     datainfo = experiments[expname]
     sampling = datainfo.sampling #/ 6.0
 
-    for file in datainfo.datafiles:
+    for file in [datainfo.datafiles[0]]:
+        print time.ctime()
         nfile = '/home/bejar/Data/Cinvestav/' + file + datasufix + '.mat'
-        nfiler = '/home/bejar/Data/Cinvestav/' + file + datasufix + '-peaks.mat'
+        nfiler = '/home/bejar/Data/Cinvestav/' + file + datasufix + '-peaks2.mat'
         print 'Processing ', file
         print 'IN= ', nfile
         print 'OUT= ', nfiler
         a = mlab.run_code('cdp_identification(\'' + nfile + '\', \'' + nfiler + '\', '+ wtime + ',' + str(sampling) + ')')
         print a
         print '************************************************'
+        print time.ctime()
 
 mlab.stop()
 

@@ -69,17 +69,23 @@ def resample_data(expname, wtsel, resampfac, TVD=False):
 
             print resampling, wtlen, wtlen_new, wtdisc, data.shape[1]
 
+            # in case we have a odd number of points in the window
+            if wtlen_new + (2*wtdisc) != wtlen:
+                wtdisci = wtdisc + 1
+            else:
+                wtdisci = wtdisc
+
             presamp = resample(data, wtlen, axis=1, window=wtlen*2)
             d = f.require_dataset(dfile + '/' + s + '/' +'PeaksResample' + alt, (presamp.shape[0], wtlen_new), dtype='f',
-                                  data=presamp[:, wtdisc:wtlen-wtdisc], compression='gzip')
-            d[()] = presamp[:, wtdisc:wtlen-wtdisc]
+                                  data=presamp[:, wtdisci:wtlen-wtdisc], compression='gzip')
+            d[()] = presamp[:, wtdisci:wtlen-wtdisc]
             f[dfile + '/' + s + '/PeaksResample' + alt].attrs['ReSampFactor'] = resampfac
 
     f.close()
 
 lexperiments = ['e130716', 'e130827', 'e130903', 'e141113', 'e141029', 'e141016', 'e140911', 'e140311', 'e140225', 'e140220']
 #lexperiments = ['e130827']  # ['e141113', 'e141029', 'e141016', 'e140911', 'e140311', 'e140225', 'e140220']
-lexperiments = ['e130716']
+lexperiments = ['130827']
 
 for exp in lexperiments:
     resample_data(exp, 100.0, 6.0)

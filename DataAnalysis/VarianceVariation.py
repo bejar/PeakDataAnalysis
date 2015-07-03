@@ -77,7 +77,7 @@ if __name__ == '__main__':
     lexperiments = ['e130827',  'e141016', 'e140911', 'e140225', 'e140220']
 
     # lexperiments = ['e140225', 'e140220', 'e141016', 'e140911']e140515
-    lexperiments = ['e140515']
+    lexperiments = ['130827']
 
     TVD = False
     ext = ''
@@ -95,13 +95,16 @@ if __name__ == '__main__':
         for dfile in range(0,len(datainfo.datafiles)):
             d = f[datainfo.datafiles[dfile] + '/' + 'Raw']
             length = int(d.shape[0]/float(step))
-            lsignals = []
+            lsignalsvar = []
+            lsignalsmean = []
             for s in range(len(datainfo.sensors)):
                 print dfile, datainfo.sensors[s]
-                p = np.zeros(length)
+                pvar = np.zeros(length)
+                pmean = np.zeros(length)
                 for pos in range(length):
-                    p[pos] = np.mean(d[pos*step:(pos*step)+rslt, s])
-                lsignals.append((p,datainfo.sensors[s]))
+                    pvar[pos] = np.std(d[pos*step:(pos*step)+rslt, s])
+                #print p
+                lsignalsvar.append((pvar,datainfo.sensors[s]))
                 # plt.subplots(figsize=(20, 10))
                 # plt.axis([0, length, 0, 0.2])
                 # plot(range(length), p)
@@ -110,4 +113,4 @@ if __name__ == '__main__':
                 # plt.savefig(datainfo.dpath + '/Results/' + datainfo.datafiles[dfile] + '-' + datainfo.sensors[s]
                 #             + '-variance.pdf', orientation='landscape', format='pdf')
                 # plt.close()
-            plotSignals(lsignals, 6, 2, 0.005, -0.005, datainfo.datafiles[dfile]+'-'+str(rslt)+'-'+str(step)+'-mean.pdf', datainfo.datafiles[dfile], datainfo.dpath + '/Results/')
+            plotSignals(lsignalsvar, 6, 2, 0.15, 0, datainfo.datafiles[dfile]+'-'+str(rslt)+'-'+str(step)+'-variance.pdf', datainfo.datafiles[dfile], datainfo.dpath + '/Results/')
