@@ -132,6 +132,11 @@ experiments = \
 
                        ['L4ci', 'L4cd', 'L5ri', 'L5rd', 'L5ci', 'L5cd', 'L6ri', 'L6rd', 'L6ci', 'L6cd', 'L7ri',
                         'L7rd'],[8,8,8,8,8,8,8,8,8,8,8,8], 'rrrrrrryyyyyy'),
+         '130827a':
+            Experiment(cinvesdata, 'e13827', 10256.4,
+                       ['13827f23_ctrl1'],
+                       ['L4ci', 'L4cd', 'L5ri', 'L5rd', 'L5ci', 'L5cd', 'L6ri', 'L6rd', 'L6ci', 'L6cd', 'L7ri']
+                       , [8,8,8,8,8,8,8,8,8,8,8], 'rrrrryyyyyyyyy'),#[9, 10, 11, 9, 11, 11, 11, 10, 8, 12, 8]
 
     }
 

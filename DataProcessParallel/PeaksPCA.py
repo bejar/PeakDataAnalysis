@@ -29,6 +29,7 @@ from config.experiments import experiments
 from util.plots import show_signal
 from joblib import Parallel, delayed
 
+
 def do_the_job(dfile, sensor, components, lind, alt, ext=''):
     """
     Transforms the data reconstructing the peaks using some components of the PCA

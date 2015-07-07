@@ -22,11 +22,8 @@ __author__ = 'bejar'
 import numpy as np
 from config.experiments import experiments, lexperiments
 import scipy.io
-from util.plots import show_signal, show_two_signals
+from util.plots import show_signal
 import time
-import h5py
-import pyfftw
-
 
 def uniquetol(peaks, tol):
     """
@@ -91,8 +88,18 @@ def integIneqG(data,QI1,QI2,QF1,QF2):
     return intTest
 
 
+def nextpow2(n):
+    """
+    Computes the next power of 2 of a number
+    :param n:
+    :return:
+    """
+    m_f = np.log2(n)
+    m_i = np.ceil(m_f)
+    return 2**m_i
 
-def fifft(Nfft, fmask, peak, dw, N):
+
+def fifft(t, peak, low_cutoff=0, high_cutoff=0, tap=0, myfreq=None):
     """
     Returns the peaks with filtered frequencies
 
@@ -106,21 +113,35 @@ def fifft(Nfft, fmask, peak, dw, N):
     :return:
     """
 
+    Fs = 1/(t[1]-t[0])
+    N = len(peak)
 
+    Nfft = nextpow2(N)
+
+    if low_cutoff < 0:
+        low_cutoff = 0
+    if high_cutoff == 0:
+        high_cutoff = Fs
+
+    f = Fs/2*np.linspace(0,1,1+Nfft/2)  # create freqs vector
     xo = np.zeros(Nfft)
+    dw = np.floor((Nfft-N)/2)
     xo[dw:N+dw] = peak
+    peak = xo  # add zeros before and aftermx
 
-    y = np.fft.rfft(xo)/N  # perform fft transform
+    #if (tap)  H=sigwin.tukeywin(Nfft,tap); win=generate(H)';    x=x.*win; end
+
+    y = np.fft.fft(peak)/N  # perform fft transform
 
     # filter amplitudes (deletes the aplitudes outside the cutoff ranges)
-    y2 = ffft(fmask, y)
-
-    X = np.fft.irfft(y2)
+    y2 = ffft(f, y, low_cutoff, high_cutoff, myfreq)
+    #print y2
+    X = np.real(np.fft.ifft(y2))
     X = X[dw:N+dw-1]*N
-    return X, y, y2
+    return X, f, y, y2
 
 
-def ffft(fmask, y):
+def ffft(f, y, low_cutoff, high_cutoff, wins=None):
     """
     Suposedly deletes the amplitudes of the fft that are outside the cutoffs so
     the inverse FFT returns the smoothed peak
@@ -132,20 +153,54 @@ def ffft(fmask, y):
     :param myfreq:
     :return:
     """
-    nf = len(fmask)
+    nf = len(f)
     ny = len(y)
+    if ((ny/2)+1) != nf:
+        print 'unexpected dimensions of input vectors!'
+        y2 = -1
+        return
 
-    y2 = np.zeros(ny, dtype=np.complex)
+    y2 = np.zeros(ny, dtype=np.complex) #y.copy()*0
     # cutoff filter, computes the indices of the frequencies among the cutoffs
-    if fmask is not None:
-        y2[fmask] = y[fmask]  # insert required elements
+    if high_cutoff is not None or low_cutoff is not None:
+        ind1 = f <= high_cutoff
+        ind2 = f >= low_cutoff
+        #print np.sum(ind1), np.sum(ind2)
+        ind3 = np.logical_and(ind2,ind1)
+        y2[ind3] = y[ind3]  # insert required elements
     else:
         y2 = y
 
+    #print y2[0:20]
+
+    # dominant freqs filter
+    # I dont know what this actually does
+    if wins is not None:
+         temp = abs(y2[0:nf-1])
+         y2 = np.zeros(ny)
+         for k in range(wins):   # number of freqs that I want
+              tmaxi = np.argmax(temp)
+              y2[tmaxi] = y[tmaxi] # insert required element
+              temp[tmaxi] = 0 # eliminate candidate from list
+
     # create a conjugate symmetric vector of amplitudes
     for k in range(nf+1, ny):
-        y2[k] = np.conj(y2[((ny-k) % ny)])
+        y2[k] = np.conj(y2[((ny-k+1) % ny)+1])
+
     return y2
+
+def smot(t, x, ifreq, ffreq, tapering, fft_freq, ismot):
+    """
+    Original matlab code used ismot to select the smoothing method
+    using only fft for now
+
+    :param t:
+    :param xs:
+    :param par:
+    :param ismot:
+    :return:
+    """
+    return fifft(t, x, ifreq, ffreq, tapering, fft_freq)
 
 
 def cdp_identification(X, T, Fs):
@@ -160,7 +215,7 @@ def cdp_identification(X, T, Fs):
     ifreq = 0.0   # Frequency cutoff low
     ffreq = 70.0  # Frequency cutoff high
 
-    tapering = 0.0  # tapering window use tukey window tap=0 no window, tap=1 max tapering
+    tapering = 0.0 # tapering window use tukey window tap=0 no window, tap=1 max tapering
     fft_freq = None  # max number of freqs used in FFT
 
     upthreshold = 1        # Outliers threshold *** ADDED by Javier
@@ -195,19 +250,7 @@ def cdp_identification(X, T, Fs):
     Tmax = Nmax/Fs               # Time max analyzed in sec
     Tw = int(2 * np.round(T*Fs/2))    # Number of points in window (Tw must be an even number)
     t = np.array(range(Tw))/Fs             # Time axis in window
-
-    Nfft = int(2**np.ceil(np.log2(Tw)))
-
-    f = Fs/2*np.linspace(0, 1, 1 + Nfft / 2)  # create freqs vector
-
-    print Nfft, Tw
-    if ifreq is not None or ffreq is not None:
-        ind1 = f <= ffreq
-        ind2 = f >= ifreq
-        fmask = np.logical_and(ind2,ind1)
-
-    Tpk = int(np.floor(Tpk*Fs))
-    print Tpk
+    Tpk = np.floor(Tpk*Fs)
     peakprecision = np.floor(peakprecision*Fs)
 
 
@@ -215,7 +258,6 @@ def cdp_identification(X, T, Fs):
     SNp = []
     RMSp = []
     Tm = 1
-    dw = np.floor((Nfft-Tw)/2)
     for j in [0]: #range(Nsig):   #Loop over different sensors
         print 'Peaks identification: analyzing sensor N ', j, time.ctime()
         tstop = 0
@@ -223,7 +265,6 @@ def cdp_identification(X, T, Fs):
         ipeakMj = []
         SNpj = []
         RMSpj = []
-        nt = 0
         while tstop < Nmax:
             tstop = min(Nmax,tstart + Tw - 1)
             xs = X[tstart:tstop, j]
@@ -231,8 +272,7 @@ def cdp_identification(X, T, Fs):
             if Nl < Tw:
                 xs = np.hstack((xs, np.zeros(Tw-Nl)))
 
-            xf, y, y2 = fifft(Nfft, fmask, xs, dw, Tw)  # signal smooth in frequency interval
-
+            xf, f, y, y2 = smot(t, xs, ifreq, ffreq, tapering, fft_freq, ismot)  # signal smooth in frequency interval
             xf -= np.min(xf)
             qpeak = (np.max(xf) > threshold) and (np.max(xf) < upthreshold) and (np.min(xf) > downthreshold) # *** up/downthreshold ADDED by Javier
 
@@ -240,45 +280,50 @@ def cdp_identification(X, T, Fs):
             #with centered peaks and minimum peaks amplitude >threshold
             Tm = np.argmax(xf[np.floor(Tw/npz)+2:Tw])+1 #smart peaks search
             if qpeak:   #store the time window only if there is a peak
+                #Nw = Tw - (2 * np.floor(peakprecision/4))  #length(miv);
                 Pv = np.max(xf[np.floor(peakprecision/4):Tw-np.floor(peakprecision/4)])
                 indp = np.argmax(xf[np.floor(peakprecision/4):Tw-np.floor(peakprecision/4)])
                 Pkv = np.max(xf[np.floor(Tw/npz)-peakprecision:np.floor(Tw/npz)+peakprecision])
-
-                if (Pv == Pkv):
-                    #evaluate quality of the peak
-                    Tqpeak = False
-                    if qualc:
-                        Dp = 1
-                        if Tpk > 0:
-                            Dp = abs(np.mean(xf[0:Tpk]))
-
-                        Dm =1
-                        if Tpk > 0:
-                            Dm = abs(np.mean(xf[Tw-Tpk:Tw]))
-                        Tqpeak = (Pv > (factp*Dp)) and (Pv > (factm*Dm))
-
-                        #Tqint = integIneqG(xf,quot)
+                Tcentr = (Pv == Pkv)
 
 
-                    # check the peak
-                    if Tqpeak:
-                        # Store the index of the peak, sum ratio and RMS
-                        ipeakMj.append(tstart+np.floor(peakprecision/4)+indp)
-                        SNpj.append(np.sum(y2*np.conj(y2))/np.sum(y*np.conj(y)))
-                        RMSpj.append(np.std(xs))
-                        # store time of max peak in window
-                        Tm = int(np.floor(Tw/npz)+1)
+                #evaluate quality of the peak
+                Tqpeak = True
+                #Tqint = True
+                if qualc:
+                    Dp = 1
+                    if Tpk > 0:
+                        Dp = abs(np.mean(xf[0:Tpk]))
+
+                    Dm =1
+                    if Tpk > 0:
+                        Dm = abs(np.mean(xf[Tw-Tpk:Tw]))
+                    Tqpeak = (Pv > factp*Dp) and (Pv > factm*Dm)
+
+                    #Tqint = integIneqG(xf,quot)
+
+                # check the peak
+                quality = Tcentr and Tqpeak
+                if quality:
+                    # Store the index of the peak, sum ratio and RMS
+                    print '-->', tstart+np.floor(peakprecision/4)+indp
+                    ipeakMj.append(tstart+np.floor(peakprecision/4)+indp)
+                    SNpj.append(np.sum(y2*np.conj(y2))/sum(y*np.conj(y)))
+                    RMSpj.append(np.std(xs))
+                    #print tstart+np.floor(peakprecision/4)+indp
+                    # store time of max peak in window
+                    Tm = int(np.floor(Tw/npz)+1)
+                    #show_signal(xf)
 
                 # check which peaks are we throwing away
                 # noquality=Tcentr and not Tqpeak
                 # if noquality:
                 #     ipeakMnoQj.append(tstart+np.floor(peakprecision/4)+indp)
 
-            if forceTm != 0:
-                 Tm = forceTm  # force exhaustive peaks search
+            # if forceTm == 0:
+            #     Tm = forceTm  # force exhaustive peaks search
             tstart += Tm
-            nt += 1
-
+            #print Tm
         # Add the peaks of the signal to the datastructure
         ipeakM.append(np.array(ipeakMj))
         SNp.append(np.array(SNpj))
@@ -296,8 +341,6 @@ def cdp_identification(X, T, Fs):
         SNpsel.append(sn[lind])
         RMSpsel.append(rms[lind])
 
-    for peaks in ipeakMsel:
-        print len(peaks)
 
     # Signal to noise ratio filtering
     signal_noise_tolerance = 1.4 # Tolerance for Signal/Noise ratio
@@ -307,6 +350,8 @@ def cdp_identification(X, T, Fs):
     so = 50
     ko = 6.41
 
+    for peaks in ipeakMsel:
+        print len(peaks)
     print 'Filtering Noise Ratio Peaks ', time.ctime()
 
     ipeakM = []
@@ -335,7 +380,6 @@ def cdp_identification(X, T, Fs):
     for peaks in ipeakM:
         print len(peaks)
 
-    return ipeakM
 
 # ---------------------------------------------------------------------------------------------------------------
 if __name__ == '__main__':
@@ -354,7 +398,6 @@ if __name__ == '__main__':
     for expname in lexperiments:
         datainfo = experiments[expname]
         sampling = datainfo.sampling #/ 6.0
-        # f = h5py.File(datainfo.dpath + datainfo.name + '.hdf5', 'r+')
 
         for dfile in [datainfo.datafiles[0]]:
 
@@ -362,28 +405,4 @@ if __name__ == '__main__':
             mattime = scipy.io.loadmat(datainfo.dpath + dfile + '.mat')
             raw = mattime['data']
 
-            peaks = cdp_identification(raw,  wtime, datainfo.sampling)
-
-            # d = f[dfile + '/' + 'L4ci' + '/' + 'Time']
-            # dataf = d[()]
-            #
-            # pk = peaks[0]
-            #
-            # i = 0
-            # j = 0
-            # tol = 30
-            # print dataf.shape
-            # while i < len(pk) and j < dataf.shape[0]:
-            #     if abs(pk[i]-dataf[j]) > tol:
-            #         if pk[i] < dataf[j]:
-            #             print 'Py: ', pk[i]
-            #             i += 1
-            #         else:
-            #             print 'Ml: ', dataf[i]
-            #             j += 1
-            #     else:
-            #         i += 1
-            #         j += 1
-            #
-            # print i, len(pk), j, dataf.shape[0]
-
+            cdp_identification(raw,  wtime, datainfo.sampling)
