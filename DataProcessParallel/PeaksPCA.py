@@ -74,10 +74,10 @@ if __name__ == '__main__':
     lexperiments = ['e130827',  'e141016', 'e140911', 'e140225', 'e140220']
 
     #lexperiments = ['e140225', 'e140220', 'e141016', 'e140911']
-    lexperiments = ['141016']
+    lexperiments = ['e120516']
 
     TVD = False
-    baseline = 40
+    baseline = 20
     components = 10
     ext = ''
     for expname in lexperiments:
@@ -94,7 +94,7 @@ if __name__ == '__main__':
             print dfile
             # Paralelize PCA computation
             res = Parallel(n_jobs=-1)(delayed(do_the_job)(dfile, s, components, lind, alt, ext) for s in datainfo.sensors)
-            print 'Parallelism ended'
+            #print 'Parallelism ended'
             # Save all the data
             f = h5py.File(datainfo.dpath + datainfo.name + ext + '.hdf5', 'r+')
             for trans, sensor in zip(res, datainfo.sensors):

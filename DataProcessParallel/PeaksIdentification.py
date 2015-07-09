@@ -280,7 +280,7 @@ def cdp_identification(X, wtime, datainfo, sensor):
     SNp = np.array(SNpj)
     RMSp = np.array(RMSpj)
 
-    print 'Filtering near peaks', sensor, time.ctime()
+    #print 'Filtering near peaks', sensor, time.ctime()
     # This eliminates all the peaks that are at a distance less than the peak precision parameter
     # TODO: Change the previous part so this is not necessary
     lind = uniquetol(ipeakM, peakprecision)
@@ -299,7 +299,7 @@ def cdp_identification(X, wtime, datainfo, sensor):
     so = 50
     ko = 6.41
 
-    print 'Filtering Noise Ratio Peaks ', sensor, time.ctime()
+    #print 'Filtering Noise Ratio Peaks ', sensor, time.ctime()
 
 
     #thdP = np.mean(SNpsel[i]) - signal_noise_tolerance * np.std(SNpsel[i])
@@ -335,7 +335,7 @@ if __name__ == '__main__':
     #lexperiments = ['e130827']  # ['e141113', 'e141029', 'e141016', 'e140911', 'e140311', 'e140225', 'e140220']
 
     #lexperiments = ['e130827', 'e140225', 'e140220', 'e141016', 'e140911']
-    lexperiments = ['130827', '141016']
+    lexperiments = ['e120516']
 
 
     datasufix = ''#'-RawResampled'

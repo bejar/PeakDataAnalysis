@@ -39,7 +39,7 @@ lexperiments = ['e130716', 'e130827', 'e130903', 'e141113', 'e141029', 'e141016'
 # Good experiments
 lexperiments = ['e130827',  'e141016', 'e140911', 'e140225', 'e140220']
 
-lexperiments = ['130827']
+lexperiments = ['e120516']
 
 #colors = 'rrryyyyyyyyybbbbbbbbbbbbb'
 ext = ''
@@ -49,7 +49,7 @@ for expname in lexperiments:
     datainfo = experiments[expname]
     colors = datainfo.colors
 
-    f = h5py.File(datainfo.dpath + datainfo.name + ext + '.hdf5', 'r+')
+    f = h5py.File(datainfo.dpath + datainfo.name + ext + '.hdf5', 'r')
 
     for s, nclusters in zip(datainfo.sensors, datainfo.clusters):
         print s
@@ -120,8 +120,6 @@ for expname in lexperiments:
         fig.savefig(datainfo.dpath+'/Results/' + datainfo.name + '-' + s + ext + '-histo-sort.pdf', orientation='landscape', format='pdf')
     #    plt.show()
 
-
-
         print '*******************'
         for nc in range(nclusters):
             lsignals.append((km.cluster_centers_[lmax[nc][0]], str(nc)+' ( '+str(cnt[lmax[nc][0]])+' )'))
@@ -135,4 +133,4 @@ for expname in lexperiments:
                     datainfo.name + '-' + s + ext, datainfo.dpath+'/Results/')
         # for cc in range(nclusters):
         #     show_signal(km.cluster_centers_[cc])
-
+    f.close()

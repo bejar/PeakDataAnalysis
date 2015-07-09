@@ -1,10 +1,15 @@
-Pasos para procesar un experimento:
+Pasos para procesar un experimento (1 o 2):
 
-ConvertABF - Genera ficheros matlab a partir de los datos en ABF
-DataProcessML - Genera el fichero con los picos con el programa MATLAB de extraccion de picos
-                (necesita el tamaño de la ventana en ms y la frecuencia de muestreo en Hz)
-PeaksCreateHDFS - Genera un fichero HDF5 con los datos originales y los picos (Raw/Peaks)
---- A partir de aqui se trabaja con el fichero HDF5
+1|ConvertABF - Genera ficheros matlab a partir de los datos en ABF
+1|DataProcessML - Genera el fichero con los picos con el programa MATLAB de extraccion de picos
+1|                (necesita el tamaño de la ventana en ms y la frecuencia de muestreo en Hz)
+1|PeaksCreateHDFS - Genera un fichero HDF5 con los datos originales y los picos (Raw/Peaks)
+
+2|ConvertABF - Genera ficheros matlab a partir de los datos en ABF
+2|PeaksCreateHDFSRaw - Genera un fichero HDF5 con los datos originales
+2|PeaksIdentification - Identifica los picos en la señal raw y los añade al fichero HDF5
+
+--- Procesamiento usando los datos del fichero HDF5 del experimento
 PeaksResampling - Añade una matriz con un resampling de los picos (PeaksResample)
                   Necesita el factor de resampling y el tiempo de la ventana a extraer
 PeaksPCA - Añade al fichero los picos despues de aplicarles el PCA y mover la basal (PeaksResamplePCA)
@@ -14,9 +19,8 @@ PeaksClusteringHistoSort - Genera el clustering para el primer tramo del experim
                        fases, genera grafico de los centroides del clustering de la primera fase e histogramas de
                        frecuencias de picos para todas los tramos del experimento ordenandolas por la altura de los picos
 
-PeaksGenerateClustering - Graba en el primer tramo del experimento los centroides del clustering usando el numero de
-                          clusters establecido para cada sensor, los centroides se graban segun el orden ascendente
-                          de la altura maxima del centroide
+PeaksGenerateClustering - Graba los centroides del clustering usando el numero de clusters establecido para cada sensor,
+                          los centroides se graban segun el orden ascendente de la altura maxima del centroide
 *********************
 Alternativas
 

@@ -37,37 +37,6 @@ from sklearn.metrics import pairwise_distances_argmin_min
 from sklearn.metrics.pairwise import euclidean_distances
 import seaborn as sns
 
-# def compute_sequences(clpeaks, timepeaks, lines, nexp, remap):
-#     """
-#     Computes the sequence of peaks of different lines
-#
-#     :param lines:
-#     :param exps:
-#     :param window:
-#     :return:
-#     """
-#     peakseq = []
-#     for line, _, _ in lines:
-#         peakini = 0
-#         i = 0
-#         while i < nexp:
-#             exp = timepeaks[line][i]
-#             peakini += exp.shape[0]
-#             i += 1
-#
-#         exp = timepeaks[line][nexp]
-#         peakend = peakini + exp.shape[0]
-#
-#         # Build the sequence of peaks
-#         peakstr = []
-#         for i in range(peakini, peakend):
-#             peakstr.append([remap[line][clpeaks[line][i][0] - 1] - 1, exp[i - peakini][0]])
-#         peakseq.append(peakstr)
-#     return peakseq
-
-
-
-# --------------------------------------------------------------------------------------------------------------------
 
 voc = ' ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 
@@ -85,30 +54,6 @@ coormap = {'L4ci': (1, 1),
            'L7rd': (6, 2)
            }
 
-###
-#peakdata, expcounts = generate_synchs(aline, nfiles, window=int(round(window)))
-####
-#synch_coincidence_matrix(peakdata, expcounts, int(round(window)))
-
-###
-#draw_synchs(peakdata, nfiles, window=int(round(window*0.6)))
-
-# print expcounts
-#
-# for p in peakdata:
-#     print p
-# print len(peakdata)
-#
-# for l in peakdata:
-#     print l[0], len(l[1])
-#     for p in l[1]:
-#         print p
-
-### Histograms of the frequency of the lengths
-#length_synch_frequency_histograms(peakdata, window=int(round(window * 0.6)))
-
-### Contingency PDFs
-#gen_peaks_contingency(peakdata)
 def gen_data_matrix(lines, clusters):
     """
     Generates a datastructure to store the peaks coincidences
@@ -127,6 +72,7 @@ def gen_data_matrix(lines, clusters):
                 imtrx.append(None)
         mtrx.append(imtrx)
     return mtrx
+
 
 def gen_peaks_contingency(peakdata, sensors, dfile, clusters):
     """
@@ -330,7 +276,7 @@ def compute_synchs(seq, labels, window=15):
     :param seq: List of the peaks for all the sensors
                 The list contains the time where the maximum of the peaks ocurr
     :param window: Window to consider that a set of peaks is synchronized
-    :return:
+    :return: List of synchronizations
     """
 
     def minind():
@@ -356,7 +302,7 @@ def compute_synchs(seq, labels, window=15):
         if len(seq[imin]) > counts[imin] + 1 and \
             seq[imin][counts[imin]] <= (seq[imin][counts[imin] + 1] + window):
             # Look for the peaks inside the window length
-            psynch = [(imin, seq[imin][counts[imin]],labels[imin][counts[imin]])]
+            psynch = [(imin, seq[imin][counts[imin]], labels[imin][counts[imin]])]
             for i in range(len(seq)):
                 if (len(seq[i]) > counts[i]) and (i != imin):
                     if seq[i][counts[i]] <= (seq[imin][counts[imin]] + window):
@@ -376,7 +322,7 @@ def compute_synchs(seq, labels, window=15):
     return lsynch
 
 
-def compute_data_labels(dfilec, dfile, sensorref, sensor):
+def compute_data_labels(fname, dfilec, dfile, sensorref, sensor):
     """
     Computes the labels of the data using the centroids of the cluster in the file
     the labels are relabeled acording to the matching with the reference sensor
@@ -384,7 +330,7 @@ def compute_data_labels(dfilec, dfile, sensorref, sensor):
     :param sensor:
     :return:
     """
-    f = h5py.File(datainfo.dpath + datainfo.name + ext + '.hdf5', 'r')
+    f = h5py.File(fname + '.hdf5', 'r')
 
     d = f[dfilec + '/' + sensor + '/Clustering/' + 'Centers']
     centers = d[()]
@@ -435,7 +381,7 @@ if __name__ == '__main__':
             lsens_labels = []
             #compute the labels of the data
             for sensor in datainfo.sensors:
-                lsens_labels.append(compute_data_labels(datainfo.datafiles[0], dfile, datainfo.sensors[0], sensor))
+                lsens_labels.append(compute_data_labels(datainfo.dpath + datainfo.name, datainfo.datafiles[0], dfile, datainfo.sensors[0], sensor))
 
             # Times of the peaks
             ltimes = []
@@ -450,15 +396,15 @@ if __name__ == '__main__':
 
             lsynchs = compute_synchs(ltimes, lsens_labels, window=window)
 
-            # print len(lsynchs)
-            # for i in  lsynchs:
-            #     print i, len(i)
+            print len(lsynchs)
+            for i in  lsynchs:
+                 print i, len(i)
 
-            peakdata = lsynchs
+            #peakdata = lsynchs
             #print peakdata
             #gen_peaks_contingency(peakdata, datainfo.sensors, dfile, datainfo.clusters)
             #draw_synchs(peakdata, dfile, datainfo.sensors, window)
             #length_synch_frequency_histograms(peakdata, dfile, window=int(round(window)))
             #synch_coincidence_matrix(peakdata, dfile, datainfo.sensors, expcounts, window)
-            coincidence_contingency(peakdata, dfile, datainfo.sensors)
+            #coincidence_contingency(peakdata, dfile, datainfo.sensors)
 

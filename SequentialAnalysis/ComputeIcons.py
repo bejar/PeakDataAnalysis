@@ -38,28 +38,29 @@ def plotSignalValues(signals, sensor, nc):
     sp1.axes.get_yaxis().set_visible(False)
 
     t = arange(0.0, peakLength, 1)
-    sp1.plot(t, signals, 'r')
+    sp1.plot(t, signals, 'b')
+    plt.axhline(linewidth=1, color='r', y=0)
     fig.set_figwidth(1.5)
     fig.set_figheight(1.5)
 
     # plt.show()
-    fig.savefig(datainfo.dpath +'/icons/' + datainfo.name + sensor + '.cl' + str(nc) + '.png', orientation='landscape', format='png',
+    fig.savefig(datainfo.dpath +'/Results/icons/' + datainfo.name + sensor + '.cl' + str(nc) + '.png', orientation='landscape', format='png',
                 pad_inches=0.1)
     plt.close()
 
 
-aline = [('L4cd', 'k9.n5', 9),
-         ('L4ci', 'k9.n1', 9),
-         ('L5cd', 'k10.n6', 10),
-         # ('L5rd', 'k20.n1' ),
-         ('L5ci', 'k15.n1', 15),
-         ('L5ri', 'k15.n9', 15),
-         ('L6cd', 'k17.n1', 17),
-         ('L6rd', 'k13.n9', 13),
-         #('L6ci', 'k15.n1'),
-         ('L6ri', 'k18.n4', 18),
-         ('L7ri', 'k18.n4', 18)
-         ]
+# aline = [('L4cd', 'k9.n5', 9),
+#          ('L4ci', 'k9.n1', 9),
+#          ('L5cd', 'k10.n6', 10),
+#          # ('L5rd', 'k20.n1' ),
+#          ('L5ci', 'k15.n1', 15),
+#          ('L5ri', 'k15.n9', 15),
+#          ('L6cd', 'k17.n1', 17),
+#          ('L6rd', 'k13.n9', 13),
+#          #('L6ci', 'k15.n1'),
+#          ('L6ri', 'k18.n4', 18),
+#          ('L7ri', 'k18.n4', 18)
+#          ]
 
 # line = 'L6ri'
 # clust = '.k15.n1'
@@ -100,7 +101,7 @@ if __name__ == '__main__':
         f = h5py.File(datainfo.dpath + datainfo.name + ext + '.hdf5', 'r')
 
         # dfile = datainfo.datafiles[0]
-        for dfile in datainfo.datafiles:
+        for dfile in datainfo.datafiles[0]:
             print dfile
 
             lsens_labels = []
