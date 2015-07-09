@@ -27,7 +27,7 @@ import numpy as np
 #from config.paths import datapath, seqpath
 from config.experiments import experiments
 
-def plotSignalValues(signals, sensor, nc):
+def plotSignalValues(signals, dfile, sensor, nc):
     fig = plt.figure()
     minaxis = -0.1
     maxaxis = 0.3
@@ -44,7 +44,7 @@ def plotSignalValues(signals, sensor, nc):
     fig.set_figheight(1.5)
 
     # plt.show()
-    fig.savefig(datainfo.dpath +'/Results/icons/' + datainfo.name + sensor + '.cl' + str(nc) + '.png', orientation='landscape', format='png',
+    fig.savefig(datainfo.dpath +'/Results/icons/' + dfile + sensor + '.cl' + str(nc) + '.png', orientation='landscape', format='png',
                 pad_inches=0.1)
     plt.close()
 
@@ -101,16 +101,16 @@ if __name__ == '__main__':
         f = h5py.File(datainfo.dpath + datainfo.name + ext + '.hdf5', 'r')
 
         # dfile = datainfo.datafiles[0]
-        for dfile in datainfo.datafiles[0]:
+        for dfile in [datainfo.datafiles[0]]:
             print dfile
 
             lsens_labels = []
             #compute the labels of the data
             for sensor in datainfo.sensors:
 
-                d = f[datainfo.datafiles[0] + '/' + sensor + '/Clustering/' + 'Centers']
+                d = f[dfile + '/' + sensor + '/Clustering/' + 'Centers']
                 centers = d[()]
                 peakLength = centers.shape[1]
                 for i in range(centers.shape[0]):
-                    plotSignalValues(centers[i], sensor, i + 1)
+                    plotSignalValues(centers[i], expname, sensor, i + 1)
         f.close()

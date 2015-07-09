@@ -25,9 +25,13 @@ from pyx.color import cmyk, rgb, gray
 from PIL import Image
 from config.paths import resultpath
 from config.experiments import experiments
-from PeaksSynchro import compute_data_labels, compute_synchs, gen_data_matrix
+from PeaksSynchro import compute_synchs, gen_data_matrix
 import h5py
 import numpy as np
+from munkres import Munkres
+from sklearn.metrics import pairwise_distances_argmin_min
+from sklearn.metrics.pairwise import euclidean_distances
+
 
 def peaks_contingency(peakdata, sensors, clusters):
     """
@@ -90,9 +94,38 @@ def draw_page(c, file, sensori, sensorj, nci, ncj, matrix):
     c.text((ncj/2)+1, -1.5, " ", [text.size(-1)])
     c.text((ncj/2)+1, ncj+2,  " ", [text.size(-1)])
 
+
+def compute_data_labels(fname, dfilec, dfile, sensorref, sensor):
+    """
+    Computes the labels of the data using the centroids of the cluster in the file
+    the labels are relabeled acording to the matching with the reference sensor
+    :param dfile:
+    :param sensor:
+    :return:
+    """
+    f = h5py.File(fname + '.hdf5', 'r')
+
+    d = f[dfilec + '/' + sensor + '/Clustering/' + 'Centers']
+    centers = d[()]
+    d = f[dfile + '/' + sensor + '/' + 'PeaksResamplePCA']
+    data = d[()]
+    d = f[dfilec + '/' + sensorref + '/Clustering/' + 'Centers']
+    centersref = d[()]
+    f.close()
+
+    # clabels, _ = pairwise_distances_argmin_min(centers, centersref)
+    #
+    # m = Munkres()
+    # dist = euclidean_distances(centers, centersref)
+    # indexes = m.compute(dist)
+    # print indexes
+    # print clabels
+    labels, _ = pairwise_distances_argmin_min(data, centers)
+    return labels #[indexes[i][1] for i in labels]
+
 if __name__ == '__main__':
 
-    window = 100
+    window = 400
     print 'W=', int(round(window))
     lexperiments = ['e130716', 'e130827', 'e130903', 'e141113', 'e141029', 'e141016', 'e140911', 'e140311', 'e140225',
                     'e140220']

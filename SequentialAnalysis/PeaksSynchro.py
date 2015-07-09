@@ -326,6 +326,10 @@ def compute_data_labels(fname, dfilec, dfile, sensorref, sensor):
     """
     Computes the labels of the data using the centroids of the cluster in the file
     the labels are relabeled acording to the matching with the reference sensor
+
+    Disabled the association using the Hungarian algorithm so the cluster index are
+    the original ones
+
     :param dfile:
     :param sensor:
     :return:
@@ -340,14 +344,16 @@ def compute_data_labels(fname, dfilec, dfile, sensorref, sensor):
     centersref = d[()]
     f.close()
 
-    dist = euclidean_distances(centers, centersref)
-    clabels, _ = pairwise_distances_argmin_min(centers, centersref)
-    m = Munkres()
-    indexes = m.compute(dist)
+    # clabels, _ = pairwise_distances_argmin_min(centers, centersref)
+    #
+    # m = Munkres()
+    # dist = euclidean_distances(centers, centersref)
+    # indexes = m.compute(dist)
     # print indexes
     # print clabels
     labels, _ = pairwise_distances_argmin_min(data, centers)
-    return [indexes[i][1] for i in labels]
+    return labels #[indexes[i][1] for i in labels]
+
 
 # --------------------------------------------------------------------------------------------------------------------
 
