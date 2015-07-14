@@ -46,7 +46,7 @@ if __name__ == '__main__':
     lexperiments = ['e130827',  'e141016', 'e140911', 'e140225', 'e140220']
 
     # lexperiments = ['e140225', 'e140220', 'e141016', 'e140911']e140515
-    lexperiments = ['130827']
+    lexperiments = ['e140515']
 
     TVD = False
     ext = ''
@@ -62,8 +62,8 @@ if __name__ == '__main__':
         chunk = 2000000
 
         rate = datainfo.sampling
-        for dfile in range(len(datainfo.datafiles)):
-            d = f[datainfo.datafiles[dfile] + '/' + 'Raw']
+        for dfile in [0]:#range(len(datainfo.datafiles)):
+            d = f[datainfo.datafiles[dfile] + '/' + 'RawFiltered']
             print d.shape, datainfo.sampling/2
             for s in range(len(datainfo.sensors)):
                 print dfile, datainfo.sensors[s]
@@ -77,6 +77,7 @@ if __name__ == '__main__':
 
                 sp1 = fig.add_subplot(1, 1, 1)
                 img = sp1.imshow(vec[:,0:100].T, cmap=plt.cm.seismic, interpolation='none')
-                fig.savefig(datainfo.dpath + '/Results/' + datainfo.datafiles[dfile] + '-' + datainfo.sensors[s] + '-ftft.pdf', orientation='landscape', format='pdf')
+                fig.savefig(datainfo.dpath + '/Results/' + datainfo.datafiles[dfile] + '-' + datainfo.sensors[s]
+                            + '-ftft.pdf', orientation='landscape', format='pdf')
                 #plt.show()
                 plt.close()

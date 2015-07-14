@@ -332,9 +332,9 @@ def max_peaks_edges(nexp, clpeaks, timepeaks, sup, gap=0):
 
     return lstringsg
 
-
-
 # ----------------------------------------
+
+
 def generate_sequences(dfile, timepeaks, clpeaks, sensor, ncl, gap):
     """
     Generates the frequent subsequences from the times of the peaks considering

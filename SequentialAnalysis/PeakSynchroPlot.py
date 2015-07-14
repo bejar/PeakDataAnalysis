@@ -89,8 +89,6 @@ def plotDummy(fig,num,n,m,p,name):
 #         plotSignals(lsignals,cres,10,2)
 
 
-
-
 def draw_sincro(raw, lsync, num, nums, cres, name, sens):
     """
     Generates files with syncronizations
@@ -101,7 +99,7 @@ def draw_sincro(raw, lsync, num, nums, cres, name, sens):
                 return sig, time
         return s, 0
 
-    pp = PdfPages(cres+'/synch-raw' + name + '-' +str(num) +'-' + str(nums) + '.pdf')
+    pp = PdfPages(cres+'/synch-raw' + name + '-' +str(num) + '-' + str(nums) + '.pdf')
 
     for i in range(num, nums):
         syn = lsync[i]

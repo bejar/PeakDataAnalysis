@@ -48,7 +48,7 @@ def do_the_job(dfile, sensor, wtsel, resampfac, alt, ext=""):
     # Sampling of the dataset in Hz / resampling factor
     resampling = f[dfile + '/Raw'].attrs['Sampling'] / resampfac
 
-    d = f[dfile + '/' + sensor + '/' + 'Peaks' + alt]
+    d = f[dfile + '/' + sensor + '/' + 'PeaksFilter' + alt]
 
     data = d[()]
 
@@ -74,7 +74,7 @@ if __name__ == '__main__':
     lexperiments = ['e130716', 'e130827', 'e130903', 'e141113', 'e141029', 'e141016', 'e140911', 'e140311', 'e140225', 'e140220']
     #lexperiments = ['e130827']  # ['e141113', 'e141029', 'e141016', 'e140911', 'e140311', 'e140225', 'e140220']
     lexperiments = ['e130827', 'e140225', 'e140220', 'e141016', 'e140911']
-    lexperiments = ['e120516']
+    lexperiments = ['e140515']
 
     ext = ''
     TVD = False
@@ -84,7 +84,7 @@ if __name__ == '__main__':
         alt = ''
 
     wtsel = 100.0
-    resampfactor = 1.0
+    resampfactor = 6.0
     for expname in lexperiments:
 
         datainfo = experiments[expname]
@@ -98,7 +98,8 @@ if __name__ == '__main__':
             f = h5py.File(datainfo.dpath + datainfo.name + ext + '.hdf5', 'r+')
             for presamp, sensor in zip(res, datainfo.sensors):
                 print dfile + '/' + sensor + '/' + 'PeaksResample' + alt
-                d = f.require_dataset(dfile + '/' + sensor + '/' + 'PeaksResample' + alt, presamp.shape, dtype='f',
+                del f[dfile + '/' + sensor + '/' + 'PeaksResample']
+                d = f.require_dataset(dfile + '/' + sensor + '/' + 'PeaksResample', presamp.shape, dtype='f',
                                       data=presamp, compression='gzip')
                 d[()] = presamp
                 f[dfile + '/' + sensor + '/PeaksResample' + alt].attrs['ReSampFactor'] = resampfactor

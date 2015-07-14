@@ -54,6 +54,7 @@ coormap = {'L4ci': (1, 1),
            'L7rd': (6, 2)
            }
 
+
 def gen_data_matrix(lines, clusters):
     """
     Generates a datastructure to store the peaks coincidences

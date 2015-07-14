@@ -34,12 +34,12 @@ from sklearn.metrics import mean_squared_error
 from operator import itemgetter
 
 lexperiments = ['e130716', 'e130827', 'e130903', 'e141113', 'e141029', 'e141016', 'e140911', 'e140311', 'e140225',
-                'e140220']
+                'e140220', 'e120516', 'e140515']
 
 # Good experiments
 lexperiments = ['e130827',  'e141016', 'e140911', 'e140225', 'e140220']
 
-lexperiments = ['e120516']
+lexperiments = ['e140515']
 
 #colors = 'rrryyyyyyyyybbbbbbbbbbbbb'
 ext = ''

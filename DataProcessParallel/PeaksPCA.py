@@ -74,7 +74,7 @@ if __name__ == '__main__':
     lexperiments = ['e130827',  'e141016', 'e140911', 'e140225', 'e140220']
 
     #lexperiments = ['e140225', 'e140220', 'e141016', 'e140911']
-    lexperiments = ['e120516']
+    lexperiments = ['e140515']
 
     TVD = False
     baseline = 20
@@ -99,7 +99,8 @@ if __name__ == '__main__':
             f = h5py.File(datainfo.dpath + datainfo.name + ext + '.hdf5', 'r+')
             for trans, sensor in zip(res, datainfo.sensors):
                 print dfile + '/' + sensor + '/' + 'PeaksResamplePCA' + alt
-                d = f.require_dataset(dfile + '/' + sensor + '/' + 'PeaksResamplePCA' + alt, trans.shape, dtype='f',
+                del f[dfile + '/' + sensor + '/' + 'PeaksResamplePCA']
+                d = f.require_dataset(dfile + '/' + sensor + '/' + 'PeaksResamplePCA', trans.shape, dtype='f',
                                       data=trans, compression='gzip')
                 d[()] = trans
 
