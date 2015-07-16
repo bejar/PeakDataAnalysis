@@ -34,9 +34,15 @@ def plotSignals(signals,pp,n,m, title):
     fig.set_figheight(30)
     fig.suptitle(str(title), fontsize=48)
     i=1
-    for s,snm in signals:
+    vmax = []
+    vmin = []
+    for s, _, _ in signals:
+        vmax.append(np.max(s))
+        vmin.append(np.min(s))
+
+    for s,snm,v in signals:
         if min(s)!=max(s):
-            plotSignalValues(fig,s,n,m,i,snm)
+            plotSignalValues(fig,s,n,m,i,snm,v, np.max(vmax), np.min(vmin))
         else:
             plotDummy(fig,len(s),n,m,i,snm)
         i+=1
@@ -48,15 +54,19 @@ def plotSignals(signals,pp,n,m, title):
 
 
 # Plot a set of signals
-def plotSignalValues(fig,signal1,n,m,p,name):
-    minaxis=min(signal1)
-    maxaxis=max(signal1)
+def plotSignalValues(fig,signal1,n,m,p,name,v, maxaxis, minaxis):
+    # minaxis=min(signal1)
+    # maxaxis=max(signal1)
     num=len(signal1)
     sp1=fig.add_subplot(n,m,p)
     plt.title(name)
     sp1.axis([0,num,minaxis,maxaxis])
     t = arange(0.0, num, 1)
-    sp1.plot(t,signal1)
+    if v !=0:
+        sp1.plot(t,signal1, 'r')
+    else:
+        sp1.plot(t,signal1, 'b')
+
 #    plt.show()
 
 def plotDummy(fig,num,n,m,p,name):
@@ -111,14 +121,29 @@ def draw_sincro(raw, lsync, num, nums, cres, name, sens):
         print i
         lsig = []
         for s, v in ldraw:
-            if v != 0:
-                lsig.append((raw[center-1000:center+1000, s], sens[s]))
-            else:
-                lsig.append((np.zeros(2000), sens[s]))
+            lsig.append((raw[center-1000:center+1000, s], sens[s], v))
 
-        plotSignals(lsig, pp, 6, 2, center)
+        plotSignals(lsig, pp, 6, 2, int(center))
 
     pp.close()
+
+
+def select_sensor(synchs, sensor, slength):
+    """
+    Maintains only the syncs corresponding to the given sensor
+
+    :param synchs:
+    :param sensor:
+    :return:
+    """
+    lres = []
+    for syn in synchs:
+        for s, _,_ in syn:
+            if s == sensor and len(syn) >= slength:
+                lres.append(syn)
+    return lres
+
+
 
 if __name__ == '__main__':
     window = 400
@@ -132,7 +157,7 @@ if __name__ == '__main__':
     # lexperiments = ['e140225', 'e140220', 'e141016', 'e140911']
     lexperiments = ['e140515']
 
-    TVD = False
+    TVD = True
     ext = ''
     peakdata = {}
     for expname in lexperiments:
@@ -142,6 +167,10 @@ if __name__ == '__main__':
             alt = ''
 
         datainfo = experiments[expname]
+        rsensor = 'L5ci'
+        nsensor = datainfo.sensors.index(rsensor)
+        slength = 2
+        filter = False
 
         # dfile = datainfo.datafiles[0]
         for dfile in [datainfo.datafiles[0]]:
@@ -156,15 +185,24 @@ if __name__ == '__main__':
             ltimes = []
             expcounts = []
             f = h5py.File(datainfo.dpath + datainfo.name + ext + '.hdf5', 'r')
-            d = f[dfile + '/Raw']
+            if filter:
+                ext = '-F'
+                d = f[dfile + '/RawFiltered']
+            else:
+                ext = ''
+                d = f[dfile + '/Raw']
+
             raw = d[()]
             for sensor in datainfo.sensors:
-                d = f[dfile + '/' + sensor + '/' + 'Time']
+                d = f[dfile + '/' + sensor + '/' + 'TimeClean']
                 data = d[()]
-                expcounts.append(data.shape[0])
+                #expcounts.append(data.shape[0])
                 ltimes.append(data)
             f.close()
-
             lsynchs = compute_synchs(ltimes, lsens_labels, window=window)
-            for i in range(0, 1000, 100):
-                draw_sincro(raw, lsynchs, i, i + 100, datainfo.dpath + '/Results', dfile, datainfo.sensors)
+            print len(lsynchs)
+            lsynchs = select_sensor(lsynchs, nsensor, slength)
+            print len(lsynchs)
+
+            for i in range(0, 100, 100):
+                draw_sincro(raw, lsynchs, i, i + 100, datainfo.dpath + '/Results', dfile + '-' + rsensor + '-Len' + str(slength) + ext, datainfo.sensors)

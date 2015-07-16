@@ -93,4 +93,4 @@ lexperiments = ['e130716', 'e130827', 'e130903', 'e141113', 'e141029', 'e141016'
 
 lexperiments = ['e140515']
 for exp in lexperiments:
-    filter_data(exp, 1.0, 50.0)
+    filter_data(exp, 1.0, 60.0)

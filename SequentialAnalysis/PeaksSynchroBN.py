@@ -123,6 +123,22 @@ def compute_data_labels(fname, dfilec, dfile, sensorref, sensor):
     labels, _ = pairwise_distances_argmin_min(data, centers)
     return labels #[indexes[i][1] for i in labels]
 
+def select_sensor(synchs, sensor, slength):
+    """
+    Maintains only the syncs corresponding to the given sensor
+
+    :param synchs:
+    :param sensor:
+    :return:
+    """
+    lres = []
+    for syn in synchs:
+        for s, _,_ in syn:
+            if s == sensor and len(syn) >= slength:
+                lres.append(syn)
+    return lres
+
+
 if __name__ == '__main__':
 
     window = 400
@@ -141,6 +157,10 @@ if __name__ == '__main__':
     peakdata = {}
     for expname in lexperiments:
         datainfo = experiments[expname]
+        rsensor = 'L4cd'
+        nsensor = datainfo.sensors.index(rsensor)
+        slength = 6
+
 
         # dfile = datainfo.datafiles[0]
         for dfile in datainfo.datafiles:
@@ -156,13 +176,15 @@ if __name__ == '__main__':
             expcounts = []
             f = h5py.File(datainfo.dpath + datainfo.name + ext + '.hdf5', 'r')
             for sensor in datainfo.sensors:
-                d = f[dfile + '/' + sensor + '/' + 'Time']
+                d = f[dfile + '/' + sensor + '/' + 'TimeClean']
                 data = d[()]
                 expcounts.append(data.shape[0])
                 ltimes.append(data)
             f.close()
 
             lsynchs = compute_synchs(ltimes, lsens_labels, window=window)
+
+            lsynchs = select_sensor(lsynchs, nsensor, slength)
 
             msyn = np.zeros((len(lsynchs), len(datainfo.sensors))) -1
             print msyn.shape
@@ -174,4 +196,4 @@ if __name__ == '__main__':
                 varnames += datainfo.sensors[n] + ' ,'
             varnames += datainfo.sensors[-1]
 
-            np.savetxt(datainfo.dpath + '/' + expname + '-sdata-' + dfile + '.csv', msyn, fmt='%d', delimiter=', ', newline='\n', header=varnames)
+            np.savetxt(datainfo.dpath + '/' + expname + '-sdata-' + dfile + '-R' + rsensor + '.csv', msyn, fmt='%d', delimiter=', ', newline='\n', header=varnames, comments='')

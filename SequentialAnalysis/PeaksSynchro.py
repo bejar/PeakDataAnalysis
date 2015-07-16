@@ -277,7 +277,7 @@ def compute_synchs(seq, labels, window=15):
     :param seq: List of the peaks for all the sensors
                 The list contains the time where the maximum of the peaks ocurr
     :param window: Window to consider that a set of peaks is synchronized
-    :return: List of synchronizations
+    :return: List of synchronizations (sensor, time, class)
     """
 
     def minind():
@@ -355,6 +355,20 @@ def compute_data_labels(fname, dfilec, dfile, sensorref, sensor):
     labels, _ = pairwise_distances_argmin_min(data, centers)
     return labels #[indexes[i][1] for i in labels]
 
+def select_sensor(synchs, sensor, slength):
+    """
+    Maintains only the syncs corresponding to the given sensor
+
+    :param synchs:
+    :param sensor:
+    :return:
+    """
+    lres = []
+    for syn in synchs:
+        for s, _,_ in syn:
+            if s == sensor and len(syn) >= slength:
+                lres.append(syn)
+    return lres
 
 # --------------------------------------------------------------------------------------------------------------------
 
@@ -395,7 +409,7 @@ if __name__ == '__main__':
             expcounts = []
             f = h5py.File(datainfo.dpath + datainfo.name + ext + '.hdf5', 'r')
             for sensor in datainfo.sensors:
-                d = f[dfile + '/' + sensor + '/' + 'Time']
+                d = f[dfile + '/' + sensor + '/' + 'TimeClean']
                 data = d[()]
                 expcounts.append(data.shape[0])
                 ltimes.append(data)
@@ -404,9 +418,9 @@ if __name__ == '__main__':
             lsynchs = compute_synchs(ltimes, lsens_labels, window=window)
 
             print len(lsynchs)
-            for i in  lsynchs:
-                 print i, len(i)
-
+            for i, s in enumerate(datainfo.sensors):
+                lsyn_fil = select_sensor(lsynchs, i, 1)
+                print s, len(lsyn_fil)
             #peakdata = lsynchs
             #print peakdata
             #gen_peaks_contingency(peakdata, datainfo.sensors, dfile, datainfo.clusters)
