@@ -8,13 +8,36 @@ Pasos para procesar un experimento (1 o 2):
 2|ConvertABF - Genera ficheros matlab a partir de los datos en ABF
 2|PeaksCreateHDFSRaw - Genera un fichero HDF5 con los datos originales
 2|PeaksIdentification - Identifica los picos en la señal raw y los añade al fichero HDF5
+                        Crea en cada sensor una tabla /sensor/Raw con los picos raw (extrayendo una ventana en ms) y
+                        una tabla /sensor/Time con los tiempos de los maximos de los picos
+                        (mejor usar la version paralelizada)
+
+-- Otros preprocesos
+
+PeaksOutliers - Detecta outliers en los picos usando el algoritmo Knn y eliminando todos
+                los picos a una distancia mayor a 6 veces la variancia de las distancias a los
+                vecinos cercanos. Los outliers se tratan con la señal resampleada para reducir el coste
+                computacional del calculo de distancias y mejorar la efectividad del Kmm.
+                Añade una tabla por cada sensor /sensor/TimeClean con los tiempos de los picos
+                no eliminados por el algoritmo de outliers
+                (version paralelizada)
+
+PeaksFilterRaw - Extrae de la señal raw los picos y les aplica un filtro butterworth pasa banda (ahora entre 1 y 200Hz)
+                Genera una tabla por cada sensor /sensor/PeaksFilter. Solo trata los picos que hay en la tabla
+                /sensor/TimeClean, se puede cambiar para que use /sensor/Time
+
 
 --- Procesamiento usando los datos del fichero HDF5 del experimento
 PeaksResampling - Añade una matriz con un resampling de los picos (PeaksResample)
                   Necesita el factor de resampling y el tiempo de la ventana a extraer
-PeaksPCA - Añade al fichero los picos despues de aplicarles el PCA y mover la basal (PeaksResamplePCA)
+                  (mejor usar la version paralelizada)
+PeaksPCA - Añade al fichero los picos despues de aplicarles el PCA y mover la basal (PeaksResamplePCA), si se trabaja con
+           los picos filtrados se puede obviar el PCA (la señal procesada por PCA es menos natural)
+           (mejor usar la version paralelizada)
+
 PeaksClusteringValidateWhole - Estima el numero de clusters para los picos (todos los picos de todas las fases
                                 juntos)
+
 PeaksClusteringHistoSort - Genera el clustering para el primer tramo del experimento y clasifica con él el resto de
                        fases, genera grafico de los centroides del clustering de la primera fase e histogramas de
                        frecuencias de picos para todas los tramos del experimento ordenandolas por la altura de los picos

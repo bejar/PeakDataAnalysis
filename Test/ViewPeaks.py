@@ -34,7 +34,7 @@ from sklearn.metrics import mean_squared_error
 import util.TotalVariation as tv
 
 lexperiments = ['e130827',  'e141016', 'e140911', 'e140225', 'e140220']
-lexperiments = ['e140515']
+lexperiments = ['e150514']
 expname = lexperiments[0]
 
 datainfo = experiments[expname]
@@ -46,12 +46,12 @@ for s in datainfo.sensors:
     ldatap = []
     ldatappca = []
     ldataraw = []
-    for dfiles in [datainfo.datafiles[2]]:
+    for dfiles in [datainfo.datafiles[0]]:
         print dfiles
         d = f[dfiles + '/' + s + '/' + 'Peaks']
         dataf = d[()]
         ldataraw.append(dataf)
-        d = f[dfiles + '/' + s + '/' + 'PeaksFilter']
+        d = f[dfiles + '/' + s + '/' + 'PeaksResample']
         dataf = d[()]
         ldatap.append(dataf)
         # d = f[dfiles + '/' + s + '/' + 'PeaksResamplePCA']
@@ -62,8 +62,9 @@ for s in datainfo.sensors:
     # datapca = ldatappca[0] #np.concatenate(ldata)
     dataraw = ldataraw[0] #np.concatenate(ldata)
 
-    for i in range(data.shape[0]):
-        print dataraw[i]
-        print data[i]
-        show_two_signals(dataraw[i], data[i])
-        # show_signal(dataraw[i])
+    for i in range(dataraw.shape[0]):
+        # print dataraw[i]
+        # print data[i]
+        show_signal(dataraw[i])
+        #show_two_signals(dataraw[i], data[i])
+        show_signal(data[i])

@@ -170,7 +170,7 @@ if __name__ == '__main__':
         rsensor = 'L5ci'
         nsensor = datainfo.sensors.index(rsensor)
         slength = 2
-        filter = False
+        filter = True
 
         # dfile = datainfo.datafiles[0]
         for dfile in [datainfo.datafiles[0]]:
@@ -186,7 +186,7 @@ if __name__ == '__main__':
             expcounts = []
             f = h5py.File(datainfo.dpath + datainfo.name + ext + '.hdf5', 'r')
             if filter:
-                ext = '-F'
+                ext = '-F200'
                 d = f[dfile + '/RawFiltered']
             else:
                 ext = ''

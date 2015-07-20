@@ -159,7 +159,7 @@ def cdp_identification(X, wtime, datainfo, sensor):
     """
     Fs = datainfo.sampling
     ifreq = 0.0   # Frequency cutoff low
-    ffreq = 70.0  # Frequency cutoff high
+    ffreq = 200.0  # Frequency cutoff high
 
     tapering = 0.0  # tapering window use tukey window tap=0 no window, tap=1 max tapering
     fft_freq = None  # max number of freqs used in FFT
@@ -335,7 +335,7 @@ if __name__ == '__main__':
     #lexperiments = ['e130827']  # ['e141113', 'e141029', 'e141016', 'e140911', 'e140311', 'e140225', 'e140220']
 
     #lexperiments = ['e130827', 'e140225', 'e140220', 'e141016', 'e140911']
-    lexperiments = ['e120516']
+    lexperiments = ['e150514']
 
 
     datasufix = ''#'-RawResampled'

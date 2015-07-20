@@ -76,10 +76,10 @@ def filter_data(expname, iband, fband):
                     rawpeaks[j, :] = np.hstack((np.zeros(np.abs(tstart)), filtered[0:tstop, i]))
                 else:
                     rawpeaks[j, :] = np.hstack((filtered[tstart:tstop, i], np.zeros(tstop-filtered.shape[0])))
-            #show_signal(rawpeaks[j])
+           #show_signal(rawpeaks[j])
             # Peak Data
             dfilter = f[df + '/' + s]
-            del dfilter['PeaksFilter']
+            #del dfilter['PeaksFilter']
             dfilter.require_dataset('PeaksFilter', rawpeaks.shape, dtype='f', data=rawpeaks,
                                       compression='gzip')
 
@@ -91,6 +91,6 @@ def filter_data(expname, iband, fband):
 lexperiments = ['e130716', 'e130827', 'e130903', 'e141113', 'e141029', 'e141016', 'e140911', 'e140311', 'e140225',
                 'e140220']
 
-lexperiments = ['e140515']
+lexperiments = ['e150514']
 for exp in lexperiments:
-    filter_data(exp, 1.0, 60.0)
+    filter_data(exp, 1.0, 200.0)

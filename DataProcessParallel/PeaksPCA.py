@@ -30,7 +30,7 @@ from util.plots import show_signal
 from joblib import Parallel, delayed
 
 
-def do_the_job(dfile, sensor, components, lind, alt, ext=''):
+def do_the_job(dfile, sensor, components, lind, alt, ext='', PCA=True):
     """
     Transforms the data reconstructing the peaks using some components of the PCA
     and uses the mean of the baseline points to move the peak
@@ -48,13 +48,16 @@ def do_the_job(dfile, sensor, components, lind, alt, ext=''):
     d = f[dfile + '/' + sensor + '/' + 'PeaksResample' + alt]
     data = d[()]
 
-    pca = PCA(n_components=data.shape[1])
-    res = pca.fit_transform(data)
+    if PCA:
+        pca = PCA(n_components=data.shape[1])
+        res = pca.fit_transform(data)
 
-    print 'VEX=', np.sum(pca.explained_variance_ratio_[0:components])
+        print 'VEX=', np.sum(pca.explained_variance_ratio_[0:components])
 
-    res[:, components:] = 0
-    trans = pca.inverse_transform(res)
+        res[:, components:] = 0
+        trans = pca.inverse_transform(res)
+    else:
+        trans = data
 
     # Substract the basal
     for row in range(trans.shape[0]):
@@ -74,7 +77,7 @@ if __name__ == '__main__':
     lexperiments = ['e130827',  'e141016', 'e140911', 'e140225', 'e140220']
 
     #lexperiments = ['e140225', 'e140220', 'e141016', 'e140911']
-    lexperiments = ['e140515']
+    lexperiments = ['e150514']
 
     TVD = False
     baseline = 20
@@ -93,13 +96,13 @@ if __name__ == '__main__':
         for dfile in datainfo.datafiles:
             print dfile
             # Paralelize PCA computation
-            res = Parallel(n_jobs=-1)(delayed(do_the_job)(dfile, s, components, lind, alt, ext) for s in datainfo.sensors)
+            res = Parallel(n_jobs=-1)(delayed(do_the_job)(dfile, s, components, lind, alt, ext, PCA=False) for s in datainfo.sensors)
             #print 'Parallelism ended'
             # Save all the data
             f = h5py.File(datainfo.dpath + datainfo.name + ext + '.hdf5', 'r+')
             for trans, sensor in zip(res, datainfo.sensors):
                 print dfile + '/' + sensor + '/' + 'PeaksResamplePCA' + alt
-                del f[dfile + '/' + sensor + '/' + 'PeaksResamplePCA']
+                #del f[dfile + '/' + sensor + '/' + 'PeaksResamplePCA']
                 d = f.require_dataset(dfile + '/' + sensor + '/' + 'PeaksResamplePCA', trans.shape, dtype='f',
                                       data=trans, compression='gzip')
                 d[()] = trans
