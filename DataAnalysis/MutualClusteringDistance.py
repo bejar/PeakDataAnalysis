@@ -92,20 +92,22 @@ for expname in lexperiments:
                 #print rfile, dfile, hellinger_distance(rhisto, histo)
         for i in range(mdist.shape[0]):
             for j in range(mdist.shape[1]):
-                tmp = (mdist[i,j] + mdist[j,i])/2
-                mdist[i,j] = mdist[j,i] = tmp
+                tmp = (mdist[i, j] + mdist[j, i])/2
+                mdist[i, j] = mdist[j,i] = tmp
 
 
         transf = MDS(n_components=2, dissimilarity='precomputed', n_jobs=-1)
         #transf = TSNE(n_components=2, metric='precomputed')
         mres = transf.fit_transform(mdist)
-
+        print transf.stress_
         fig = plt.figure()
-#        ax = fig.gca(projection='3d')
+        #ax = fig.gca(projection='3d')
+        #plt.scatter(mres[:, 0], mres[:, 1], zs=mres[:, 2], c=colors, s=100)
         plt.scatter(mres[:, 0], mres[:, 1], c=colors, s=100)
 
-        for label, x, y in zip([l[-2:] for l in datainfo.datafiles], mres[:, 0], mres[:, 1]):
-            plt.annotate(label, xy=(x, y))
+
+        # for label, x, y in zip([l[-2:] for l in datainfo.datafiles], mres[:, 0], mres[:, 1]):
+        #     plt.annotate(label, xy=(x, y))
 
         plt.show()
 
