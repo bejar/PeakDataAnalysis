@@ -30,7 +30,7 @@ from util.plots import show_two_signals
 from joblib import Parallel, delayed
 
 
-def do_the_job(dfile, sensor, wtsel, resampfac, alt, ext=""):
+def do_the_job(dfile, sensor, wtsel, resampfac, alt, ext="", filter=False):
     """
     Applies a resampling of the data using Raw peaks or TVD peaks
     The time window selected has to be larger than the length of the raw peaks
@@ -48,7 +48,10 @@ def do_the_job(dfile, sensor, wtsel, resampfac, alt, ext=""):
     # Sampling of the dataset in Hz / resampling factor
     resampling = f[dfile + '/Raw'].attrs['Sampling'] / resampfac
 
-    d = f[dfile + '/' + sensor + '/' + 'PeaksFilter' + alt]
+    if filter:
+        d = f[dfile + '/' + sensor + '/' + 'PeaksFilter' + alt]
+    else:
+        d = f[dfile + '/' + sensor + '/' + 'Peaks' + alt]
 
     data = d[()]
 
@@ -92,13 +95,14 @@ if __name__ == '__main__':
         for dfile in datainfo.datafiles:
             print dfile
             # Paralelize PCA computation
-            res = Parallel(n_jobs=-1)(delayed(do_the_job)(dfile, s, wtsel, resampfactor, alt, ext) for s in datainfo.sensors)
+            res = Parallel(n_jobs=-1)(delayed(do_the_job)(dfile, s, wtsel, resampfactor, alt, ext, filter=True) for s in datainfo.sensors)
             #print 'Parallelism ended'
 
             f = h5py.File(datainfo.dpath + datainfo.name + ext + '.hdf5', 'r+')
             for presamp, sensor in zip(res, datainfo.sensors):
                 print dfile + '/' + sensor + '/' + 'PeaksResample' + alt
-                del f[dfile + '/' + sensor + '/' + 'PeaksResample']
+                if dfile + '/' + sensor + '/' + 'PeaksResample' in f:
+                    del f[dfile + '/' + sensor + '/' + 'PeaksResample']
                 d = f.require_dataset(dfile + '/' + sensor + '/' + 'PeaksResample', presamp.shape, dtype='f',
                                       data=presamp, compression='gzip')
                 d[()] = presamp

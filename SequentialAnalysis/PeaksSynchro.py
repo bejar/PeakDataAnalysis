@@ -370,6 +370,22 @@ def select_sensor(synchs, sensor, slength):
                 lres.append(syn)
     return lres
 
+def save_sync_sequence(lsync, nfile):
+    """
+    Saves the list of synchronizations in a file with the number of sync signals
+
+    :param lsync:
+    :param file:
+    :return:
+    """
+    ttable = '0123456789ABC'
+    rfile = open(datainfo.dpath + 'seq-' + nfile + '.csv', 'w')
+    for syn in lsync:
+        mtime = min([v for _, v, _ in syn])
+        rfile.write('%d, %s \n'% (mtime, ttable[len(syn)]))
+
+    rfile.close()
+
 # --------------------------------------------------------------------------------------------------------------------
 
 if __name__ == '__main__':
@@ -382,7 +398,7 @@ if __name__ == '__main__':
     lexperiments = ['e130827',  'e141016', 'e140911', 'e140225', 'e140220']
 
     # lexperiments = ['e140225', 'e140220', 'e141016', 'e140911']
-    lexperiments = ['e140515']
+    lexperiments = ['e150514']
 
     TVD = False
     ext = ''
@@ -409,7 +425,7 @@ if __name__ == '__main__':
             expcounts = []
             f = h5py.File(datainfo.dpath + datainfo.name + ext + '.hdf5', 'r')
             for sensor in datainfo.sensors:
-                d = f[dfile + '/' + sensor + '/' + 'TimeClean']
+                d = f[dfile + '/' + sensor + '/' + 'Time']
                 data = d[()]
                 expcounts.append(data.shape[0])
                 ltimes.append(data)
@@ -417,10 +433,13 @@ if __name__ == '__main__':
 
             lsynchs = compute_synchs(ltimes, lsens_labels, window=window)
 
-            print len(lsynchs)
-            for i, s in enumerate(datainfo.sensors):
-                lsyn_fil = select_sensor(lsynchs, i, 1)
-                print s, len(lsyn_fil)
+            save_sync_sequence(lsynchs, dfile)
+
+            # print len(lsynchs)
+            # for i, s in enumerate(datainfo.sensors):
+            #     lsyn_fil = select_sensor(lsynchs, i, 1)
+            #     print s, len(lsyn_fil)
+
             #peakdata = lsynchs
             #print peakdata
             #gen_peaks_contingency(peakdata, datainfo.sensors, dfile, datainfo.clusters)

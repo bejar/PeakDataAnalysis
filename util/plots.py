@@ -100,7 +100,7 @@ def plotSignals(signals, n, m, vmax, vmin, name, title, path, cstd=None):
 
 # plt.show()
 
-def show_signal(signal):
+def show_signal(signal, title=''):
     """
     Plots a signal
     :param signal:
@@ -110,6 +110,7 @@ def show_signal(signal):
     fig = plt.figure()
     fig.set_figwidth(30)
     fig.set_figheight(40)
+    fig.suptitle(title, fontsize=48)
     minaxis = min(signal)
     maxaxis = max(signal)
     num = len(signal)

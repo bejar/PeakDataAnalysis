@@ -38,7 +38,7 @@ lexperiments = ['e130716', 'e130827', 'e130903', 'e141113', 'e141029', 'e141016'
 # Good experiments
 lexperiments = ['e130827',  'e141016', 'e140911', 'e140225', 'e140220']
 
-lexperiments = ['e140515']
+lexperiments = ['e150514']
 
 ext = ''
 
@@ -68,8 +68,8 @@ for expname in lexperiments:
             centers = np.zeros(km.cluster_centers_.shape)
             for nc in range(nclusters):
                 centers[nc] = km.cluster_centers_[lmax[nc][0]]
-            d = f[dfile + '/' + sensor + '/Clustering']
-            del d['Centers']
+            if dfile + '/' + sensor + '/Clustering/Centers' in f:
+                del f[dfile + '/' + sensor + '/Clustering/Centers']
             d = f.require_dataset(dfile + '/' + sensor + '/Clustering/' + 'Centers' + ext, centers.shape, dtype='f',
                                   data=centers, compression='gzip')
             d[()] = centers

@@ -25,7 +25,7 @@ from util.distances import simetrized_kullback_leibler_divergence, square_froben
     jensen_shannon_divergence, bhattacharyya_distance, hellinger_distance
 import numpy as np
 from sklearn.cluster import KMeans
-from scipy.signal import resample, decimate
+from scipy.signal import resample, decimate, detrend
 
 from config.experiments import experiments
 from collections import Counter
@@ -40,6 +40,7 @@ expname = lexperiments[0]
 datainfo = experiments[expname]
 
 f = h5py.File(datainfo.dpath + datainfo.name + '.hdf5', 'r')
+print expname
 
 for s in datainfo.sensors:
     print s
@@ -54,17 +55,20 @@ for s in datainfo.sensors:
         d = f[dfiles + '/' + s + '/' + 'PeaksResample']
         dataf = d[()]
         ldatap.append(dataf)
-        # d = f[dfiles + '/' + s + '/' + 'PeaksResamplePCA']
-        # dataf = d[()]
-        # ldatappca.append(dataf)
+        d = f[dfiles + '/' + s + '/' + 'PeaksResamplePCA']
+        dataf = d[()]
+        ldatappca.append(dataf)
 
     data = ldatap[0] #np.concatenate(ldata)
-    # datapca = ldatappca[0] #np.concatenate(ldata)
+    datapca = ldatappca[0] #np.concatenate(ldata)
     dataraw = ldataraw[0] #np.concatenate(ldata)
 
+    print len(data)
     for i in range(dataraw.shape[0]):
+        print i
         # print dataraw[i]
         # print data[i]
-        show_signal(dataraw[i])
-        #show_two_signals(dataraw[i], data[i])
-        show_signal(data[i])
+        show_signal(dataraw[i], expname)
+        # show_two_signals(dataraw[i], detrend(dataraw[i]))
+        # show_signal(data[i])
+        # show_signal(datapca[i])

@@ -138,7 +138,7 @@ if __name__ == '__main__':
     lexperiments = ['e130827',  'e141016', 'e140911', 'e140225', 'e140220']
 
     # lexperiments = ['e140225', 'e140220', 'e141016', 'e140911']
-    lexperiments = ['e140515']
+    lexperiments = ['e150514']
 
     TVD = False
     ext = ''
@@ -160,7 +160,7 @@ if __name__ == '__main__':
             expcounts = []
             f = h5py.File(datainfo.dpath + datainfo.name + ext + '.hdf5', 'r')
             for sensor in datainfo.sensors:
-                d = f[dfile + '/' + sensor + '/' + 'Time']
+                d = f[dfile + '/' + sensor + '/' + 'TimeClean']
                 data = d[()]
                 expcounts.append(data.shape[0])
                 ltimes.append(data)
@@ -171,9 +171,11 @@ if __name__ == '__main__':
             for syn in lsynchs:
                 seq_syn += voc[len(syn)]
 
+            # Probabilidad de cada elemento del alfabeto
             conteo = Counter(seq_syn)
             for e in conteo:
                 conteo[e] = float(conteo[e]/(len(seq_syn)*1.0))
+
             # pvector = np.array([conteo[e] for e in voc[2:]])
             # pmatrix = np.outer(pvector, pvector)
             #print pmatrix
@@ -202,11 +204,12 @@ if __name__ == '__main__':
             nsig = 0
             for seq, s in lstrings:
                 prob = 1.0
+                # Probabilidad asumiendo independencia
                 for v in seq:
                     prob *= conteo[v]
-                test = binom_test(s, len(seq_syn)-1, prob)
+                test = binom_test(s, len(seq_syn)-(len(seq)-1), prob)
                 if test < 0.05:
-                    print seq, s, (s*1.0)/(len(seq_syn)-len(seq)-1) / prob, prob, test, '*'
+                    print seq, 'Times=', s, 'EProb=', (s*1.0)/(len(seq_syn)-(len(seq)-1)), 'IProb=', prob, 'T=', test, '*'
                     nsig += 1
                 # else:
                 #     print seq, s, (s*1.0)/(len(seq_syn)-len(seq)-1) / prob

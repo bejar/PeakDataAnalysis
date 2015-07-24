@@ -30,7 +30,7 @@ from util.plots import show_signal
 from joblib import Parallel, delayed
 
 
-def do_the_job(dfile, sensor, components, lind, alt, ext='', PCA=True):
+def do_the_job(dfile, sensor, components, lind, alt, ext='', fpca=True):
     """
     Transforms the data reconstructing the peaks using some components of the PCA
     and uses the mean of the baseline points to move the peak
@@ -48,7 +48,7 @@ def do_the_job(dfile, sensor, components, lind, alt, ext='', PCA=True):
     d = f[dfile + '/' + sensor + '/' + 'PeaksResample' + alt]
     data = d[()]
 
-    if PCA:
+    if fpca:
         pca = PCA(n_components=data.shape[1])
         res = pca.fit_transform(data)
 
@@ -96,13 +96,14 @@ if __name__ == '__main__':
         for dfile in datainfo.datafiles:
             print dfile
             # Paralelize PCA computation
-            res = Parallel(n_jobs=-1)(delayed(do_the_job)(dfile, s, components, lind, alt, ext, PCA=False) for s in datainfo.sensors)
+            res = Parallel(n_jobs=-1)(delayed(do_the_job)(dfile, s, components, lind, alt, ext, fpca=False) for s in datainfo.sensors)
             #print 'Parallelism ended'
             # Save all the data
             f = h5py.File(datainfo.dpath + datainfo.name + ext + '.hdf5', 'r+')
             for trans, sensor in zip(res, datainfo.sensors):
                 print dfile + '/' + sensor + '/' + 'PeaksResamplePCA' + alt
-                #del f[dfile + '/' + sensor + '/' + 'PeaksResamplePCA']
+                if dfile + '/' + sensor + '/' + 'PeaksResamplePCA' + alt in f:
+                    del f[dfile + '/' + sensor + '/' + 'PeaksResamplePCA']
                 d = f.require_dataset(dfile + '/' + sensor + '/' + 'PeaksResamplePCA', trans.shape, dtype='f',
                                       data=trans, compression='gzip')
                 d[()] = trans
