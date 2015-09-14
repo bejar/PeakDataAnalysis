@@ -148,7 +148,7 @@ def ffft(fmask, y):
     return y2
 
 
-def cdp_identification(X, wtime, datainfo, sensor):
+def cdp_identification(X, wtime, datainfo, sensor, ifreq=0.0, ffreq=200):
     """
     Identification of peaks
 
@@ -158,8 +158,7 @@ def cdp_identification(X, wtime, datainfo, sensor):
     :return:
     """
     Fs = datainfo.sampling
-    ifreq = 0.0   # Frequency cutoff low
-    ffreq = 200.0  # Frequency cutoff high
+
 
     tapering = 0.0  # tapering window use tukey window tap=0 no window, tap=1 max tapering
     fft_freq = None  # max number of freqs used in FFT
@@ -335,12 +334,14 @@ if __name__ == '__main__':
     #lexperiments = ['e130827']  # ['e141113', 'e141029', 'e141016', 'e140911', 'e140311', 'e140225', 'e140220']
 
     #lexperiments = ['e130827', 'e140225', 'e140220', 'e141016', 'e140911']
-    lexperiments = ['e150514']
+    lexperiments = ['e150514b']
 
 
     datasufix = ''#'-RawResampled'
 
     wtime = 120e-3 # Window length in miliseconds
+    ifreq = 0.0   # Frequency cutoff low
+    ffreq = 100.0  # Frequency cutoff high
     for expname in lexperiments:
         datainfo = experiments[expname]
         sampling = datainfo.sampling #/ 6.0
@@ -352,15 +353,18 @@ if __name__ == '__main__':
             d = f[dfile + '/Raw']
 
             raw = d[()]
-            peaks = Parallel(n_jobs=-1)(delayed(cdp_identification)(raw[:, i], wtime, datainfo, s) for i, s in enumerate(datainfo.sensors))
+            peaks = Parallel(n_jobs=-1)(delayed(cdp_identification)(raw[:, i], wtime, datainfo, s, ifreq=ifreq, ffreq=ffreq) for i, s in enumerate(datainfo.sensors))
             #peaks = cdp_identification(raw, wtime, datainfo)
 
             for s, p in peaks:
                 print s, len(p), p.shape
+                if dfile + '/' + s in f:
+                    del f[dfile + '/' + s]
                 dgroup = f.create_group(dfile + '/' + s)
                 # Time of the peak
                 dgroup.create_dataset('Time', p.shape, dtype='i', data=p,
                                   compression='gzip')
+
                 rawpeaks = np.zeros((p.shape[0], Tw))
                 # Extraction of the window around the peak maximum
 
@@ -373,5 +377,9 @@ if __name__ == '__main__':
                 # Peak Data
                 dgroup.create_dataset('Peaks', rawpeaks.shape, dtype='f', data=rawpeaks,
                                       compression='gzip')
+                f[dfile + '/' + s + '/Peaks'].attrs['wtime'] = wtime
+                f[dfile + '/' + s + '/Peaks'].attrs['low'] = ifreq
+                f[dfile + '/' + s + '/Peaks'].attrs['high'] = ffreq
+
 
         f.close()
