@@ -52,7 +52,7 @@ for s in datainfo.sensors:
         d = f[dfiles + '/' + s + '/' + 'Peaks']
         dataf = d[()]
         ldataraw.append(dataf)
-        d = f[dfiles + '/' + s + '/' + 'PeaksResample']
+        d = f[dfiles + '/' + s + '/' + 'PeaksFilter']
         dataf = d[()]
         ldatap.append(dataf)
         d = f[dfiles + '/' + s + '/' + 'PeaksResamplePCA']
@@ -63,12 +63,13 @@ for s in datainfo.sensors:
     datapca = ldatappca[0] #np.concatenate(ldata)
     dataraw = ldataraw[0] #np.concatenate(ldata)
 
+    print data.shape, datapca.shape, dataraw.shape
     print len(data)
     for i in range(dataraw.shape[0]):
         print i
         # print dataraw[i]
         # print data[i]
-        show_signal(dataraw[i], expname)
+        show_signal(dataraw[i])
         # show_two_signals(dataraw[i], detrend(dataraw[i]))
-        # show_signal(data[i])
-        # show_signal(datapca[i])
+        show_signal(data[i])
+        show_signal(datapca[i])

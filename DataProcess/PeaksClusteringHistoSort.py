@@ -37,9 +37,9 @@ lexperiments = ['e130716', 'e130827', 'e130903', 'e141113', 'e141029', 'e141016'
                 'e140220', 'e120516', 'e140515']
 
 # Good experiments
-lexperiments = ['e130827',  'e141016', 'e140911', 'e140225', 'e140220']
+lexperiments = ['e130827',  'e141016', 'e140911', 'e140225', 'e140220', 'e140304']
 
-lexperiments = ['e150514']
+lexperiments = ['e140515'] #['e150514b']
 
 #colors = 'rrryyyyyyyyybbbbbbbbbbbbb'
 ext = ''
@@ -95,7 +95,7 @@ for expname in lexperiments:
         matplotlib.rcParams.update({'font.size': 26})
         fig = plt.figure()
         ax = fig.add_subplot(2, 1, 1)
-        fig.set_figwidth(90)
+        fig.set_figwidth(60)
         fig.set_figheight(40)
 
         ind = np.arange(nclusters)  # the x locations for the groups

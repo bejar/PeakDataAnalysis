@@ -40,14 +40,17 @@ def uniquetol(peaks, tol):
     :return:
     """
 
-    lres = []
-    curr = peaks[0]
-    lres.append(0)
-    for i in range(1,peaks.shape[0]):
-        if peaks[i] - curr > tol:
-            curr = peaks[i]
-            lres.append(i)
-    return lres
+    if len(peaks) != 0:
+        lres = []
+        curr = peaks[0]
+        lres.append(0)
+        for i in range(1,peaks.shape[0]):
+            if peaks[i] - curr > tol:
+                curr = peaks[i]
+                lres.append(i)
+        return lres
+    else:
+        return []
 
 
 def integIneqG(data,QI1,QI2,QF1,QF2):
@@ -148,7 +151,7 @@ def ffft(fmask, y):
     return y2
 
 
-def cdp_identification(X, wtime, datainfo, sensor, ifreq=0.0, ffreq=200):
+def cdp_identification(X, wtime, datainfo, sensor, ifreq=0.0, ffreq=200, threshold=0.05):
     """
     Identification of peaks
 
@@ -166,7 +169,6 @@ def cdp_identification(X, wtime, datainfo, sensor, ifreq=0.0, ffreq=200):
     upthreshold = 1        # Outliers threshold *** ADDED by Javier
     downthreshold = -0.4   # Outliers threshold *** ADDED by Javier
 
-    threshold = 0.05        # Peaks Max-Min in window above threshold in amplitude
     peakprecision = wtime/12     # Peaks localization time resolution in points
     RCoinc = wtime/6             # Peak synchronization radius
     Tpk = wtime/4                # Quality filter time window subdivision
@@ -213,7 +215,7 @@ def cdp_identification(X, wtime, datainfo, sensor, ifreq=0.0, ffreq=200):
     RMSp = None
     Tm = 1
     dw = np.floor((Nfft-Tw)/2)
-    print 'Peaks identification: analyzing sensor ', sensor, time.ctime()
+
     tstop = 0
     tstart = Tw
     ipeakMj = []
@@ -320,7 +322,7 @@ def cdp_identification(X, wtime, datainfo, sensor, ifreq=0.0, ffreq=200):
             ipeakMj.append(ipeakMsel[j])
     ipeakM = np.array(ipeakMj)
 
-    print 'The end ', sensor, time.ctime()
+
 
     # for peaks in ipeakM:
     #     print len(peaks)
@@ -334,7 +336,7 @@ if __name__ == '__main__':
     #lexperiments = ['e130827']  # ['e141113', 'e141029', 'e141016', 'e140911', 'e140311', 'e140225', 'e140220']
 
     #lexperiments = ['e130827', 'e140225', 'e140220', 'e141016', 'e140911']
-    lexperiments = ['e150514b']
+    lexperiments = ['e140304']
 
 
     datasufix = ''#'-RawResampled'
@@ -342,6 +344,7 @@ if __name__ == '__main__':
     wtime = 120e-3 # Window length in miliseconds
     ifreq = 0.0   # Frequency cutoff low
     ffreq = 100.0  # Frequency cutoff high
+    threshold = 0.02        # Peaks Max-Min in window above threshold in amplitude
     for expname in lexperiments:
         datainfo = experiments[expname]
         sampling = datainfo.sampling #/ 6.0
@@ -353,11 +356,13 @@ if __name__ == '__main__':
             d = f[dfile + '/Raw']
 
             raw = d[()]
-            peaks = Parallel(n_jobs=-1)(delayed(cdp_identification)(raw[:, i], wtime, datainfo, s, ifreq=ifreq, ffreq=ffreq) for i, s in enumerate(datainfo.sensors))
+            print 'Peaks identification: ', time.ctime()
+            peaks = Parallel(n_jobs=-1)(delayed(cdp_identification)(raw[:, i], wtime, datainfo, s, ifreq=ifreq, ffreq=ffreq, threshold=threshold) for i, s in enumerate(datainfo.sensors))
             #peaks = cdp_identification(raw, wtime, datainfo)
+            print 'The end ', time.ctime()
 
             for s, p in peaks:
-                print s, len(p), p.shape
+                print s, len(p)
                 if dfile + '/' + s in f:
                     del f[dfile + '/' + s]
                 dgroup = f.create_group(dfile + '/' + s)

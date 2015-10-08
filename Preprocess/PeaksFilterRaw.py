@@ -91,6 +91,6 @@ def filter_data(expname, iband, fband):
 lexperiments = ['e130716', 'e130827', 'e130903', 'e141113', 'e141029', 'e141016', 'e140911', 'e140311', 'e140225',
                 'e140220']
 
-lexperiments = ['e150514']
+lexperiments = ['e150514b']
 for exp in lexperiments:
     filter_data(exp, 1.0, 200.0)

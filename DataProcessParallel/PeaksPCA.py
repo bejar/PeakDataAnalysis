@@ -74,10 +74,10 @@ if __name__ == '__main__':
                     'e140220']
 
     # Good experiments
-    lexperiments = ['e130827',  'e141016', 'e140911', 'e140225', 'e140220']
+    lexperiments = ['e130827',  'e141016', 'e140911', 'e140225', 'e140220', 'e150514b']
 
     #lexperiments = ['e140225', 'e140220', 'e141016', 'e140911']
-    lexperiments = ['e150514']
+    lexperiments = ['e140304']
 
     TVD = False
     baseline = 20

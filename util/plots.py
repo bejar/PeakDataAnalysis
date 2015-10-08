@@ -118,7 +118,27 @@ def show_signal(signal, title=''):
     sp1.axis([0, num, minaxis, maxaxis])
     t = arange(0.0, num, 1)
     sp1.plot(t, signal)
+    plt.show()
 
+def show_vsignals(signal, title=''):
+    """
+    Plots a signal
+    :param signal:
+    :return:
+    """
+    matplotlib.rcParams.update({'font.size': 26})
+    fig = plt.figure()
+    fig.set_figwidth(30)
+    fig.set_figheight(40)
+    fig.suptitle(title, fontsize=48)
+    minaxis = np.min(signal)
+    maxaxis = np.max(signal)
+    num = signal.shape[1]
+    sp1 = fig.add_subplot(111)
+    sp1.axis([0, num, minaxis, maxaxis])
+    t = arange(0.0, num, 1)
+    for i in range(signal.shape[0]):
+        sp1.plot(t, signal[i,:])
     plt.show()
 
 

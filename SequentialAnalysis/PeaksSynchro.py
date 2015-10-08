@@ -193,7 +193,6 @@ def length_synch_frequency_histograms(dsynchs, dfile, window):
 def draw_synchs(peakdata, exp, sensors, window):
     """
     Generates a PDF of the synchronizations
-
     :param peakdata: Dictionary with the synchronizations computed by compute_syncs
     :param exps: Experiments in the dictionary
     :param window: Window used to determine the synchronizations
@@ -236,7 +235,7 @@ def draw_synchs(peakdata, exp, sensors, window):
             l[p[0]] = True
             lcol[p[0]] = collist[p[2]]
 
-        v = np.min([t for _, t, _ in pk[i]]) % 5000
+        v = np.min([t for _, t, _ in pk[i]]) % 10000  # Time in a page (5000)
         if v < vprev:
             p = path.line(yt + 2.5, 0, yt + 2.5, 28)
             c.stroke(p)
@@ -258,9 +257,11 @@ def draw_synchs(peakdata, exp, sensors, window):
                 yt = 1.25
 
         vprev = v
-        d = v - 800
-        c.text(yt, (d / 200.0) + 5.25, '%8s' % str(int(round(pk[i][0][1] * 0.6))), [text.size(-4)])
-        syncIcon(d / 200.0, y, sensors, coormap, l, lcol, 0.25, c)
+        d = v - 1500  # end of the page (800)
+
+        # proportion of x axis (200)
+        c.text(yt, (d / 400.0) + 5.25, '%8s' % str(int(round(pk[i][0][1] * 0.6))), [text.size(-4)])
+        syncIcon(d / 400.0, y, sensors, coormap, l, lcol, 0.25, c)
 
     # p=path.line(yt+2.5, 0, yt+2.5, 28)
     # c.stroke(p)
@@ -268,7 +269,6 @@ def draw_synchs(peakdata, exp, sensors, window):
     d = document.document(lpages)
 
     d.writePDFfile(datainfo.dpath + "/Results/peaksynchs-%s-%s-W%d" % (datainfo.name, exp, window))
-
 
 def compute_synchs(seq, labels, window=15):
     """
@@ -398,7 +398,7 @@ if __name__ == '__main__':
     lexperiments = ['e130827',  'e141016', 'e140911', 'e140225', 'e140220']
 
     # lexperiments = ['e140225', 'e140220', 'e141016', 'e140911']
-    lexperiments = ['e150514']
+    lexperiments = ['e140515']
 
     TVD = False
     ext = ''
@@ -412,7 +412,7 @@ if __name__ == '__main__':
         datainfo = experiments[expname]
 
         # dfile = datainfo.datafiles[0]
-        for dfile in datainfo.datafiles:
+        for dfile in [datainfo.datafiles[0]]:
             print dfile
 
             lsens_labels = []
@@ -425,7 +425,7 @@ if __name__ == '__main__':
             expcounts = []
             f = h5py.File(datainfo.dpath + datainfo.name + ext + '.hdf5', 'r')
             for sensor in datainfo.sensors:
-                d = f[dfile + '/' + sensor + '/' + 'Time']
+                d = f[dfile + '/' + sensor + '/' + 'TimeClean']
                 data = d[()]
                 expcounts.append(data.shape[0])
                 ltimes.append(data)
@@ -440,10 +440,10 @@ if __name__ == '__main__':
             #     lsyn_fil = select_sensor(lsynchs, i, 1)
             #     print s, len(lsyn_fil)
 
-            #peakdata = lsynchs
+            peakdata = lsynchs
             #print peakdata
             #gen_peaks_contingency(peakdata, datainfo.sensors, dfile, datainfo.clusters)
-            #draw_synchs(peakdata, dfile, datainfo.sensors, window)
+            draw_synchs(peakdata, dfile, datainfo.sensors, window)
             #length_synch_frequency_histograms(peakdata, dfile, window=int(round(window)))
             #synch_coincidence_matrix(peakdata, dfile, datainfo.sensors, expcounts, window)
             #coincidence_contingency(peakdata, dfile, datainfo.sensors)

@@ -30,6 +30,14 @@ from pylab import *
 from rstr_max import *
 from util.misc import compute_frequency_remap
 from sklearn.metrics import pairwise_distances_argmin_min
+import random
+import string
+
+def randomize_string(s):
+    l = list(s)
+    random.shuffle(l)
+    result = ''.join(l)
+    return result
 
 def drawgraph(nnodes, edges, nfile, sensor, dfile, legend):
     rfile = open(datainfo.dpath + '/Results/maxseq-' + nfile + '-' + dfile + '-' + sensor + '.dot', 'w')
@@ -177,7 +185,7 @@ def max_seq_long(nexp, clpeaks, timepeaks, sup, nfile, gap=0):
     print '----------'
 
 
-def max_seq_exp(nfile, clpeaks, timepeaks, sensor, dfile, nclust, gap=0):
+def max_seq_exp(nfile, clpeaks, timepeaks, sensor, dfile, nclust, gap=0, sup=None, rand=False):
     """
     Generates frequent subsequences and the graphs representing the two step frequent
     subsequences
@@ -210,8 +218,13 @@ def max_seq_exp(nfile, clpeaks, timepeaks, sensor, dfile, nclust, gap=0):
         else:
             peakfreq[voc[clpeaks[i]]] = 1
 
+    if rand:
+        peakstr = randomize_string(peakstr)
     # print peakend - peakini, len(peakstr), len(peakstr)*(1.0 / (len(peakfreq)*len(peakfreq)))
-    sup = int(round(len(peakstr) * (1.0 / (len(peakfreq) * len(peakfreq)))) * 1.2)
+    # Support computed heuristcally
+
+    if sup is None:
+        sup = int(round(len(peakstr) * (1.0 / (len(peakfreq) * len(peakfreq)))) * 1.0)
     print sup
 
     for l in peakfreq:
@@ -235,7 +248,11 @@ def max_seq_exp(nfile, clpeaks, timepeaks, sensor, dfile, nclust, gap=0):
 
     lstrings = sorted(lstrings, key=operator.itemgetter(0), reverse=True)
     lstringsg = []
-    rfile = open(datainfo.dpath + 'Results/maxseq-' + nfile + '-' + dfile + '-' +  sensor + '.txt', 'w')
+    randname = ''
+    if rand:
+        randname = randname.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(6))
+
+    rfile = open(datainfo.dpath + 'Results/maxseq-' + nfile + '-' + dfile + '-' +  sensor + '-' + randname + '.txt', 'w')
 
     for seq, s in lstrings:
         wstr = ''
@@ -335,7 +352,7 @@ def max_peaks_edges(nexp, clpeaks, timepeaks, sup, gap=0):
 # ----------------------------------------
 
 
-def generate_sequences(dfile, timepeaks, clpeaks, sensor, ncl, gap):
+def generate_sequences(dfile, timepeaks, clpeaks, sensor, ncl, gap, sup=None, rand=False):
     """
     Generates the frequent subsequences from the times of the peaks considering
     gap the minimum time between consecutive peaks that indicates a pause (time in the sampling frequency)
@@ -346,7 +363,7 @@ def generate_sequences(dfile, timepeaks, clpeaks, sensor, ncl, gap):
     :param sensor:
     :return:
     """
-    max_seq_exp(datainfo.name, clpeaks, timepeaks, sensor, dfile, ncl, gap=gap)
+    max_seq_exp(datainfo.name, clpeaks, timepeaks, sensor, dfile, ncl, gap=gap, sup=sup, rand=rand)
 
 
 def generate_sequences_long(dfile, timepeaks, clpeaks, sensor, thres, gap):
@@ -415,7 +432,6 @@ if __name__ == '__main__':
 
     # lexperiments = ['e140225', 'e140220', 'e141016', 'e140911']
     lexperiments = ['e140515']
-
     TVD = False
     ext = ''
     peakdata = {}
@@ -433,7 +449,6 @@ if __name__ == '__main__':
 
             for ncl, sensor in zip(datainfo.clusters, datainfo.sensors):
                 clpeaks = compute_data_labels(datainfo.datafiles[0], dfile, sensor)
-                d = f[dfile + '/' + sensor + '/' + 'Time']
+                d = f[dfile + '/' + sensor + '/' + 'TimeClean']
                 timepeaks = data = d[()]
-                generate_sequences(dfile, timepeaks, clpeaks, sensor, ncl, gap=5000)
-
+                generate_sequences(dfile, timepeaks, clpeaks, sensor, ncl, gap=2000, sup= 20, rand=True)

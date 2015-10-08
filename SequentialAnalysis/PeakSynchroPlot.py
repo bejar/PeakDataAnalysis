@@ -30,8 +30,8 @@ from pylab import *
 
 def plotSignals(signals,pp,n,m, title):
     fig = plt.figure()
-    fig.set_figwidth(16)
-    fig.set_figheight(30)
+    fig.set_figwidth(30)
+    fig.set_figheight(16)
     fig.suptitle(str(title), fontsize=48)
     i=1
     vmax = []
@@ -121,9 +121,9 @@ def draw_sincro(raw, lsync, num, nums, cres, name, sens):
         print i
         lsig = []
         for s, v in ldraw:
-            lsig.append((raw[center-1000:center+1000, s], sens[s], v))
+            lsig.append((raw[center-500:center+500, s], sens[s], v))
 
-        plotSignals(lsig, pp, 6, 2, int(center))
+        plotSignals(lsig, pp, 2, 6, int(center))
 
     pp.close()
 
@@ -204,5 +204,5 @@ if __name__ == '__main__':
             lsynchs = select_sensor(lsynchs, nsensor, slength)
             print len(lsynchs)
 
-            for i in range(0, 100, 100):
-                draw_sincro(raw, lsynchs, i, i + 100, datainfo.dpath + '/Results', dfile + '-' + rsensor + '-Len' + str(slength) + ext, datainfo.sensors)
+            for i in range(0, 25, 100):
+                draw_sincro(raw, lsynchs, i, i + 25, datainfo.dpath + '/Results', dfile + '-' + rsensor + '-Len' + str(slength) + ext, datainfo.sensors)
