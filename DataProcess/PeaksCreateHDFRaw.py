@@ -33,11 +33,11 @@ def save_data(expname, ext=""):
     datainfo = experiments[expname]
     print datainfo.name + ext + '.hdf5'
 
-    f = h5py.File(datainfo.dpath + expname + ext + '.hdf5', 'w')
+    f = h5py.File(datainfo.dpath + datainfo.name + ext + '.hdf5', 'r+')
 
     for dfiles in datainfo.datafiles:
         print datainfo.dpath + dfiles + '.mat'
-        mattime = scipy.io.loadmat(cinvesdatanew + datainfo.name +'/' + dfiles + '.mat')
+        mattime = scipy.io.loadmat(cinvesdatanew + datainfo.name + '/' + dfiles + '.mat')
 
         raw = mattime['data']
         dgroup = f.create_group(dfiles)
@@ -52,7 +52,7 @@ lexperiments = ['e130716', 'e130827', 'e130903', 'e141113', 'e141029', 'e141016'
 #lexperiments = ['e130827']  # ['e141113', 'e141029', 'e141016', 'e140911', 'e140311', 'e140225', 'e140220']
 
 #lexperiments = ['e130827', 'e140225', 'e140220', 'e141016', 'e140911']
-lexperiments = ['e140304']
+lexperiments = ['e140515b']
 
 cinvesdatanew = '/home/bejar/storage/Data/cinvestav/'
 for exp in lexperiments:

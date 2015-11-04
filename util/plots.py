@@ -61,7 +61,7 @@ def plotHungarianSignals(coinc, centers1, centers2, vmax, vmin, name, title, pat
     plt.close()
 
 
-def plotSignals(signals, n, m, vmax, vmin, name, title, path, cstd=None):
+def plotSignals(signals, n, m, vmax, vmin, name, title, path, cstd=None, orientation='landscape'):
     """
      Plots list of signals (signal,name)
 
@@ -78,8 +78,13 @@ def plotSignals(signals, n, m, vmax, vmin, name, title, path, cstd=None):
     """
     matplotlib.rcParams.update({'font.size': 26})
     fig = plt.figure()
-    fig.set_figwidth(30)
-    fig.set_figheight(40)
+    if orientation=='landscape':
+        fig.set_figwidth(30)
+        fig.set_figheight(40)
+    else:
+        fig.set_figwidth(40)
+        fig.set_figheight(30)
+
     i = 1
     plt.subplots_adjust(hspace=0.5, wspace=0.3)
     for s, snm in signals:
@@ -94,7 +99,7 @@ def plotSignals(signals, n, m, vmax, vmin, name, title, path, cstd=None):
         i += 1
 
     fig.suptitle(title, fontsize=48)
-    fig.savefig(path + '/' + name + '.pdf', orientation='landscape', format='pdf')
+    fig.savefig(path + '/' + name + '.pdf', orientation=orientation, format='pdf', bbox_inches='tight', pad_inches=0.1)
     plt.close()
 
 
@@ -172,17 +177,17 @@ def plotSignalValues(fig, signal1, n, m, p, name, vmax, vmin, cstd=None):
     plt.title(name)
     sp1.axis([0, num, minaxis, maxaxis])
     t = arange(0.0, num, 1)
-    if cstd is not None:
+    if cstd == 'mv':
         plt.axhline(linewidth=4, color='r', y=np.mean(signal1))
         pstd = np.std(signal1)
         plt.axhline(linewidth=4, color='b', y=np.mean(signal1) + pstd)
         plt.axhline(linewidth=4, color='b', y=np.mean(signal1) - pstd)
-    else:
-        plt.axhline(linewidth=1, color='r', y=0)
-    sp1.plot(t, signal1)
-    if cstd is not None:
         sp1.plot(t, signal1 + cstd)
         sp1.plot(t, signal1 - cstd)
+    elif type(cstd) == float:
+        plt.axhline(linewidth=1, color='r', y=cstd)
+    sp1.plot(t, signal1)
+
 
 
 #    plt.show()

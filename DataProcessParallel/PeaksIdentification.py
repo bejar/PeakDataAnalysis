@@ -160,8 +160,10 @@ def cdp_identification(X, wtime, datainfo, sensor, ifreq=0.0, ffreq=200, thresho
     :param Fs: Sampling
     :return:
     """
-    Fs = datainfo.sampling
 
+    print 'Sensor: ', sensor, time.ctime()
+
+    Fs = datainfo.sampling
 
     tapering = 0.0  # tapering window use tukey window tap=0 no window, tap=1 max tapering
     fft_freq = None  # max number of freqs used in FFT
@@ -336,17 +338,23 @@ if __name__ == '__main__':
     #lexperiments = ['e130827']  # ['e141113', 'e141029', 'e141016', 'e140911', 'e140311', 'e140225', 'e140220']
 
     #lexperiments = ['e130827', 'e140225', 'e140220', 'e141016', 'e140911']
-    lexperiments = ['e140304']
+    lexperiments = ['e150514']
 
 
     datasufix = ''#'-RawResampled'
 
-    wtime = 120e-3 # Window length in miliseconds
-    ifreq = 0.0   # Frequency cutoff low
-    ffreq = 100.0  # Frequency cutoff high
-    threshold = 0.02        # Peaks Max-Min in window above threshold in amplitude
+
+
     for expname in lexperiments:
         datainfo = experiments[expname]
+
+        wtime = datainfo.peaks_id_params['wtime']  #120e-3 # Window length in miliseconds
+        ifreq = datainfo.peaks_id_params['low']  #0.0   # Frequency cutoff low
+        ffreq = datainfo.peaks_id_params['high']  #70.0  # Frequency cutoff high
+        threshold = datainfo.peaks_id_params['threshold']  #0.05        # Peaks Max-Min in window above threshold in amplitude
+
+        print(wtime, ifreq, ffreq, threshold)
+
         sampling = datainfo.sampling #/ 6.0
         Tw = int(2 * np.round(wtime*sampling/2))
         f = h5py.File(datainfo.dpath + datainfo.name + '.hdf5', 'r+')
@@ -385,6 +393,7 @@ if __name__ == '__main__':
                 f[dfile + '/' + s + '/Peaks'].attrs['wtime'] = wtime
                 f[dfile + '/' + s + '/Peaks'].attrs['low'] = ifreq
                 f[dfile + '/' + s + '/Peaks'].attrs['high'] = ffreq
+                f[dfile + '/' + s + '/Peaks'].attrs['threshold'] = threshold
 
 
         f.close()

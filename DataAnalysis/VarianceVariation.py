@@ -77,7 +77,7 @@ if __name__ == '__main__':
     lexperiments = ['e130827',  'e141016', 'e140911', 'e140225', 'e140220']
 
     # lexperiments = ['e140225', 'e140220', 'e141016', 'e140911']e140515
-    lexperiments = ['130827']
+    lexperiments = ['e150514']
 
     TVD = False
     ext = ''
@@ -97,7 +97,7 @@ if __name__ == '__main__':
             length = int(d.shape[0]/float(step))
             lsignalsvar = []
             lsignalsmean = []
-            for s in range(len(datainfo.sensors)):
+            for s in [4]: # range(len(datainfo.sensors)):
                 print dfile, datainfo.sensors[s]
                 pvar = np.zeros(length)
                 pmean = np.zeros(length)
@@ -105,12 +105,15 @@ if __name__ == '__main__':
                     pvar[pos] = np.std(d[pos*step:(pos*step)+rslt, s])
                 #print p
                 lsignalsvar.append((pvar,datainfo.sensors[s]))
-                # plt.subplots(figsize=(20, 10))
-                # plt.axis([0, length, 0, 0.2])
-                # plot(range(length), p)
-                # #plt.show()
-                # plt.title(datainfo.datafiles[dfile]+ '-' + datainfo.sensors[s], fontsize=48)
-                # plt.savefig(datainfo.dpath + '/Results/' + datainfo.datafiles[dfile] + '-' + datainfo.sensors[s]
-                #             + '-variance.pdf', orientation='landscape', format='pdf')
-                # plt.close()
-            plotSignals(lsignalsvar, 6, 2, 0.15, 0, datainfo.datafiles[dfile]+'-'+str(rslt)+'-'+str(step)+'-variance.pdf', datainfo.datafiles[dfile], datainfo.dpath + '/Results/')
+                plt.subplots(figsize=(20, 10))
+                plt.axis([0, length, 0, 0.2])
+                plot(range(length), pvar)
+                #plt.show()
+                plt.title(datainfo.datafiles[dfile]+ '-' + datainfo.sensors[s], fontsize=48)
+                plt.savefig(datainfo.dpath + '/Results/' + datainfo.datafiles[dfile] + '-' + datainfo.sensors[s]
+                            + '-variance.pdf', orientation='landscape', format='pdf')
+                plt.close()
+            plotSignals(lsignalsvar, 1, 1, 0.2, 0,
+                        datainfo.datafiles[dfile]+'-'+str(rslt)+'-'+str(step)+'-variance',
+                        datainfo.datafiles[dfile],
+                        datainfo.dpath + '/Results/', orientation='portrait', cstd=[0.05, 0.05, 0.05, 0.05])

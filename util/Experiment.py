@@ -31,8 +31,9 @@ class Experiment():
     dpath = None # Path of the datafiles
     clusters = None # List with the numer of clusters for each sensor
     colors = '' # Colors to use for histogram of the datafiles peaks
+    peaks_id_params = None
 
-    def __init__(self, dpath, name, sampling, datafiles, sensors, clusters, colors):
+    def __init__(self, dpath, name, sampling, datafiles, sensors, clusters, colors, peaks_id_params):
         self.name = name
         self.sampling = sampling
         self.datafiles = datafiles
@@ -40,5 +41,6 @@ class Experiment():
         self.dpath = dpath
         self.clusters = clusters
         self.colors = colors
+        self.peaks_id_params = peaks_id_params
 
 

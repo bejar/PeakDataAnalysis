@@ -25,9 +25,8 @@ import scipy.io
 
 from config.paths import cinvesdata, cinvesdatanew
 
-datafiles = [(['14304g08', '14304g12',  '14304g23', '14304g32', '14304g34', '14304g39',
-               '14304g43','14304g53',  '14304g55', '14304g57', '14304g58', '14304g61',
-               '14304g69', '14304g73'], 12, 2014.0)
+datafiles = [(['15514028', '15514029', '15514030',
+                '15514031', '15514032', '15514033', '15514034', '15514035', '15514036', '15514037', '15514038'], 12, 10000.0)
              ]
 
 
@@ -40,7 +39,7 @@ datafiles = [(['14304g08', '14304g12',  '14304g23', '14304g32', '14304g34', '143
 for dataf, nsig, _ in datafiles:
     for files in dataf:
         print 'Reading: ', files, '...'
-        data = AxonIO(cinvesdatanew + 'e140304/' + files + '.abf')
+        data = AxonIO(cinvesdatanew + 'e150514/' + files + '.abf')
 
         bl = data.read_block(lazy=False, cascade=True)
 
