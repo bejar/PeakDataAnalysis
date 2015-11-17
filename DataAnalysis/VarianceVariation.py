@@ -97,7 +97,7 @@ if __name__ == '__main__':
             length = int(d.shape[0]/float(step))
             lsignalsvar = []
             lsignalsmean = []
-            for s in [4]: # range(len(datainfo.sensors)):
+            for s in [4,5,6,7]: # range(len(datainfo.sensors)):
                 print dfile, datainfo.sensors[s]
                 pvar = np.zeros(length)
                 pmean = np.zeros(length)
@@ -113,7 +113,7 @@ if __name__ == '__main__':
                 plt.savefig(datainfo.dpath + '/Results/' + datainfo.datafiles[dfile] + '-' + datainfo.sensors[s]
                             + '-variance.pdf', orientation='landscape', format='pdf')
                 plt.close()
-            plotSignals(lsignalsvar, 1, 1, 0.2, 0,
+            plotSignals(lsignalsvar, 2, 2, 0.2, 0,
                         datainfo.datafiles[dfile]+'-'+str(rslt)+'-'+str(step)+'-variance',
                         datainfo.datafiles[dfile],
                         datainfo.dpath + '/Results/', orientation='portrait', cstd=[0.05, 0.05, 0.05, 0.05])

@@ -32,6 +32,7 @@ from util.misc import compute_frequency_remap
 from sklearn.metrics import pairwise_distances_argmin_min
 import random
 import string
+import os
 
 def randomize_string(s):
     l = list(s)
@@ -62,15 +63,20 @@ def drawgraph(nnodes, edges, nfile, sensor, dfile, legend):
     for e, nb, pe in edges:
         if len(e) == 2:
             rfile.write(str(e[0]) + '->' + str(e[1]))
-            # if pe/nb > 1.3:
-            # rfile.write('[color="red"]')
-            # if pe/nb < 0.7:
-            #        rfile.write('[color="green"]')
+            if pe>= 0.014:
+                rfile.write('[color="blue"]')
+            if 0.014>pe> 0.007:
+                rfile.write('[color="red"]')
+            if pe < 0.007:
+                rfile.write('[color="green"]')
             rfile.write('\n')
 
     rfile.write('}\n')
 
     rfile.close()
+    os.system('dot -Tpdf '+datainfo.dpath + '/Results/maxseq-' + nfile + '-' + dfile + '-' + sensor + '.dot ' + '-o '
+              +datainfo.dpath + '/Results/maxseq-' + nfile + '-' + dfile + '-' + sensor + '.pdf')
+    os.system(' rm -fr ' + datainfo.dpath + '/Results/maxseq-' + nfile + '-' + dfile + '-' + sensor + '.dot')
 
 
 def drawgraph_with_edges(nnodes, edges, nfile, sensor):
@@ -431,7 +437,7 @@ if __name__ == '__main__':
     lexperiments = ['e130827',  'e141016', 'e140911', 'e140225', 'e140220']
 
     # lexperiments = ['e140225', 'e140220', 'e141016', 'e140911']
-    lexperiments = ['e140515']
+    lexperiments = ['e150514']
     TVD = False
     ext = ''
     peakdata = {}
@@ -449,6 +455,6 @@ if __name__ == '__main__':
 
             for ncl, sensor in zip(datainfo.clusters, datainfo.sensors):
                 clpeaks = compute_data_labels(datainfo.datafiles[0], dfile, sensor)
-                d = f[dfile + '/' + sensor + '/' + 'TimeClean']
+                d = f[dfile + '/' + sensor + '/' + 'Time']
                 timepeaks = data = d[()]
-                generate_sequences(dfile, timepeaks, clpeaks, sensor, ncl, gap=2000, sup= 20, rand=True)
+                generate_sequences(dfile, timepeaks, clpeaks, sensor, ncl, gap=2000, sup=None, rand=False)

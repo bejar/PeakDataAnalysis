@@ -20,7 +20,7 @@ plots
 __author__ = 'bejar'
 
 from pylab import *
-
+import seaborn as sns
 
 def plotHungarianSignals(coinc, centers1, centers2, vmax, vmin, name, title, path):
     """
@@ -242,9 +242,10 @@ def plotMatrices(matrices, n, m, name, title, path, ticks=[], lticks=[]):
 def plotMatrixValues(fig, matrix, n, m, p, name, ticks = [], lticks = []):
     sp1 = fig.add_subplot(n, m, p)
     plt.title(name, fontsize=48)
-    sp1.imshow(matrix, cmap=plt.cm.gray, interpolation='none')
-    plt.xticks(ticks, lticks, fontsize=40)
-    plt.yticks(ticks, lticks, fontsize=40)
+    sns.heatmap(matrix, ax=sp1, cmap='Blues')
+    #sp1.imshow(matrix, cmap=plt.cm.gray, interpolation='none')
+    # plt.xticks(ticks, lticks, fontsize=40)
+    # plt.yticks(ticks, lticks, fontsize=40)
 
 
 
