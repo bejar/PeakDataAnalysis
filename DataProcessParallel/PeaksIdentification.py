@@ -151,7 +151,7 @@ def ffft(fmask, y):
     return y2
 
 
-def cdp_identification(X, wtime, datainfo, sensor, ifreq=0.0, ffreq=200, threshold=0.05):
+def cdp_identification(Y, i, wtime, datainfo, sensor, ifreq=0.0, ffreq=200, threshold=0.05):
     """
     Identification of peaks
 
@@ -161,6 +161,7 @@ def cdp_identification(X, wtime, datainfo, sensor, ifreq=0.0, ffreq=200, thresho
     :return:
     """
 
+    X = Y[:, i]
     print 'Sensor: ', sensor, time.ctime()
 
     Fs = datainfo.sampling
@@ -338,7 +339,7 @@ if __name__ == '__main__':
     #lexperiments = ['e130827']  # ['e141113', 'e141029', 'e141016', 'e140911', 'e140311', 'e140225', 'e140220']
 
     #lexperiments = ['e130827', 'e140225', 'e140220', 'e141016', 'e140911']
-    lexperiments = ['e150514']
+    lexperiments = ['e150707']
 
 
     datasufix = ''#'-RawResampled'
@@ -365,7 +366,7 @@ if __name__ == '__main__':
 
             raw = d[()]
             print 'Peaks identification: ', time.ctime()
-            peaks = Parallel(n_jobs=-1)(delayed(cdp_identification)(raw[:, i], wtime, datainfo, s, ifreq=ifreq, ffreq=ffreq, threshold=threshold) for i, s in enumerate(datainfo.sensors))
+            peaks = Parallel(n_jobs=-1)(delayed(cdp_identification)(raw, i, wtime, datainfo, s, ifreq=ifreq, ffreq=ffreq, threshold=threshold) for i, s in enumerate(datainfo.sensors))
             #peaks = cdp_identification(raw, wtime, datainfo)
             print 'The end ', time.ctime()
 

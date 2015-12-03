@@ -191,7 +191,7 @@ def max_seq_long(nexp, clpeaks, timepeaks, sup, nfile, gap=0):
     print '----------'
 
 
-def max_seq_exp(nfile, clpeaks, timepeaks, sensor, dfile, nclust, gap=0, sup=None, rand=False):
+def max_seq_exp(nfile, clpeaks, timepeaks, sensor, dfile, ename, nclust, gap=0, sup=None, rand=False):
     """
     Generates frequent subsequences and the graphs representing the two step frequent
     subsequences
@@ -258,7 +258,7 @@ def max_seq_exp(nfile, clpeaks, timepeaks, sensor, dfile, nclust, gap=0, sup=Non
     if rand:
         randname = randname.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(6))
 
-    rfile = open(datainfo.dpath + 'Results/maxseq-' + nfile + '-' + dfile + '-' +  sensor + '-' + randname + '.txt', 'w')
+    rfile = open(datainfo.dpath + 'Results/maxseq-' + nfile + '-' + ename + '-' + sensor + '-' + randname + '.txt', 'w')
 
     for seq, s in lstrings:
         wstr = ''
@@ -282,7 +282,7 @@ def max_seq_exp(nfile, clpeaks, timepeaks, sensor, dfile, nclust, gap=0, sup=Non
     if '#' in peakfreq:
         nsig -= 1
 
-    drawgraph(nclust, lstringsg, nfile, sensor, dfile, nfile + '-' + dfile+ '-'+sensor + ' sup(%d)' % sup)
+    drawgraph(nclust, lstringsg, nfile, sensor, dfile, nfile + '-' + ename + '-' + sensor + ' sup(%d)' % sup)
 
 
 def max_peaks_edges(nexp, clpeaks, timepeaks, sup, gap=0):
@@ -358,7 +358,7 @@ def max_peaks_edges(nexp, clpeaks, timepeaks, sup, gap=0):
 # ----------------------------------------
 
 
-def generate_sequences(dfile, timepeaks, clpeaks, sensor, ncl, gap, sup=None, rand=False):
+def generate_sequences(dfile, ename, timepeaks, clpeaks, sensor, ncl, gap, sup=None, rand=False):
     """
     Generates the frequent subsequences from the times of the peaks considering
     gap the minimum time between consecutive peaks that indicates a pause (time in the sampling frequency)
@@ -369,7 +369,7 @@ def generate_sequences(dfile, timepeaks, clpeaks, sensor, ncl, gap, sup=None, ra
     :param sensor:
     :return:
     """
-    max_seq_exp(datainfo.name, clpeaks, timepeaks, sensor, dfile, ncl, gap=gap, sup=sup, rand=rand)
+    max_seq_exp(datainfo.name, clpeaks, timepeaks, sensor, dfile, ename, ncl, gap=gap, sup=sup, rand=rand)
 
 
 def generate_sequences_long(dfile, timepeaks, clpeaks, sensor, thres, gap):
@@ -450,11 +450,11 @@ if __name__ == '__main__':
         datainfo = experiments[expname]
         f = h5py.File(datainfo.dpath + datainfo.name + ext + '.hdf5', 'r')
 
-        for dfile in datainfo.datafiles:
+        for dfile, ename in zip(datainfo.datafiles, datainfo.expnames):
             print dfile
 
             for ncl, sensor in zip(datainfo.clusters, datainfo.sensors):
                 clpeaks = compute_data_labels(datainfo.datafiles[0], dfile, sensor)
                 d = f[dfile + '/' + sensor + '/' + 'Time']
                 timepeaks = data = d[()]
-                generate_sequences(dfile, timepeaks, clpeaks, sensor, ncl, gap=2000, sup=None, rand=False)
+                generate_sequences(dfile, ename, timepeaks, clpeaks, sensor, ncl, gap=2000, sup=None, rand=False)

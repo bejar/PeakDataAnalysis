@@ -20,171 +20,114 @@ experiments
 __author__ = 'bejar'
 
 from util.Experiment import Experiment
-from config.paths import cinvesdata
+from Config.paths import datapath
 
-datafiles = [(['e130716f00-cntrl1', 'e130716f02-cntrl2', 'e130716f03-cntrl3'], 12,
-              ['L4ci', 'L4cd', 'L5ri', 'L5rd', 'L5ci', 'L5cd', 'L6ri', 'L6rd', 'L6ci', 'L6cd', 'L7ri', 'L7rd'],
-              10204.1),
-             (['e130827f23-cntrl1', 'e130827f26-cntrl2', 'e130827f37-cntrl3'], 11,
-              ['L4ci', 'L4cd', 'L5ri', 'L5rd', 'L5ci', 'L5cd', 'L6ri', 'L6rd', 'L6ci', 'L6cd', 'L7ri'],
-              10256.4),
-             (['e130903f20-cntrl1', 'e130903f22-cntrl2', 'e130903f25-cntrl3'], 11,
-              ['L4ri', 'L4cd', 'L4ci', 'L5rd', 'L5ri', 'L5cd', 'L5ci', 'L6rd', 'L6ri', 'L6cd', 'L6ci'],
-              10256.4),
-             (['e141113f09-cntrl1', 'e141113f11-cntrl2', 'e141113f13-cntrl3'], 12,
-              ['L4ci', 'L4cd', 'L5ri', 'L5rd', 'L5ci', 'L5cd', 'L6ri', 'L6rd', 'L6ci', 'L6cd', 'L7ri', 'L7rd'],
-              10204.1),
-             (['e141029f35-cntrl1', 'e141029f37-cntrl2', 'e141029f39-cntrl3'], 12,
-              ['L4ci', 'L4cd', 'L5ri', 'L5rd', 'L5ci', 'L5cd', 'L6ri', 'L6rd', 'L6ci', 'L6cd', 'L7ri', 'L7rd'],
-              10204.1),
-             (['e141016f07-cntrl1', 'e141016f09-cntrl2', 'e141016f11-cntrl3'], 12,
-              ['L4ci', 'L4cd', 'L5ri', 'L5rd', 'L5ci', 'L5cd', 'L6ri', 'L6rd', 'L6ci', 'L6cd', 'L7ri', 'L7rd'],
-              10204.1),
-             (['e140911f20-cntrl1', 'e140911f33-cntrl2', 'e140911f36-cntrl3'], 12,
-              ['L4ci', 'L4cd', 'L5ri', 'L5rd', 'L5ci', 'L5cd', 'L6ri', 'L6rd', 'L6ci', 'L6cd', 'L7ri', 'L7rd'],
-              10416.7),
-             (['e140311f09-cntrl1', 'e140311f13-cntrl2', 'e140311f23-cntrl3'], 12,
-              ['L4ci', 'L4cd', 'L5ri', 'L5rd', 'L5ci', 'L5cd', 'L6ri', 'L6rd', 'L6ci', 'L6cd', 'L7ri', 'L7rd'],
-              10204.1),
-             (['e140225f31-cntrl1', 'e140225f34-cntrl2', 'e140225f39-cntrl3', 'e140225f47-cntrl4', 'e140225f50-cntrl5',
-               'e140225f59-cntrl6'], 12,
-              ['L4ci', 'L4cd', 'L5ri', 'L5rd', 'L5ci', 'L5cd', 'L6ri', 'L6rd', 'L6ci', 'L6cd', 'L7ri', 'L7rd'],
-              10204.1),
-             (['e140220f8-ctrl1', 'e140220f10-ctrl2', 'e140220f12-ctrl3'], 12,
-              ['DRP', 'L4cd', 'L4ci', 'L5rd', 'L5ri', 'L5cd', 'L5ci', 'L6rd', 'L6ri', 'L6cd', 'L6ci', 'L7ri'],
-              10416.7),
-             ]
+__author__ = 'bejar'
 
-lexperiments = ['e130716', 'e130827', 'e130903', 'e141113', 'e141029', 'e141016', 'e140911', 'e140311', 'e140225',
-                'e140220']
+# Lista de conveniencia para poder procesar varios experimentos a la vez
+lexperiments = ['e150514']
 
+# Diccionario con los datos de cada experimento
+# Todos los experimentos estan en el directorio cinvesdata dentro de una carpeta que tenga el nombre del experimento
 experiments = \
     {
-        'e140304':
-               Experiment(cinvesdata, 'e140304', 2012.0,
-                       ['14304g08', '14304g12',  '14304g23', '14304g32', '14304g34', '14304g39', '14304g43','14304g53',
-                        '14304g55', '14304g57', '14304g58', '14304g61', '14304g69', '14304g73'],
-                       ['L4ci', 'L4cd', 'L5ri', 'L5rd', 'L5ci', 'L5cd', 'L6ri', 'L6rd', 'L6ci', 'L6cd', 'L7ri', 'L7rd'],
-                        [12,12,12,12,12,12,12,12,12,12,12,12], 'rrrggyyybbbbbb',
-                        {'wtime': 120e-3, 'low':0, 'high':70, 'threshold': 0.05}),
+        'e150707':
+            Experiment(
+                dpath='/home/bejar/storage/Data/Gatos/',
+                name='e150707',
+                sampling=10000.0,
+                datafiles=['15707000', '15707001', '15707002', '15707003', '15707004', '15707005', '15707006', '15707007',
+                           '15707008', '15707009', '15707010', '15707011', '15707012', '15707013', '15707014', '15707015',
+                           '15707016', '15707017', '15707018', '15707019', '15707020', '15707021', '15707022', '15707023',
+                           '15707024', '15707025', '15707026', '15707027', '15707028', '15707029', '15707030', '15707031',
+                           '15707032', '15707035', '15707036', '15708000', '15708001', '15708002', '15708003', '15708004',
+                           '15708005', '15708006', '15708007', '15708008'],
+                sensors=['L4ci', 'L4cd', 'L5ri', 'L5rd', 'L5ci', 'L5cd', 'L6ri', 'L6rd', 'L6ci', 'L6cd', 'L7ri', 'L7rd'],
+                abfsensors=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+                clusters=[12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12],
+                colors='bbbbyyyyyyyyyyrrrrrrrrryyyyyyyyyyygggyyyyyyy',
+                peaks_id_params={'wtime': 120e-3, 'low': 0, 'high': 70, 'threshold': 0.05},
+                peaks_resampling={'wtsel': 100, 'rsfactor': 6.0, 'filtered': False},
+                peaks_smooth={'pcasmooth': True, 'components': 10, 'wbaseline': 20},
+                peaks_filter={'lowpass': 1.0, 'highpass':200.0},
+                expnames=['ctrl1', 'ctrl2', 'ctrl3', 'ctrl4', 'lido11', 'lido12', 'lido13', 'lido14', 'lido15', 'lido16',
+                          'lido17', 'lido18', 'lido19', 'lido110', 'capsa1', 'capsa2', 'capsa3', 'capsa4', 'capsa5',
+                          'capsa6', 'capsa7', 'capsa8', 'capsa9', 'lido21', 'lido22', 'lido23', 'lido24', 'lido25',
+                          'lido26', 'lido27', 'lido28', 'lido29', 'lido210', 'esp1', 'esp2', 'esp3', 'lido31', 'lido32',
+                          'lido33', 'lido34', 'lido35', 'lido36', 'lido37']
 
-        'e150514':
-             Experiment(cinvesdata, 'e150514', 10000.0,
-                       ['15514005', '15514006', '15514007',
-                        '15514008', '15514009', '15514010', '15514011', '15514012', '15514013', '15514014', '15514015', '15514016',
-                        '15514017', '15514018', '15514019', '15514020', '15514021', '15514022', '15514023', '15514024', '15514025', '15514026', '15514027',
-                        '15514028', '15514029', '15514030',
-                        '15514031', '15514032', '15514033', '15514034', '15514035', '15514036', '15514037', '15514038'],
-                       ['L4ci', 'L4cd', 'L5ri', 'L5rd', 'L5ci', 'L5cd', 'L6ri', 'L6rd', 'L6ci', 'L6cd', 'L7ri', 'L7rd'],
-                        [12,12,12,12,12,12,12,12,12,12,12,12], 'rrryyyyyyyyybbbbbbbbbbbbbggggggggggg',
-                        {'wtime': 120e-3, 'low':0, 'high':70, 'threshold': 0.05}),#[8,8,8,8,8,8,8,8,8,8,8,8]
-        'e150514b':
-             Experiment(cinvesdata, 'e150514', 10000.0,
-                       ['15514028', '15514029', '15514030',
-                        '15514031', '15514032', '15514033', '15514034', '15514035', '15514036', '15514037', '15514038'],
-                       ['L4ci', 'L4cd', 'L5ri', 'L5rd', 'L5ci', 'L5cd', 'L6ri', 'L6rd', 'L6ci', 'L6cd', 'L7ri', 'L7rd'],
-                        [12,12,12,12,12,12,12,12,12,12,12,12], 'rrryyyyyyyyybbbbbbbbbbbbb',
-                        {'wtime': 120e-3, 'low':0, 'high':70, 'threshold': 0.05}),#[8,8,8,8,8,8,8,8,8,8,8,8]
-        # 'e150514':
-        #      Experiment(cinvesdata, 'e150514', 10000.0,
-        #                ['15514005', '15514006', '15514007',
-        #                 '15514008', '15514009', '15514010', '15514011', '15514012', '15514013', '15514014', '15514015', '15514016',
-        #                 '15514017', '15514018', '15514019', '15514020', '15514021', '15514022', '15514023', '15514024', '15514025', '15514026', '15514027'],
-        #                ['L4ci', 'L4cd', 'L5ri', 'L5rd', 'L5ci', 'L5cd', 'L6ri', 'L6rd', 'L6ci', 'L6cd', 'L7ri', 'L7rd'],
-        #                 [8,8,8,8,8,8,8,8,8,8,8,8], 'rrryyyyyyyyybbbbbbbbbbbbb'),#[12,12,12,12,12,12,12,12,12,12,12,12]
-        # 'e150514b':
-        #      Experiment(cinvesdata, 'e150514b', 10000.0,
-        #                ['15514005', '15514006', '15514007',
-        #                 '15514008', '15514009', '15514010', '15514011', '15514012', '15514013', '15514014', '15514015', '15514016',
-        #                 '15514017', '15514018', '15514019', '15514020', '15514021', '15514022', '15514023', '15514024', '15514025', '15514026', '15514027'],
-        #                ['L4ci', 'L4cd', 'L5ri', 'L5rd', 'L5ci', 'L5cd', 'L6ri', 'L6rd', 'L6ci', 'L6cd', 'L7ri', 'L7rd'],
-        #                 [8,8,8,8,8,8,8,8,8,8,8,8], 'rrryyyyyyyyybbbbbbbbbbbbb'),#[12,12,12,12,12,12,12,12,12,12,12,12]
-        'e130716':
-            Experiment(cinvesdata, 'e130716', 10204.1,
-                       ['e130716f00-cntrl1', 'e130716f02-cntrl2', 'e130716f03-cntrl3'],
-                       ['L4ci', 'L4cd', 'L5ri', 'L5rd', 'L5ci', 'L5cd', 'L6ri', 'L6rd', 'L6ci', 'L6cd', 'L7ri',
-                        'L7rd'],[12,12,12,12,12,12,12,12,12,12,12,12], 'rrr',
-                        {'wtime': 120e-3, 'low':0, 'high':70, 'threshold': 0.05}),#[8,8,8,8,8,8,8,8,8,8,8,8]
-        'e130827':
-            Experiment(cinvesdata, 'e130827', 10256.4,
-                       ['e130827f23-cntrl1', 'e130827f26-cntrl2', 'e130827f37-cntrl3'],
-                       ['L4ci', 'L4cd', 'L5ri', 'L5rd', 'L5ci', 'L5cd', 'L6ri', 'L6rd', 'L6ci', 'L6cd', 'L7ri']
-                       , [12, 10, 12, 10, 12, 11, 11, 14, 13, 11, 11], 'rrr',
-                        {'wtime': 120e-3, 'low':0, 'high':70, 'threshold': 0.05}),#[9, 10, 11, 9, 11, 11, 11, 10, 8, 12, 8]
-        'e130903':
-            Experiment(cinvesdata, 'e130903', 10256.4,
-                       ['e130903f20-cntrl1', 'e130903f22-cntrl2', 'e130903f25-cntrl3'],
-                       ['L4ri', 'L4cd', 'L4ci', 'L5rd', 'L5ri', 'L5cd', 'L5ci', 'L6rd', 'L6ri', 'L6cd', 'L6ci'],[], 'rrr',
-                        {'wtime': 120e-3, 'low':0, 'high':70, 'threshold': 0.05}),
-        'e141113':
-            Experiment(cinvesdata, 'e141113', 10204.1,
-                       ['e141029f35-cntrl1', 'e141029f37-cntrl2', 'e141029f39-cntrl3'],
-                       ['L4ci', 'L4cd', 'L5ri', 'L5rd', 'L5ci', 'L5cd', 'L6ri', 'L6rd', 'L6ci', 'L6cd', 'L7ri',
-                        'L7rd'],[8,8,8,8,8,8,8,8,8,8,8,8], 'rrr',
-                        {'wtime': 120e-3, 'low':0, 'high':70, 'threshold': 0.05}),
+            ),
 
-        'e141029':
-            Experiment(cinvesdata, 'e141029', 10204.1,
-                       ['e141029f35-cntrl1', 'e141029f37-cntrl2', 'e141029f39-cntrl3'],
-                       ['L4ci', 'L4cd', 'L5ri', 'L5rd', 'L5ci', 'L5cd', 'L6ri', 'L6rd', 'L6ci', 'L6cd', 'L7ri',
-                        'L7rd'],[8,8,8,8,8,8,8,8,8,8,8,8], 'rrr',
-                        {'wtime': 120e-3, 'low':0, 'high':70, 'threshold': 0.05}),
-        'e141016':
-            Experiment(cinvesdata, 'e141016', 10204.1,
-                       ['e141016f07-cntrl1', 'e141016f09-cntrl2', 'e141016f11-cntrl3'],
-                       ['L4ci', 'L4cd', 'L5ri', 'L5rd', 'L5ci', 'L5cd', 'L6ri', 'L6rd', 'L6ci', 'L6cd', 'L7ri',
-                        'L7rd'],[9, 8, 10, 8, 8, 8, 9, 10, 7, 7, 10, 8], 'rrr',
-                        {'wtime': 120e-3, 'low':0, 'high':70, 'threshold': 0.05}),
-        'e140911':
-            Experiment(cinvesdata, 'e140911', 10416.7,
-                       ['e140911f20-cntrl1', 'e140911f33-cntrl2', 'e140911f36-cntrl3'],
-                       ['L4ci', 'L4cd', 'L5ri', 'L5rd', 'L5ci', 'L5cd', 'L6ri', 'L6rd', 'L6ci', 'L6cd', 'L7ri',
-                        'L7rd'], [6, 6, 7, 7, 7, 7, 7, 8, 6, 6, 6, 8], 'rrr',
-                        {'wtime': 120e-3, 'low':0, 'high':70, 'threshold': 0.05}),
-        'e140311':
-            Experiment(cinvesdata, 'e140311', 10204.1,
-                       ['e140311f09-cntrl1', 'e140311f13-cntrl2', 'e140311f23-cntrl3'],
-                       ['L4ci', 'L4cd', 'L5ri', 'L5rd', 'L5ci', 'L5cd', 'L6ri', 'L6rd', 'L6ci', 'L6cd', 'L7ri',
-                        'L7rd'],[8,8,8,8,8,8,8,8,8,8,8,8], 'rrr',
-                        {'wtime': 120e-3, 'low':0, 'high':70, 'threshold': 0.05}),
-        'e140225':
-            Experiment(cinvesdata, 'e140225', 10204.1,
-                       ['e140225f31-cntrl1', 'e140225f34-cntrl2', 'e140225f39-cntrl3', 'e140225f47-cntrl4',
-                        'e140225f50-cntrl5', 'e140225f59-cntrl6'],
-                       ['L4ci', 'L4cd', 'L5ri', 'L5rd', 'L5ci', 'L5cd', 'L6ri', 'L6rd', 'L6ci', 'L6cd', 'L7ri',
-                        'L7rd'], [8, 7, 7, 7, 7, 8, 8, 7, 8, 8, 6, 6], 'rrrrrr',
-                        {'wtime': 120e-3, 'low':0, 'high':70, 'threshold': 0.05}), #[13, 12, 16, 14, 14, 13, 13, 13, 14, 10, 10, 12]
-        'e140220':
-            Experiment(cinvesdata, 'e140220', 10416.7,
-                       ['e140220f8-ctrl1', 'e140220f10-ctrl2', 'e140220f12-ctrl3'],
-                       ['DRP', 'L4cd', 'L4ci', 'L5rd', 'L5ri', 'L5cd', 'L5ci', 'L6rd', 'L6ri', 'L6cd', 'L6ci', 'L7ri'],
-               [10, 8, 10, 9, 9, 8, 8, 8, 10, 9, 6, 10], 'rrr',
-                        {'wtime': 120e-3, 'low':0, 'high':70, 'threshold': 0.05}),
-        '130827':
-            Experiment(cinvesdata, 'e13827', 10256.4,
-                       ['13827f23_ctrl1', '13827f24_ctrl2', '13827f25_ctrl3', '13827f26_ctrl4', '13827f37_ctrl5',
-                        '13827f38_cap1', '13827f39_cap2', '13827f40_cap4', '13827f41_cap5', '13827f42_cap6',
-                        '13827f43_cap11', '13827f44_cap12', '13827f54_cap17', '13827f55_cap19'],
-                       ['L4ci', 'L4cd', 'L5ri', 'L5rd', 'L5ci', 'L5cd', 'L6ri', 'L6rd', 'L6ci', 'L6cd', 'L7ri']
-                       , [8,8,8,8,8,8,8,8,8,8,8], 'rrrrryyyyyyyyy',
-                        {'wtime': 120e-3, 'low':0, 'high':70, 'threshold': 0.05}),#[9, 10, 11, 9, 11, 11, 11, 10, 8, 12, 8]
-        '141016':
-            Experiment(cinvesdata, 'e141016', 10204.1,
-                       ['141016g07', '141016f08', '141016g09', '141016f10',  '141016g11', '141016f12', '141016f13', '141016f14',
-                        '141016f15', '141016g16', '141016g24', '141016f25', '141016g26'],
+       'e150514':
+            Experiment(
+                dpath='/home/bejar/storage/Data/Gatos/',
+                name='e150514',
+                sampling=10000.0,
+                datafiles=['15514005', '15514006', '15514007', '15514008', '15514009', '15514010', '15514011',
+                           '15514012', '15514013', '15514014', '15514015', '15514016', '15514017', '15514018',
+                           '15514019', '15514020', '15514021', '15514022', '15514023', '15514024', '15514025',
+                           '15514026', '15514027', '15514028', '15514029', '15514030', '15514031', '15514032',
+                           '15514033', '15514034', '15514035', '15514036', '15514037', '15514038'],
+                sensors=['L4ci', 'L4cd', 'L5ri', 'L5rd', 'L5ci', 'L5cd', 'L6ri', 'L6rd', 'L6ci', 'L6cd', 'L7ri', 'L7rd'],
+                abfsensors=[0, 1,2,3,4,5,6,7,8,9,10,11],
+                clusters=[12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12],
+                colors='rrryyyyyyyyybbbbbbbbbbbrrggggggggg',
+                peaks_id_params={'wtime': 120e-3, 'low': 0, 'high': 70, 'threshold': 0.05},
+                peaks_resampling={'wtsel': 100, 'rsfactor': 6.0, 'filtered': False},
+                peaks_smooth={'pcasmooth': True, 'components': 10, 'wbaseline': 20},
+                peaks_filter={'lowpass': 1.0, 'highpass':200.0},
+                expnames=['15514005ctr1', '15514006ctr2', '15514007ctr3',
+                        '15514008cap1', '15514009cap2', '15514010cap3', '15514011cap4', '15514012cap5', '15514013cap6',
+                        '15514014cap7', '15514015cap8', '15514016cap9',
+                        '15514017lido1', '15514018lido2', '15514019lido3', '15514020lido4', '15514021lido5',
+                        '15514022lido6', '15514023lido7', '15514024lido8', '15514025lido8', '15514026lido10', '15514027lido11',
+                        '15514028esp1', '15514029esp2', '15514030lido21',
+                        '15514031lido22', '15514032lido23', '15514033lido24', '15514034lido25', '15514035lido26',
+                        '15514036lido27', '15514037lido28', '15514038lido29']
 
-                       ['L4ci', 'L4cd', 'L5ri', 'L5rd', 'L5ci', 'L5cd', 'L6ri', 'L6rd', 'L6ci', 'L6cd', 'L7ri',
-                        'L7rd'],[8,8,8,8,8,8,8,8,8,8,8,8], 'rrrrryyyyyyyy',
-                        {'wtime': 120e-3, 'low':0, 'high':70, 'threshold': 0.05}),
-        'e120516':
-            Experiment(cinvesdata, 'e120516', 1400.0,
-                       ['12516000ctrl1', '12516001ctrl2', '12516007capsa1', '12516008capsa2', '12516014capsa3',
-                        '12516015capsa4', '12516021capsa5', '12516022capsa6', '12516028capsa7',
-                        '12516029capsa8', '12516035capsa9', '12516036capsa10', '12516044capsa11', '12516045capsa12',
-                        '12516051lido1', '12516052lido2', '12516053lido3', '12516054lido4', '12516060lido5',
-                        '12516061lido6', '12517005lido7', '12517006lido8'],
-                       ['L4ci', 'L4cd', 'L5ri', 'L5rd', 'L5ci', 'L5cd', 'L6ri', 'L6rd', 'L6ci', 'L6cd', 'L7ri',]
-                       , [9]*22, 'rryyyyyyyyyyyybbbbbbbb',
-                        {'wtime': 120e-3, 'low':0, 'high':70, 'threshold': 0.05}),
+            ),
+
+        'e120503':
+            Experiment(
+                dpath='/home/bejar/storage/Data/Gatos/',
+                name='e120503',
+                sampling=10416.0,
+                datafiles=[
+                    '12503f02', '12503f03', '12503f24', '12503f25', '12503f36', '12503f37', '12503f48', '12503f49',
+                    '12503f61', '12503f62', '12503f73',  '12503f74', '12503f85', '12503f86'],
+                sensors=['L4ci', 'L4cd', 'L5ri', 'L5rd', 'L5ci', 'L5cd', 'L6ri', 'L6rd', 'L6ci', 'L6cd', 'L7ri'],
+                abfsensors=[1,2,3,4,5,6,7,8,9,10,11],
+                clusters=[12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12],
+                colors='rryyyybbbggggg',
+                peaks_id_params={'wtime': 120e-3, 'low': 0, 'high': 70, 'threshold': 0.05},
+                peaks_resampling={'wtsel': 100, 'rsfactor': 6.0, 'filtered': False},
+                peaks_smooth={'pcasmooth': True, 'components': 10, 'wbaseline': 20},
+                peaks_filter={'lowpass': 1.0, 'highpass':200.0},
+                expnames=['ctrl1', 'ctrl2', 'lido11', 'lido12', 'lido13', 'lido14', 'capsa1', 'capsa2', 'capsa3',
+                          'lido21', 'lido22', 'lido23', 'lido24', 'lido25']
+            ),
+
+        'e110616':
+            Experiment(
+                dpath='/home/bejar/storage/Data/Gatos/',
+                name='e110616',
+                sampling=10416.0,
+                datafiles=['11616f08', '11616f16', '11616f18',  '11616f29', '11616f30', '11616f31','11616f39', '11616f40',
+                           '11616f49', '11616f50', '11616f51', '11616f59', '11617f00', '11617f08', '11617f09'],
+                sensors=['L4ci', 'L5ri', 'L5rd', 'L5ci', 'L5cd', 'L6ri', 'L6rd', 'L6ci', 'L6cd', 'L7ri'],
+                abfsensors=[1,2,3,4,5,6,7,8,9,10],
+                clusters=[12, 12, 12, 12, 12, 12, 12, 12, 12, 12],
+                colors='rrryyyyybbbbbbb',
+                peaks_id_params={'wtime': 120e-3, 'low': 0, 'high': 70, 'threshold': 0.05},
+                peaks_resampling={'wtsel': 100, 'rsfactor': 6.0, 'filtered': False},
+                peaks_smooth={'pcasmooth': True, 'components': 10, 'wbaseline': 20},
+                peaks_filter={'lowpass': 1.0, 'highpass':200.0},
+                expnames=['ctrl1', 'ctrl2', 'ctrl3', 'capsa1', 'capsa2', 'capsa3', 'capsa4', 'capsa5',
+                          'lido1', 'lido2', 'lido3', 'lido4', 'lido5', 'lido6', 'lido7']
+            ),
+
     }
+
+if __name__ == '__main__':
+    experiment = experiments['e120503']
 

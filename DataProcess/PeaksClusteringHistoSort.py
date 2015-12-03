@@ -61,7 +61,7 @@ for expname in lexperiments:
 
         data = ldata[0] #np.concatenate(ldata)
 
-        km = KMeans(n_clusters=nclusters)
+        km = KMeans(n_clusters=nclusters, n_jobs=-1)
         km.fit_transform(data)
         lsignals = []
         cnt = Counter(list(km.labels_))
