@@ -34,13 +34,7 @@ from sklearn.metrics import mean_squared_error
 from operator import itemgetter
 
 if __name__ == '__main__':
-    lexperiments = ['e130716', 'e130827', 'e130903', 'e141113', 'e141029', 'e141016', 'e140911', 'e140311', 'e140225',
-                    'e140220']
 
-    # Good experiments
-    lexperiments = ['e130827',  'e141016', 'e140911', 'e140225', 'e140220']
-
-    # lexperiments = ['e140225', 'e140220', 'e141016', 'e140911']
     lexperiments = ['e140515']
 
     TVD = False
